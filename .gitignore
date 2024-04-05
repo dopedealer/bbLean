@@ -1,0 +1,16 @@
+tags
+*.exe
+*.lib
+*.bin
+*.dll
+*.obj
+*.pdb
+*.sbr
+*.idb
+*.log
+*.ind
+*.sav
+*.set
+*.swp
+*.o
+moc_*
