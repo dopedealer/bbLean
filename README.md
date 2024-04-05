@@ -1,6 +1,12 @@
 # bbLean
 A blackbox for windows up-to-date code with bug fixes
 
+Project goals:
+- providing compilation with most used windows compilers
+- fixing known bugs
+- increasing the quality of code
+- minimal needed customisations
+
 # Original base code info:
 
 This is the source code for bbLean
