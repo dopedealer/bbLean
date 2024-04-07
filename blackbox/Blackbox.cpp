@@ -19,6 +19,8 @@
 
   ========================================================================== */
 
+#include <stdexcept> 
+
 #include "BB.h"
 #include "Settings.h"
 #include "MessageManager.h"
@@ -615,7 +617,7 @@ void set_focus_model(const char *fm_string)
        : 0
        ;
     SystemParametersInfo(SPI_SETACTIVEWNDTRKTIMEOUT, 0,
-        (PVOID)(fm ? Settings_autoRaiseDelay : 0), 0);
+        (PVOID)size_t(fm ? Settings_autoRaiseDelay : 0), 0);
     SystemParametersInfo(SPI_SETACTIVEWINDOWTRACKING, 0,
         (PVOID)!!(fm & 1), 0);
     SystemParametersInfo(SPI_SETACTIVEWNDTRKZORDER, 0,
@@ -1083,7 +1085,7 @@ void about_style(void)
 
     cp = stylePath(NULL);
     BBMessageBox(MB_OK,
-        "#"BBAPPNAME" - %s#"
+        "#" BBAPPNAME " - %s#"
         "%s"
         "\n%s %s"
         "\n%s"
@@ -1452,7 +1454,7 @@ int exec_core_broam(const char *broam)
             break;
 
         case e_Crash:
-            *(DWORD*)0 = 0x11111111;
+            throw std::runtime_error("manual crash");
             break;
 
         case e_ShowRecoverMenu:
