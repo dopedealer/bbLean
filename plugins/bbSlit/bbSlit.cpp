@@ -26,7 +26,7 @@
 #include "BBSendData.h"
 #include "bbPlugin.h"
 
-const char szVersion      [] = "bbSlit "BBLEAN_VERSION;
+const char szVersion      [] = "bbSlit " BBLEAN_VERSION;
 const char szAppName      [] = "bbSlit";
 const char szInfoVersion  [] = BBLEAN_VERSION;
 const char szInfoAuthor   [] = "grischka";

@@ -62,7 +62,7 @@ TinyDropTarget::~TinyDropTarget()
     //dbg_printf("deleted");
 };
 
-STDMETHODIMP TinyDropTarget::QueryInterface(REFIID iid, void** ppvObject)
+COM_DECLSPEC_NOTHROW STDMETHODIMP TinyDropTarget::QueryInterface(REFIID iid, void** ppvObject)
 {
     *ppvObject = NULL;
     if(IsEqualIID(iid, IID_IUnknown) || IsEqualIID(iid, IID_IDropTarget))
@@ -74,13 +74,13 @@ STDMETHODIMP TinyDropTarget::QueryInterface(REFIID iid, void** ppvObject)
     return E_NOINTERFACE;
 }
 
-STDMETHODIMP_(ULONG) TinyDropTarget::AddRef()
+COM_DECLSPEC_NOTHROW STDMETHODIMP_(ULONG) TinyDropTarget::AddRef()
 {
     //dbg_printf("addref %d", 1+m_dwRef);
     return ++m_dwRef;
 }
 
-STDMETHODIMP_(ULONG) TinyDropTarget::Release()
+COM_DECLSPEC_NOTHROW STDMETHODIMP_(ULONG) TinyDropTarget::Release()
 { 
     int tempCount = --m_dwRef;
     //dbg_printf("decref %d", tempCount);
@@ -91,7 +91,7 @@ STDMETHODIMP_(ULONG) TinyDropTarget::Release()
     return tempCount; 
 }
 
-STDMETHODIMP TinyDropTarget::DragEnter(LPDATAOBJECT pDataObject, DWORD grfKeyState, POINTL pt, LPDWORD pdwEffect)
+COM_DECLSPEC_NOTHROW STDMETHODIMP TinyDropTarget::DragEnter(LPDATAOBJECT pDataObject, DWORD grfKeyState, POINTL pt, LPDWORD pdwEffect)
 {
     AddRef();
 /*
@@ -108,7 +108,7 @@ STDMETHODIMP TinyDropTarget::DragEnter(LPDATAOBJECT pDataObject, DWORD grfKeySta
     return S_OK;
 }
 
-STDMETHODIMP TinyDropTarget::DragOver(DWORD grfKeyState, POINTL pt, LPDWORD pdwEffect)
+COM_DECLSPEC_NOTHROW STDMETHODIMP TinyDropTarget::DragOver(DWORD grfKeyState, POINTL pt, LPDWORD pdwEffect)
 {
     ScreenToClient(m_hwnd, (POINT*)&pt);
     HWND task = (HWND)SendMessage(m_hwnd, BB_DRAGOVER, 0, MAKELPARAM(pt.x, pt.y));
@@ -125,14 +125,14 @@ STDMETHODIMP TinyDropTarget::DragOver(DWORD grfKeyState, POINTL pt, LPDWORD pdwE
     return S_OK;
 }
 
-STDMETHODIMP TinyDropTarget::DragLeave()
+COM_DECLSPEC_NOTHROW STDMETHODIMP TinyDropTarget::DragLeave()
 {
     task_over = NULL;
     Release();
     return S_OK;
 }
 
-STDMETHODIMP TinyDropTarget::Drop(LPDATAOBJECT pDataObject, DWORD grfKeyState, POINTL pt, LPDWORD pdwEffect)
+COM_DECLSPEC_NOTHROW STDMETHODIMP TinyDropTarget::Drop(LPDATAOBJECT pDataObject, DWORD grfKeyState, POINTL pt, LPDWORD pdwEffect)
 {
     *pdwEffect = DROPEFFECT_NONE;
 /*

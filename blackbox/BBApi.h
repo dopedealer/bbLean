@@ -31,10 +31,11 @@
 /*------------------------------------------ */
 /* windows include */
 /*------------------------------------------ */
+// Set windows 7 as minimal os version. Althogh it is not supported already
 #ifndef WINVER
-  #define WINVER 0x0500
-  #define _WIN32_WINNT 0x0500
-  #define _WIN32_IE 0x0501
+  #define WINVER 0x601                                          
+  #define _WIN32_WINNT 0x601
+  #define _WIN32_IE 0x601
 #endif
 
 #define WIN32_LEAN_AND_MEAN

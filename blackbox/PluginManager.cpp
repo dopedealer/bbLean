@@ -261,7 +261,7 @@ ST void plugin_error(struct plugins *q, int error)
             return;
         case error_plugin_is_built_in      :
             msg = NLS2("$Error_Plugin_IsBuiltIn$",
-            "Dont load this plugin with "BBAPPNAME". It is built-in."
+            "Dont load this plugin with " BBAPPNAME ". It is built-in."
             ); break;
         case error_plugin_dll_not_found    :
             msg = NLS2("$Error_Plugin_NotFound$",
@@ -499,7 +499,7 @@ void PluginManager_aboutPlugins(void)
         }
 
     BBMessageBox(MB_OK,
-        "#"BBAPPNAME" - %s#%s\t",
+        "#" BBAPPNAME " - %s#%s\t",
         NLS2("$About_Plugins_Title$", "About loaded plugins"),
         x ? msg : NLS1("No plugins loaded.")
         );
@@ -581,7 +581,6 @@ ST Menu *get_menu(const char *title, char *menu_id, bool pop, struct plugins **q
 {
     struct plugins *q;
     char *end_id;
-    MenuItem *pItem;
     char command[20], label[80], broam[MAX_PATH+80];
     const char *cp;
     Menu *pMenu, *pSub;
@@ -594,8 +593,8 @@ ST Menu *get_menu(const char *title, char *menu_id, bool pop, struct plugins **q
         if (q->name) {
             if (0 == b_slit) {
                 sprintf(broam, "@BBCfg.plugin.load %s", q->name);
-                pItem = MakeMenuItem(pMenu, q->name, broam, q->enabled);
 #if 0
+                MenuItem * pItem = MakeMenuItem(pMenu, q->name, broam, q->enabled);
                 sprintf(end_id, "_opt_%s", q->name);
                 pSub = MakeNamedMenu(q->name, menu_id, pop);
                 MenuItemOption(pItem, BBMENUITEM_RMENU, pSub);

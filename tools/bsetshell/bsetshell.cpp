@@ -389,7 +389,7 @@ int WINAPI WinMain(
         message(MB_OK,
             "'%s' has been set as shell."
             "\n"
-            "\nTo make this work correctly, you need to run "APPNAME" as "
+            "\nTo make this work correctly, you need to run " APPNAME " as "
             "\nadministrator and enable individual shells too."
             , shellpath);
         break;

@@ -29,7 +29,7 @@
 #include "bbversion.h"
 
 // info
-const char szVersion     [] = "bbLeanSkin "BBLEAN_VERSION;
+const char szVersion     [] = "bbLeanSkin " BBLEAN_VERSION;
 const char szAppName     [] = "bbLeanSkin";
 const char szInfoVersion [] = BBLEAN_VERSION;
 const char szInfoAuthor  [] = "grischka";

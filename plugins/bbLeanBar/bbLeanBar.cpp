@@ -3,7 +3,7 @@
   This file is part of the bbLeanBar source code.
 
   bbLeanBar is a plugin for BlackBox for Windows
-  Copyright © 2003-2009 grischka
+  Copyright Â© 2003-2009 grischka
 
   http://bb4win.sourceforge.net/bblean/
 
@@ -52,10 +52,10 @@
 #define MY_BROAM "@bbLeanBar"
 
 #ifdef BBTINY
-const char szVersion     [] = "bbLeanBar "BBLEAN_VERSION"t";
-const char szInfoVersion [] = BBLEAN_VERSION"t";
+const char szVersion     [] = "bbLeanBar " BBLEAN_VERSION "t";
+const char szInfoVersion [] = BBLEAN_VERSION "t";
 #else
-const char szVersion     [] = "bbLeanBar "BBLEAN_VERSION;
+const char szVersion     [] = "bbLeanBar " BBLEAN_VERSION;
 const char szInfoVersion [] = BBLEAN_VERSION;
 #endif
 const char szAppName     [] = "bbLeanBar";
@@ -211,7 +211,7 @@ struct barinfo : plugin_info
 
     void about_box()
     {
-        BBP_messagebox(this, MB_OK, "%s - © %s %s\n", szVersion, szCopyright, szInfoEmail);
+        BBP_messagebox(this, MB_OK, "%s - Â© %s %s\n", szVersion, szCopyright, szInfoEmail);
     }
 
     // --------------------------------------------------------------

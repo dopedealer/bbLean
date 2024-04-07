@@ -1,0 +1,2 @@
+./BBApi.h:36:11: warning: '_WIN32_WINNT' macro redefined [-Wmacro-redefined]
+COM_DECLSPEC_NOTHROW

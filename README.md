@@ -2,6 +2,9 @@
 A blackbox for windows up-to-date code with bug fixes
 
 Project goals:
+- keeping fast work
+- backward compatibility with original blackbox on configs & stytes level
+- binary compatibility with bblean 1.17 plugins and interface
 - providing compilation with most used windows compilers
 - fixing known bugs
 - increasing the quality of code

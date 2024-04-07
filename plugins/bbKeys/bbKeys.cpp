@@ -1,8 +1,8 @@
 /* ==========================================================================
 
   This file is part of the bbLean source code
-  Copyright © 2001-2003 The Blackbox for Windows Development Team
-  Copyright © 2004-2009 grischka
+  Copyright Â© 2001-2003 The Blackbox for Windows Development Team
+  Copyright Â© 2004-2009 grischka
 
   http://bb4win.sourceforge.net/bblean
   http://developer.berlios.de/projects/bblean
@@ -22,7 +22,7 @@
 #include "BBApi.h"
 #include "bbversion.h"
 
-const char szVersion     [] = "bbKeys "BBLEAN_VERSION;
+const char szVersion     [] = "bbKeys " BBLEAN_VERSION;
 const char szAppName     [] = "bbKeys";
 const char szInfoVersion [] = BBLEAN_VERSION;
 const char szInfoAuthor  [] = "grischka";
@@ -34,7 +34,7 @@ const char szCopyright   [] = "2003-2009";
 void about_box(void)
 {
     char buffer[1000];
-    sprintf(buffer, "%s - Copyright © %s %s", szVersion, szCopyright, szInfoEmail);
+    sprintf(buffer, "%s - Copyright Â© %s %s", szVersion, szCopyright, szInfoEmail);
     MessageBox(NULL, buffer, szAppName, MB_OK|MB_TOPMOST|MB_SETFOREGROUND);
 }
 

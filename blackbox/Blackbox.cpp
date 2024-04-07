@@ -92,7 +92,7 @@ void about_style(void);
 void edit_file(int id, const char* path);
 bool exec_broam(const char *command);
 void exec_command(const char *cmd);
-int ShutdownWindows(int state, int no_msg);
+int ShutdownWindows(size_t state, int no_msg);
 
 LRESULT CALLBACK MainWndProc(HWND, UINT, WPARAM, LPARAM);
 
@@ -1582,7 +1582,7 @@ static const char * const shutdn_cmds_display[] =
 
 DWORD WINAPI ShutdownThread(void *mode)
 {
-    switch ((DWORD_PTR)mode)
+    switch ((size_t)mode)
     {
         case BBSD_SHUTDOWN:
             if (ExitWindowsEx(EWX_SHUTDOWN|EWX_POWEROFF, 0))
@@ -1605,7 +1605,7 @@ DWORD WINAPI ShutdownThread(void *mode)
     return 0;
 }
 
-int ShutdownWindows(int mode, int no_msg)
+int ShutdownWindows(size_t mode, int no_msg)
 {
     DWORD tid;
 

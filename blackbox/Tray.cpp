@@ -980,7 +980,6 @@ ST DWORD WINAPI SSO_Thread(void *pv)
     // Go through each element of the array and stop it..
     dolist(t, sso_list) {
         IOleCommandTarget *pOCT = t->pOCT;
-        HRESULT hr;
         /* sometimes for some reason trying to access the SSObject's vtbl
            here caused a GPF. Maybe it was already released. */
         if (IsBadReadPtr(*(void**)pOCT, 5*sizeof(void*)/*&Exec+1*/)) {
@@ -989,7 +988,8 @@ ST DWORD WINAPI SSO_Thread(void *pv)
 #endif
             continue;
         }
-        hr = COMCALL5(pOCT, Exec,
+        //HRESULT hr =
+        COMCALL5(pOCT, Exec,
             &CGID_ShellServiceObject,
             3, // stop
             0,

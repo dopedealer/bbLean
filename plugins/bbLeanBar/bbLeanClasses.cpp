@@ -1064,8 +1064,9 @@ public:
     // the items in the tray-icon-list
     bool calc_sizes(void)
     {
-        int w, h, ts, n, s, xpos;
-        struct itemlist *p;
+        [[maybe_unused]] int w;
+        int h, ts, n, s, xpos;
+        struct itemlist *p{};
         bool f;
 
         h = mr.bottom - mr.top;

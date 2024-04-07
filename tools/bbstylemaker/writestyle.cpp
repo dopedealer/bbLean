@@ -1005,7 +1005,7 @@ int is_style_old(const char *style)
     return false;
 }
 
-#define STYLECOMMENT(s) "!-- "s" --"
+#define STYLECOMMENT(s) "!-- " s " --"
 
 int writestyle(
     const char *style,

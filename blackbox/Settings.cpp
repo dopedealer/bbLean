@@ -35,7 +35,8 @@
 int screenNumber = 0;
 
 /* *** Do not change this line. *** */
-const int styleitem_size_assert = 1/(sizeof(StyleItem)==300?1:0);
+static_assert(sizeof(StyleItem) == 300, "The size of StyleItem struct must be strictly equal to 300 bytes!");
+
 /* If you get an error here that means that BBApi.h was changed
    in an incompatible way */
 

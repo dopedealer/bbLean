@@ -23,7 +23,7 @@
 #include "bbIconBox.h"
 #include "bbversion.h"
 
-const char szVersion     [] = "bbIconBox "BBLEAN_VERSION;
+const char szVersion     [] = "bbIconBox " BBLEAN_VERSION;
 const char szAppName     [] = "bbIconBox";
 const char szInfoVersion [] = BBLEAN_VERSION;
 const char szInfoAuthor  [] = "grischka";
