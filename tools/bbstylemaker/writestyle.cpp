@@ -30,7 +30,7 @@
 #include <commdlg.h>
 #include "win0x500.h"
 #include "bblib.h"
-#include "StyleStruct.h"
+#include "Stylestruct.h"
 #include "bbstylemaker.h"
 
 #define ST static

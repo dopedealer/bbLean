@@ -678,11 +678,13 @@ unsigned char getalnum(int o) {
     return (isalnum(d=getchr(o)) || d=='_') ? d : 0;
 }
 
-int getkword(int o, char *p) {
+int getkword(int o, char *p)
+{
     int m;
     if (getalnum(o)) for (;o && getalnum(o-1);o--);
     m=o;
-    for (;o<flen && 0!=(*p=getalnum(o));p++,o++); *p=0;
+    for (; o<flen && 0!=(*p=getalnum(o)); p++,o++);
+    *p = 0;
     return m;
 }
 

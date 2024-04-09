@@ -44,24 +44,16 @@ typedef struct tagMOUSEHOOKSTRUCTEX : public tagMOUSEHOOKSTRUCT
 
 #ifdef __BORLANDC__
 #define SHARED(T,X) extern T X
-#define hDeskHook shared_1
-#define g_hShellHook shared_2
-#define WM_ShellHook shared_3
-#define BBhwnd shared_4
-#define DTWnd shared_5
-#define underExplorer shared_6
-#define progman_present shared_7
-#define is_win2k shared_8
 #endif
 
-SHARED(HHOOK, hDeskHook);
-SHARED(HHOOK, g_hShellHook);
-SHARED(unsigned, WM_ShellHook);
-SHARED(HWND, BBhwnd);
-SHARED(HWND, DTWnd);
-SHARED(bool, underExplorer);
-SHARED(bool, progman_present);
-SHARED(bool, is_win2k);
+HHOOK hDeskHook{};
+HHOOK g_hShellHook{};
+unsigned WM_ShellHook{};
+HWND BBhwnd{};
+HWND DTWnd{};
+bool underExplorer{};
+bool progman_present{};
+bool is_win2k{};
 
 #ifdef _MSC_VER
 #pragma comment(linker, "/SECTION:.shared,RWS")

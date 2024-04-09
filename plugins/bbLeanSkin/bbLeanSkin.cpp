@@ -2,7 +2,7 @@
  ============================================================================
 
   This file is part of the bbLeanSkin source code.
-  Copyright © 2003-2009 grischka (grischka@users.sourceforge.net)
+  Copyright Â© 2003-2009 grischka (grischka@users.sourceforge.net)
 
   bbLeanSkin is a plugin for Blackbox for Windows
 
@@ -41,8 +41,8 @@ const char szCopyright   [] = "2003-2009";
 void about_box(void)
 {
     char buff[256];
-    sprintf(buff, "%s - © %s %s\n", szVersion, szCopyright, szInfoEmail);
-    MessageBox(NULL, buff, szAppName, MB_OK|MB_TOPMOST|MB_SETFOREGROUND);
+    sprintf(buff, "%s - Â© %s %s\n", szVersion, szCopyright, szInfoEmail);
+    MessageBoxA(NULL, buff, szAppName, MB_OK|MB_TOPMOST|MB_SETFOREGROUND);
 }
 
 //============================================================================

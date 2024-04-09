@@ -243,7 +243,7 @@ void ContextMenu::Copymenu (HMENU hm)
     MENUITEMINFO MII;
     Menu *CM;
     MenuItem *CI;
-    bool sep = false;
+    [[maybe_unused]] bool sep = false;
 
     static int (WINAPI *pGetMenuStringW)(HMENU,UINT,LPWSTR,int,UINT);
 
@@ -282,8 +282,7 @@ void ContextMenu::Copymenu (HMENU hm)
             CM = new ContextMenu(text_string, wc, MII.hSubMenu, 0);
 
         }
-        else
-        if (MII.fType & MFT_SEPARATOR)
+        else if (MII.fType & MFT_SEPARATOR)
         {
             sep = true;
             continue;

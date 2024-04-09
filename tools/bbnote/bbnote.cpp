@@ -190,15 +190,23 @@ char * set_my_path (char *out, const char *in)
 /*----------------------------------------------------------------------------*/
 void unquote_first (char *p, const char **qq)
 {
-    const char *q = *qq; char d = 0;
+    const char *q = *qq;
+    char d = 0;
     while (*q && (unsigned char)*q <= ' ')
+    {
         ++q;
-    while (*q && d < 2) {
-        if (*q==':')
-            d++; q++;
+    }
+    while (*q && d < 2)
+    {
+        if (*q == ':')
+        {
+            d++; 
+        }
+        q++;
     }
     q = *qq;
-    d = (q[0]=='\"') ? *q++ : d == 2 ? ' ' : 0;
+    d = (q[0]=='\"') ? *q++ 
+                     : d == 2 ? ' ' : 0;
     for (;*q && *q!=d; *p++=*q++);
     *p=0; *qq=q;
 }

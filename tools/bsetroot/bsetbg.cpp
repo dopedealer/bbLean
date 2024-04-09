@@ -1,8 +1,8 @@
 /* ==========================================================================
 
   This file is part of the bbLean source code
-  Copyright © 2001-2003 The Blackbox for Windows Development Team
-  Copyright © 2004-2009 grischka
+  Copyright Â© 2001-2003 The Blackbox for Windows Development Team
+  Copyright Â© 2004-2009 grischka
 
   http://bb4win.sourceforge.net/bblean
   http://developer.berlios.de/projects/bblean
@@ -39,8 +39,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
     {
         MessageBox(NULL,
             "bsetbg is a tool for Blackbox for Windows"
-            "\nCopyright © 2001-2003 The Blackbox for Windows DevTeam"
-            "\nCopyright © 2004-2009 grischka"
+            "\nCopyright Â© 2001-2003 The Blackbox for Windows DevTeam"
+            "\nCopyright Â© 2004-2009 grischka"
             "\nThis bsetbg passes switches and arguments to bsetroot"
             , szAppName, MB_OK|MB_TOPMOST|MB_SETFOREGROUND);
         return 1;

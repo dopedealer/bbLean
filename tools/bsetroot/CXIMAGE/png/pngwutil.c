@@ -346,8 +346,10 @@ png_write_compressed_data_out(png_structp png_ptr, compression_state *comp)
       comp->output_ptr[i]=NULL;
    }
    if (comp->max_output_ptr != 0)
-      png_free(png_ptr, comp->output_ptr);
-      comp->output_ptr=NULL;
+   {
+       png_free(png_ptr, comp->output_ptr);
+   }
+   comp->output_ptr=NULL;
    /* write anything left in zbuf */
    if (png_ptr->zstream.avail_out < (png_uint_32)png_ptr->zbuf_size)
       png_write_chunk_data(png_ptr, png_ptr->zbuf,
@@ -1226,7 +1228,7 @@ png_check_keyword(png_structp png_ptr, png_charp key, png_charpp new_key)
    if (key_len > 79)
    {
       png_warning(png_ptr, "keyword length must be 1 - 79 characters");
-      new_key[79] = '\0';
+      new_key[79] = 0x0;
       key_len = 79;
    }
 

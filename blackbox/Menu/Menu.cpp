@@ -1802,7 +1802,7 @@ MenuItem *helper_menu(Menu *PluginMenu, const char* Title, int menuID, MenuItem 
 // used with 'MakeMenuItemInt/String'-made items
 MenuItem *MenuItem::get_real_item(void)
 {
-    if (this && this->m_pSubmenu
+    if (this->m_pSubmenu
      && (this->m_pSubmenu->m_MenuID & (MENU_ID_STRING|MENU_ID_INT)))
         return this->m_pSubmenu->m_pMenuItems->next;
     return NULL;

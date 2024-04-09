@@ -21,7 +21,7 @@
 #include "bblib.h"
 #include "bbversion.h"
 #include "BBSendData.h"
-#include "StyleStruct.h"
+#include "Stylestruct.h"
 
 const char szVersion      [] = "bbNote-Proxy 1.08";
 const char szAppName      [] = "bbNote-Proxy";

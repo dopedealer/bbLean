@@ -39,7 +39,6 @@ const char szInfoAuthor  [] = "grischka";
 const char szInfoRelDate [] = BBLEAN_RELDATE;
 const char szInfoLink    [] = "http://bb4win.sourceforge.net/bblean";
 const char szInfoEmail   [] = "grischka@users.sourceforge.net";
-const char szCopyright   [] = "2004-2009";
 
 //===========================================================================
 // global variables
@@ -392,7 +391,7 @@ void get_style_colors (COLORREF *cr_buffer)
 {
 //    StyleItem menu_title            = *(StyleItem*)pGetSettingPtr(SN_MENUTITLE        );  
     StyleItem menu_frame            = *(StyleItem*)pGetSettingPtr(SN_MENUFRAME        );  
-    StyleItem menu_hilite           = *(StyleItem*)pGetSettingPtr(SN_MENUHILITE       );  
+    //StyleItem menu_hilite           = *(StyleItem*)pGetSettingPtr(SN_MENUHILITE       );  
     StyleItem window_focus_title    = *(StyleItem*)pGetSettingPtr(SN_WINFOCUS_TITLE   );  
     StyleItem window_focus_label    = *(StyleItem*)pGetSettingPtr(SN_WINFOCUS_LABEL   );  
     StyleItem window_unfocus_title  = *(StyleItem*)pGetSettingPtr(SN_WINUNFOCUS_TITLE );  

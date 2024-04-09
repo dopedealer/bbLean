@@ -19,11 +19,11 @@
 
 #define VERSION_STRING "BBNote 1.08"
 
-#include "bbapi.h"
+#include "BBApi.h"
 #include "win0x500.h"
 #include "bblib.h"
-#include "bimage.h"
-#include "stylestruct.h"
+#include "BImage.h"
+#include "Stylestruct.h"
 
 //#define MAX_LINE_LENGTH 256
 

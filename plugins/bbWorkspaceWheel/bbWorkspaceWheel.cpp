@@ -32,7 +32,6 @@ const char szInfoAuthor  [] = "grischka";
 const char szInfoRelDate [] = BBLEAN_RELDATE;
 const char szInfoLink    [] = "http://bb4win.sourceforge.net/bblean";
 const char szInfoEmail   [] = "grischka@users.sourceforge.net";
-const char szCopyright   [] = "2004-2009";
 
 //===========================================================================
 
@@ -49,10 +48,10 @@ const char szCopyright   [] = "2004-2009";
 #define SHARED(T,X) T X = (T)0
 #endif
 
-SHARED(HHOOK, hDeskHook);
-SHARED(HWND, DTWnd);
-SHARED(HWND, BBhwnd);
-SHARED(bool, is_win2k);
+HHOOK hDeskHook{};
+HWND DTWnd{};
+HWND BBhwnd{};
+bool is_win2k{};
 
 #ifdef _MSC_VER
 #pragma data_seg()

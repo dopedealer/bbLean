@@ -54,7 +54,7 @@ CImpIDropSource::~CImpIDropSource()
     //dbg_printf("CImpIDropSource Deleted");
 }
 
-STDMETHODIMP CImpIDropSource::QueryInterface(REFIID iid, void ** ppv)
+COM_DECLSPEC_NOTHROW STDMETHODIMP CImpIDropSource::QueryInterface(REFIID iid, void ** ppv)
 {
     if(IsEqualIID(iid, IID_IUnknown) || IsEqualIID(iid, IID_IDropSource))
     {
@@ -66,12 +66,12 @@ STDMETHODIMP CImpIDropSource::QueryInterface(REFIID iid, void ** ppv)
     return E_NOINTERFACE;
 }
 
-STDMETHODIMP_(ULONG) CImpIDropSource::AddRef(void)
+COM_DECLSPEC_NOTHROW STDMETHODIMP_(ULONG) CImpIDropSource::AddRef(void)
 {
     return ++m_dwRef;
 }
 
-STDMETHODIMP_(ULONG) CImpIDropSource::Release(void)
+COM_DECLSPEC_NOTHROW STDMETHODIMP_(ULONG) CImpIDropSource::Release(void)
 { 
     int r;
     if (0 == (r = --m_dwRef))
@@ -79,12 +79,12 @@ STDMETHODIMP_(ULONG) CImpIDropSource::Release(void)
     return r; 
 }
 
-STDMETHODIMP CImpIDropSource::GiveFeedback(DWORD dwEffect)
+COM_DECLSPEC_NOTHROW STDMETHODIMP CImpIDropSource::GiveFeedback(DWORD dwEffect)
 {
     return DRAGDROP_S_USEDEFAULTCURSORS;
 }
 
-STDMETHODIMP CImpIDropSource::QueryContinueDrag(BOOL fEscapePressed, DWORD grfKeyState)
+COM_DECLSPEC_NOTHROW STDMETHODIMP CImpIDropSource::QueryContinueDrag(BOOL fEscapePressed, DWORD grfKeyState)
 {
     if (fEscapePressed)
         return DRAGDROP_S_CANCEL;

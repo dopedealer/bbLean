@@ -72,7 +72,7 @@ CDropTarget::~CDropTarget()
 }
 
 // IUnknown methods
-STDMETHODIMP CDropTarget::QueryInterface(REFIID iid, void** ppvObject)
+COM_DECLSPEC_NOTHROW STDMETHODIMP CDropTarget::QueryInterface(REFIID iid, void** ppvObject)
 {
     *ppvObject = NULL;
     if( IsEqualIID(iid, IID_IUnknown) || IsEqualIID(iid, IID_IDropTarget))
@@ -84,12 +84,12 @@ STDMETHODIMP CDropTarget::QueryInterface(REFIID iid, void** ppvObject)
     return E_NOINTERFACE;
 }
 
-STDMETHODIMP_(ULONG) CDropTarget::AddRef()
+COM_DECLSPEC_NOTHROW STDMETHODIMP_(ULONG) CDropTarget::AddRef()
 {
     return ++m_dwRef;
 }
 
-STDMETHODIMP_(ULONG) CDropTarget::Release()
+COM_DECLSPEC_NOTHROW STDMETHODIMP_(ULONG) CDropTarget::Release()
 { 
     int r;
     if (0 == (r = --m_dwRef))
@@ -108,7 +108,7 @@ STDMETHODIMP_(ULONG) CDropTarget::Release()
 // is the target shell item that decides what should be done, NOT our minimal implementation.
 
 // first called when the mouse enters our target window space
-STDMETHODIMP CDropTarget::DragEnter(LPDATAOBJECT pDataObject, DWORD grfKeyState, POINTL pt, LPDWORD pdwEffect)
+COM_DECLSPEC_NOTHROW STDMETHODIMP CDropTarget::DragEnter(LPDATAOBJECT pDataObject, DWORD grfKeyState, POINTL pt, LPDWORD pdwEffect)
 {
     // don't set "*pdwEffect = DROPEFFECT_NONE"; that would adversely affect the drop target
     BOOL ok = FALSE;
@@ -135,7 +135,7 @@ STDMETHODIMP CDropTarget::DragEnter(LPDATAOBJECT pDataObject, DWORD grfKeyState,
 //-----------------------------------------------------------------------------
 // from now on things get really simple
 
-STDMETHODIMP CDropTarget::DragOver(DWORD grfKeyState, POINTL pt, LPDWORD pdwEffect)
+COM_DECLSPEC_NOTHROW STDMETHODIMP CDropTarget::DragOver(DWORD grfKeyState, POINTL pt, LPDWORD pdwEffect)
 {
 #if 0
     LPITEMIDLIST pidl = (LPITEMIDLIST)SendMessage(m_hwnd, BB_DRAGOVER, grfKeyState, (LPARAM)&pt);
@@ -176,7 +176,7 @@ STDMETHODIMP CDropTarget::DragOver(DWORD grfKeyState, POINTL pt, LPDWORD pdwEffe
 // Either DragLeave or Drop will be called for finishing the operation, but NOT both
 // DragLeave is for when the mouse leaves the target, or the drag is somehow cancelled
 
-STDMETHODIMP CDropTarget::DragLeave()
+COM_DECLSPEC_NOTHROW STDMETHODIMP CDropTarget::DragLeave()
 {
     HRESULT hr = S_OK;
     if(m_pDropTarget)
@@ -193,7 +193,7 @@ STDMETHODIMP CDropTarget::DragLeave()
 
 //-----------------------------------------------------------------------------
 // exit point when something is actually dropped
-STDMETHODIMP CDropTarget::Drop(LPDATAOBJECT pDataObject, DWORD grfKeyState, POINTL pt, LPDWORD pdwEffect)
+COM_DECLSPEC_NOTHROW STDMETHODIMP CDropTarget::Drop(LPDATAOBJECT pDataObject, DWORD grfKeyState, POINTL pt, LPDWORD pdwEffect)
 {
     HRESULT hr = S_OK;
     if(m_pDropTarget)

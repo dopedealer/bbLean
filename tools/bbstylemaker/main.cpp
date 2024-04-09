@@ -28,12 +28,11 @@
 #include "bblib.h"
 #define BBSETTINGS_INTERNAL
 #include "Settings.h"
-#include "stylestruct.h"
-#include "bimage.h"
+#include "Stylestruct.h"
+#include "BImage.h"
 #include "BBSendData.h"
 #include "bbstylemaker.h"
 #include "bbdialog.h"
-#include "bImage.h"
 
 #include <string.h>
 #include <stdio.h>
@@ -164,9 +163,9 @@ struct c_lock *pL1, *pL2;
 
 
 // current state of selected options:
-const int n_sections = 5;
+//const int n_sections = 5;
 // const int n_items[5] = { 6, 5, 7, 7, 2 };
-const int n_colorsel = 3;
+//const int n_colorsel = 3;
 
 int v_section;
 int v_item;

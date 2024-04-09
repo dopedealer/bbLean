@@ -23,11 +23,13 @@
 #include "bbIconBox.h"
 #include <commctrl.h>
 
+#if 0
 inline static int ratioX(Desk *f, int virt_x)
 { return f->mon_rect.left + virt_x * (f->mon_rect.right - f->mon_rect.left) / f->v_rect.right; }
 
 inline static int ratioY(Desk *f, int virt_y)
 { return f->mon_rect.top + virt_y * (f->mon_rect.bottom - f->mon_rect.top) / f->v_rect.bottom; }
+#endif
 
 inline static int ratioXinv(Desk *f, int screen_x)
 { return f->v_rect.left + (screen_x - f->mon_rect.left) * f->v_rect.right / (f->mon_rect.right - f->mon_rect.left); }

@@ -1,8 +1,8 @@
 /* ==========================================================================
 
   This file is part of the bbLean source code
-  Copyright © 2001-2003 The Blackbox for Windows Development Team
-  Copyright © 2004-2009 grischka
+  Copyright Â© 2001-2003 The Blackbox for Windows Development Team
+  Copyright Â© 2004-2009 grischka
 
   http://bb4win.sourceforge.net/bblean
   http://developer.berlios.de/projects/bblean
@@ -40,8 +40,8 @@ void show_help(void)
 
     sprintf(buffer,
     "%s"
-    "\n© 2001-2003 The Blackbox for Windows Development Team"
-    "\n© 2003-2009 grischka@users.sourceforge.net"
+    "\nÂ© 2001-2003 The Blackbox for Windows Development Team"
+    "\nÂ© 2003-2009 grischka@users.sourceforge.net"
     "\nBased on bsetroot for Blackbox on Linux by Brad Hughes."
 #ifdef TINY_IMAGE
     "\n%s supports only '.bmp' type images."
@@ -424,6 +424,7 @@ void Modula(HIMG Img, int mx, int my, COLORREF fg)
 // API: ParseItem
 // Purpose: parses a given string and assigns settings to a StyleItem class
 
+[[maybe_unused]]
 const struct styleprop styleprop_1[] = {
  {"solid"        ,B_SOLID           },
  {"horizontal"   ,B_HORIZONTAL      },
@@ -437,6 +438,7 @@ const struct styleprop styleprop_1[] = {
  {NULL           ,-1                }
  };
 
+[[maybe_unused]]
 const struct styleprop styleprop_2[] = {
  {"flat"        ,BEVEL_FLAT      },
  {"raised"      ,BEVEL_RAISED    },
@@ -444,6 +446,7 @@ const struct styleprop styleprop_2[] = {
  {NULL          ,-1              }
  };
 
+[[maybe_unused]]
 const struct styleprop styleprop_3[] = {
  {"bevel1"      ,BEVEL1  },
  {"bevel2"      ,BEVEL2  },

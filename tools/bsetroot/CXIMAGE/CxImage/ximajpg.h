@@ -34,7 +34,7 @@
  * ==========================================================
  */
 #if !defined(__ximaJPEG_h)
-#define __ixmaJPEG_h
+#define __ximaJPEG_h
 
 #include "ximage.h"
 
@@ -244,4 +244,4 @@ protected:
 
 #endif
 
-#endif
+#endif // !__ximaJPEG_h

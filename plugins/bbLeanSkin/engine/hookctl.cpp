@@ -2,7 +2,7 @@
  ============================================================================
 
   This file is part of the bbLeanSkin source code.
-  Copyright © 2003-2009 grischka (grischka@users.sourceforge.net)
+  Copyright Â© 2003-2009 grischka (grischka@users.sourceforge.net)
 
   bbLeanSkin is a plugin for Blackbox for Windows
 
@@ -40,12 +40,10 @@
 
 #ifdef __BORLANDC__
 #define SHARED(T,X) extern T X
-#define hCallWndHook shared_1
-#define hGetMsgHook shared_2
 #endif
 
-SHARED(HHOOK,hCallWndHook);
-SHARED(HHOOK,hGetMsgHook);
+HHOOK hCallWndHook{};
+HHOOK hGetMsgHook{};
 
 #ifdef _MSC_VER
 #pragma data_seg()

@@ -104,7 +104,8 @@ bool CxImageGIF::Decode(CxFile *fp)
 
 			if ((image.pf & 0x80) || (dscgif.pflds & 0x80)) {
 				unsigned char r[256], g[256], b[256];
-				int i, has_white = 0;
+				int i{};
+				[[maybe_unused]] int has_white{};
 
 				for (i=0; i < TabCol.sogct; i++) {
 					r[i] = TabCol.paleta[i].r;

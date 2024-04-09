@@ -520,7 +520,7 @@ DeskDropTarget::~DeskDropTarget()
 {
 }
 
-STDMETHODIMP DeskDropTarget::QueryInterface(REFIID iid, void** ppvObject)
+COM_DECLSPEC_NOTHROW STDMETHODIMP DeskDropTarget::QueryInterface(REFIID iid, void** ppvObject)
 {
     if (IsEqualIID(iid, IID_IUnknown) || IsEqualIID(iid, IID_IDropTarget))
     {
@@ -532,12 +532,12 @@ STDMETHODIMP DeskDropTarget::QueryInterface(REFIID iid, void** ppvObject)
     return E_NOINTERFACE;
 }
 
-STDMETHODIMP_(ULONG) DeskDropTarget::AddRef()
+COM_DECLSPEC_NOTHROW STDMETHODIMP_(ULONG) DeskDropTarget::AddRef()
 {
     return ++m_dwRef;
 }
 
-STDMETHODIMP_(ULONG) DeskDropTarget::Release()
+COM_DECLSPEC_NOTHROW STDMETHODIMP_(ULONG) DeskDropTarget::Release()
 { 
     int r;
     if (0 == (r = --m_dwRef))
@@ -545,7 +545,7 @@ STDMETHODIMP_(ULONG) DeskDropTarget::Release()
     return r; 
 }
 
-STDMETHODIMP DeskDropTarget::DragEnter(LPDATAOBJECT pDataObject,
+COM_DECLSPEC_NOTHROW STDMETHODIMP DeskDropTarget::DragEnter(LPDATAOBJECT pDataObject,
     DWORD grfKeyState, POINTL pt, LPDWORD pdwEffect)
 {
     AddRef();
@@ -581,20 +581,20 @@ DWORD DeskDropTarget::drop_check(int flag)
         return DROPEFFECT_NONE;
 }
 
-STDMETHODIMP DeskDropTarget::DragOver(DWORD grfKeyState, POINTL pt, LPDWORD pdwEffect)
+COM_DECLSPEC_NOTHROW STDMETHODIMP DeskDropTarget::DragOver(DWORD grfKeyState, POINTL pt, LPDWORD pdwEffect)
 {
     *pdwEffect = drop_check(1);
     return S_OK;
 }
 
-STDMETHODIMP DeskDropTarget::Drop(LPDATAOBJECT pDataObject,
+COM_DECLSPEC_NOTHROW STDMETHODIMP DeskDropTarget::Drop(LPDATAOBJECT pDataObject,
     DWORD grfKeyState, POINTL pt, LPDWORD pdwEffect)
 {
     *pdwEffect = drop_check(0);
     return DragLeave();
 }
 
-STDMETHODIMP DeskDropTarget::DragLeave()
+COM_DECLSPEC_NOTHROW STDMETHODIMP DeskDropTarget::DragLeave()
 {
     Release();
     return S_OK;

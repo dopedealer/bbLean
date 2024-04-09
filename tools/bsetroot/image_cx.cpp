@@ -4,7 +4,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <malloc.h>
-#include "CxImage/CxImage/ximage.h"
+#include "CXIMAGE/CxImage/ximage.h"
 
 extern "C" void dbg_printf (const char *fmt, ...);
 

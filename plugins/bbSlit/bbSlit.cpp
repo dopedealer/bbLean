@@ -3,7 +3,7 @@
   This file is part of the bbSlit source code.
 
   bbSlit is a plugin for BlackBox for Windows
-  Copyright © 2003-2009 grischka
+  Copyright Â© 2003-2009 grischka
 
   http://bb4win.sourceforge.net/bblean/
 
@@ -137,7 +137,7 @@ struct slit_info : plugin_info
 
     void about_box()
     {
-        BBP_messagebox(this, MB_OK, "%s - © %s %s\n", szVersion, szCopyright, szInfoEmail);
+        BBP_messagebox(this, MB_OK, "%s - Â© %s %s\n", szVersion, szCopyright, szInfoEmail);
     }
 
     void process_broam(const char *temp, int f);
@@ -837,11 +837,19 @@ void reorder_standard (struct nobjs *pv, struct options *o)
     }
 
     if (o->alignment != ALN_LEFT)
+    {
         for (p = pv->p, n = 0; n < pv->n; ++n, ++p)
+        {
             if (o->alignment == ALN_RIGHT)
+            {
                 p->x = (w - p->w);
+            }
             else
+            {
                 p->x = (w - p->w) / 2;
+            }
+        }
+    }
 }
 
 //=============================================================================

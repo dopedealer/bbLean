@@ -124,9 +124,9 @@ struct bbanalog_plugin : plugin_info
     void about_box()
     {
         BBP_messagebox(this, MB_OK,
-            "%s\n%s\n© %s %s",
+            "%s\n%s\nÂ© %s %s",
             szVersion,
-            "© 2003 Mortar - Brad Bartolucci",
+            "Â© 2003 Mortar - Brad Bartolucci",
             szCopyright, szInfoEmail
         );
     }

@@ -177,7 +177,8 @@ long CxImage::Draw(HDC hdc, long x, long y, long cx, long cy, RECT* pClipRect)
 			HGDIOBJ TmpObj=SelectObject(TmpDC,TmpBmp);
 
 			if (pbase){
-				long xx,yy,yoffset;
+                [[maybe_unused]] long yoffset{};
+				long xx,yy;
 				long ew = ((((24 * destw) + 31) / 32) * 4);
 				long ymax = paintbox.bottom;
 				long xmin = paintbox.left;
