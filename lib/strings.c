@@ -177,7 +177,7 @@ _char:
             case 'u':
             case 'c':
                 tmp[0] = '%', tmp[1] = c, tmp[2] = 0;
-                sprintf(buff, tmp, va_arg(arg, int));
+                snprintf(buff, sizeof buff, tmp, va_arg(arg, int));
                 cp = buff;
                 goto put;
 

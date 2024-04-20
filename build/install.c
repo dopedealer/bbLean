@@ -147,19 +147,22 @@ char *unix2dos(char *s, size_t *lp)
 
 int check_filetype(const char *in)
 {
-    FILE *fp;
-    char buffer[0x1000];
+    FILE *fp = 0;
+    enum {BUF_SIZE = 0x1000};
+    char buffer[BUF_SIZE];
     size_t len;
     int ret = 0;
+    errno_t err;
 
-    sprintf(buffer, "%s.", file_extension(in));
+    snprintf(buffer, BUF_SIZE, "%s.", file_extension(in));
     strlwr(buffer);
 
     if (buffer[1] && strstr(".exe.dll.bmp.png.jpg.fon.fnt.", buffer))
         return ret;
 
-    fp = fopen(in, "rb");
-    if (fp) {
+    err = fopen_s(&fp, in, "rb");
+    if (fp && (err == 0))
+    {
         len = fread(buffer, 1, sizeof buffer, fp);
         ret = get_filetype(buffer, len);
         fclose(fp);
@@ -170,18 +173,23 @@ int check_filetype(const char *in)
 /* -------------------------------------------------------------- */
 int copy_file(const char *in, const char *out, int convert)
 {
-    FILE *fp, *op;
-    char buffer[0x8000];
+    FILE *fp = 0x0;
+    FILE *op = 0x0;
+    enum {BUF_SIZE = 0x8000};
+    char buffer[BUF_SIZE];
     size_t len = 1;
     time_t t;
     char *p;
 
-    fp = fopen(in, "rb");
-    if (fp) {
-        op = fopen(out, "wb");
-        if (op) {
-            for (;;) {
-                len = fread(buffer, 1, sizeof buffer, fp);
+    (void)fopen_s(&fp, in, "rb");
+    if (fp != 0)
+    {
+        (void)fopen_s(&op, out, "wb");
+        if (op != 0)
+        {
+            for (;;)
+            {
+                len = fread(buffer, 1, BUF_SIZE, fp);
                 if (0 == len)
                     break;
                 p = convert ? unix2dos(buffer, &len) : buffer;
@@ -193,26 +201,30 @@ int copy_file(const char *in, const char *out, int convert)
             fclose(op);
         }
         fclose(fp);
-        if (len) {
-            fprintf(stderr, "'%s': %s\n", out, strerror(errno));
+        if (len)
+        {
+            (void)strerror_s(buffer, BUF_SIZE, errno);
+            fprintf(stderr, "'%s': %s\n", out, buffer);
             return 0;
         }
         if (get_filetime(in, &t))
             set_filetime(out, t);
         return 1;
     }
-    fprintf(stderr, "'%s': %s\n", in, strerror(errno));
+    (void)strerror_s(buffer, BUF_SIZE, errno);
+    fprintf(stderr, "'%s': %s\n", in, buffer);
     return 0;
 }
 
 /* ---------------------------------------------------------------------------- */
 
-int make_folders(const char *p, int all, time_t t)
+int make_folders(const char *p, int all, time_t time)
 {
     int m, c;
     char buffer[MAX_PATH];
 
-    for (m = 0; ; ++m) {
+    for (m = 0; ; ++m)
+    {
         while (0 != (c = p[m]) && !IS_PATHSEP(c))
             ++m;
         if (0 == c && 0 == all)
@@ -221,13 +233,19 @@ int make_folders(const char *p, int all, time_t t)
             ++m;
         extract_string(buffer, p, m);
 
-        if (!is_dir(buffer)) {
-            if (!make_dir(buffer)) {
-                fprintf(stderr, "'%s': %s\n", buffer, strerror(errno));
+        if (!is_dir(buffer))
+        {
+            if (!make_dir(buffer))
+            {
+                fprintf(stderr, "'%s': ", buffer);
+                (void)strerror_s(buffer, MAX_PATH, errno);
+                fprintf(stderr, "%s\n", buffer);
                 return 0;
             }
-            if (t)
-                set_filetime(buffer, t);
+            if (time)
+            {
+                set_filetime(buffer, time);
+            }
         }
         if (0 == c)
             break;
@@ -237,15 +255,18 @@ int make_folders(const char *p, int all, time_t t)
 
 /* -------------------------------------------------------------- */
 
+#pragma message(__FILE__  ": warning: output buffer size is not checked!")
 void join_path(char *buf, const char *dir, const char *file)
 {
     char *s, *d, c;
     char tmp[MAX_PATH];
 
-    strcpy(tmp, dir);
+    (void)strncpy_s(tmp, MAX_PATH, dir, MAX_PATH);
     if (*file_basename(dir) && *file)
-        strcat(tmp, PATHSEP);
-    strcat(tmp, file);
+    {
+        (void)strcat_s(tmp, sizeof tmp, PATHSEP);
+    }
+    (void)strcat_s(tmp, sizeof tmp, file);
 
     s = tmp, d = buf;
     do {

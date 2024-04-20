@@ -24,9 +24,9 @@
 int get_false_true(const char *arg)
 {
     if (arg) {
-        if (0==stricmp(arg, "true"))
+        if (0 == _stricmp(arg, "true"))
             return 1;
-        if (0==stricmp(arg, "false"))
+        if (0 == _stricmp(arg, "false"))
             return 0;
     }
     return -1;

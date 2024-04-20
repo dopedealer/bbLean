@@ -215,7 +215,10 @@ static struct litcolor5 { const char *cname; COLORREF cref[5]; } litcolor5_ary[]
 
 COLORREF ParseLiteralColor(LPCSTR color)
 {
-    int i, n, s; unsigned l; char *p, c, buf[32]; const char *cp;
+    int i, n, s; unsigned l;
+    char *p, c;
+    char buf[32];
+    const char *cp;
 
     l = strlen(color) + 1;
     if (l > sizeof buf)
@@ -224,6 +227,9 @@ COLORREF ParseLiteralColor(LPCSTR color)
     memcpy(buf, color, l);
     /*strlwr(buf); */
 
+    /* TODO: in strcpy overlaps str and dest = #UB; replace strcpy to safer version
+     * strange --l after strcpy - is it correct?
+     */
     while (NULL != (p = strchr(buf,' ')))
         strcpy(p, p+1), --l;
 

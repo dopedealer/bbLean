@@ -103,6 +103,7 @@ int is_absolute_path(const char *path)
     return 0;
 }
 
+#pragma message(__FILE__  ": warning: output buffer size is not checked!")
 /* concatenate directory / file */
 char *join_path(char *buffer, const char *dir, const char *filename)
 {

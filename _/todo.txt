@@ -1,0 +1,23 @@
+
+* make valid build g++ x64
+    * make initial build
+    * fix warnings
+* make valid build g++ x86
+    * fix errors
+    * fix warnings
+- make valid build msvc x86
+    * make correct build
+    - fix warnings
+- make valid build msvc x64
+- move to cmake
+    - make tree file with list of result artifacts
+    - add head cmakefile 
+    - add every artifact cmakefile build case
+    - add generating commands
+    - add making of package
+    - test on mingw, msvsc
+- change structure - source + include dirs for plugins
+- gathering of needed compiler runtime for deploy of installation
+- add optional gtest
+- move to wchar_t paths usage
+? add spleen font type usage

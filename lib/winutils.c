@@ -28,8 +28,11 @@ void dbg_printf (const char *fmt, ...)
     va_list arg;
     int x;
     va_start(arg, fmt);
-    x = vsprintf (buffer, fmt, arg);
-    strcpy(buffer+x, "\n");
+    x = vsnprintf (buffer, sizeof buffer, fmt, arg);
+    if (x >= 0L)
+    {
+        strncpy_s(buffer+x, sizeof buffer - x, "\n", 2);
+    }
     OutputDebugString(buffer);
 }
 
