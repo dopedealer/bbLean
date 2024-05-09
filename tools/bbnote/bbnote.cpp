@@ -395,7 +395,7 @@ int WINAPI WinMain (HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR szCmdLine
 
 struct button {
     const char *str;
-    DWORD data;
+    size_t data;
     int x, y, xl, yl;
     int f, typ, msg;
 };
@@ -424,7 +424,7 @@ void get_slider_rect(struct button *bp, RECT *r)
 {
     int dx = bp->xl;
     int k  = bp->yl - dx;
-    r->top      = dlg_title_h + bp->y + k - bp->data * k / SB_DIV;
+    r->top      = dlg_title_h + bp->y + k - long(bp->data) * k / SB_DIV;
     r->bottom   = r->top + dx;
     r->left     = bp->x;
     r->right    = r->left + bp->xl;
@@ -967,7 +967,7 @@ int make_dlg_wnd (struct dlg *dlg, HWND hwnd, int x, int y, const char *title, W
         r.top    = bp->y + dlg->dlg_title_h;
         r.right  = bp->xl;
         r.bottom = bp->yl;
-        bp->data = (DWORD_PTR)editline(&r, dlg->hwnd, bp->str);
+        bp->data = reinterpret_cast<size_t>(editline(&r, dlg->hwnd, bp->str));
     } while ((++bp)->str);
 
     return 1;
@@ -1177,7 +1177,7 @@ void paint_box(HWND hwnd, struct dlg *dlg)
             break;
 
         case BN_UPDN:
-            sprintf (bstr, "%d -%s+", (int)bp->data, bp->str);
+            sprintf (bstr, "%zu -%s+", bp->data, bp->str);
             x=strlen(s = bstr);
 
             SetTextColor (hdc, c);
@@ -1371,11 +1371,12 @@ int dlg_domouse (struct dlg *dlg, UINT msg, WPARAM wParam, LPARAM lParam)
             bpb->f&=~BN_ACT;
             if (bpb->typ==BN_UPDN)
             {
-                mx=(short)LOWORD(lParam);
+                mx = (short)LOWORD(lParam);
                 if (mx < bpb->x + bpb->xl/3)
                 {
-                    if (bpb->data>0)
+                    if (bpb->data > 0) {
                         bpb->data--;
+                    }
                 }
                 else bpb->data++;
                 return bpb->msg;
@@ -1495,7 +1496,7 @@ int dlg_domouse (struct dlg *dlg, UINT msg, WPARAM wParam, LPARAM lParam)
 
 
 /*----------------------------------------------------------------------------*/
-int do_search (int msg, DWORD param);
+int do_search (int msg, size_t param);
 
 void do_search_0 (int msg, struct dlg *dlg)
 {
@@ -1523,7 +1524,7 @@ LRESULT CALLBACK SearchProc (HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
         case WM_CREATE:
             mwnd = hwnd;
             cfg_f=1;
-            do_search(0, (DWORD_PTR)ewnd);
+            do_search(0, (size_t)ewnd);
             return 0;
 
         case WM_DESTROY:
@@ -1563,7 +1564,7 @@ LRESULT CALLBACK SearchProc (HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 
             case VK_TAB:
                     SetFocus(
-                        GetFocus()==(HWND)dlg->btp[8].data
+                        GetFocus() == (HWND)dlg->btp[8].data
                         ? (HWND)dlg->btp[9].data
                         : (HWND)dlg->btp[8].data
                         );
@@ -1630,7 +1631,7 @@ LRESULT CALLBACK SearchProc (HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
             if (1000 == LOWORD(wParam))
             {
                 HWND edw = (HWND)dlg->btp[8].data;
-                do_search(0,(DWORD_PTR)ewnd);
+                do_search(0, (size_t)ewnd);
                 SendMessage (edw, WM_SETTEXT, 0, (LPARAM)seabuf);
                 SendMessage (edw, EM_SETSEL, 0,-1);
                 SetFocus    (edw);

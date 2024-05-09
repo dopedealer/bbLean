@@ -854,7 +854,7 @@ char seamodeflg;
 char * ed_make_rplc(char *, char *);
 
 /*----------------------------------------------------------------------------*/
-int do_search (int msg, DWORD param)
+int do_search (int msg, size_t param)
 {
     static HWND hwnd;
     static char s_dir, s_cont;

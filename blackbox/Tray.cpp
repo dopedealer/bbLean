@@ -442,7 +442,7 @@ LRESULT AppBarEvent(void *data, unsigned size)
     DWORD *p_message;
     DWORD *p_pid;
     APPBARDATAV1 *abd, abd_ret;
-    HANDLE32 *p_shmem;
+    HANDLE32 *p_shmem{};
 
     abd = (APPBARDATAV1*)data;
 
@@ -492,7 +492,7 @@ LRESULT AppBarEvent(void *data, unsigned size)
         abd_ret = *abd;
         abd_ret.uEdge = tray_edge;
         GetWindowRect(hTrayWnd, &abd_ret.rc);
-        return pass_back(*p_pid, (HANDLE)*p_shmem, &abd_ret, sizeof abd_ret);
+        return pass_back(*p_pid, reinterpret_cast<HANDLE>(*p_shmem), &abd_ret, sizeof abd_ret);
     }
 
     return FALSE;
@@ -512,11 +512,11 @@ ST LRESULT TrayEvent(void *data, unsigned size)
 
 #ifdef _WIN64
     size                    = ((NIDNT_32*)pData)->cbSize        ;
-    nid.hWnd                = (HWND)((NIDNT_32*)pData)->hWnd    ;
+    nid.hWnd                = reinterpret_cast<HWND>(((NIDNT_32*)pData)->hWnd)  ;
     nid.uID                 = ((NIDNT_32*)pData)->uID           ;
     nid.uFlags              = ((NIDNT_32*)pData)->uFlags        ;
     nid.uCallbackMessage    = ((NIDNT_32*)pData)->uCallbackMessage  ;
-    nid.hIcon        = (HICON)((NIDNT_32*)pData)->hIcon         ;
+    nid.hIcon        = reinterpret_cast<HICON>(((NIDNT_32*)pData)->hIcon)       ;
     if (size >= sizeof(NID2KW_32)) {
         nid.is_unicode          = true;
         nid.pInfoFlags          = &((NID2KW_32*)pData)->dwInfoFlags ;

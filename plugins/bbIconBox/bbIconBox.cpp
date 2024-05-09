@@ -454,7 +454,7 @@ BOOL desk_enum_func(const DesktopInfo *icon, LPARAM lParam)
     Item * item = new Item;
     *(Item ***)lParam = &(**(Item ***)lParam=item)->next;
     item->next = NULL;
-    item->data = (void*)icon->number;
+    item->data = reinterpret_cast<void*>(icon->number);
     item->hIcon = NULL;
     item->is_folder = false;
     item->active = icon->isCurrent;
@@ -532,7 +532,7 @@ struct task_box : icon_box
         {
             desk = get_other_desk();
             if (desk > 0)
-                SetCursor(LoadCursor(hInstance, (LPCSTR)(wParam & MK_RBUTTON?102:101)));
+                SetCursor(LoadCursor(hInstance, reinterpret_cast<LPCSTR>(wParam & MK_RBUTTON ? 102 : 101)));
             else
                 SetCursor(LoadCursor(NULL, IDC_NO));
             return desk > 0;
@@ -662,7 +662,7 @@ struct desk_box : icon_box
                 desk = get_other_desk();
                 if (desk > 0) {
                     if (index < 0)
-                        SetCursor(LoadCursor(hInstance, (LPCSTR)(wParam & MK_RBUTTON?102:101)));
+                        SetCursor(LoadCursor(hInstance, reinterpret_cast<LPCSTR>(wParam & MK_RBUTTON ? 102 : 101)));
                     else
                         SetCursor(LoadCursor(NULL, IDC_ARROW));
                 } else {
