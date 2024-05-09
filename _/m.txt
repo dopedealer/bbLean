@@ -3,7 +3,11 @@
     * fix errors
     - fix warnings
 - make valid build g++ x64
+    * make initial build
+    - fix warnings
 - make valid build msvc x86
 - make valid build msvc x64
 - move to cmake
     ?
+- gathering of needed compiler runtime for deploy of installation
+- move to wchar_t paths usage

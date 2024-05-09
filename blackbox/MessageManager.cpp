@@ -83,7 +83,7 @@ void MessageManager_Register(HWND hwnd, const UINT* messages, bool add)
     UINT msg;
     while (0 != (msg = *messages++))
     {
-        struct MsgMap *mm = (struct MsgMap *)assoc(msgs, (void*)msg);
+        struct MsgMap *mm = (struct MsgMap *)assoc(msgs, reinterpret_cast<void*>(msg));
         if (mm) {
             if (remove_assoc(&mm->winmap, hwnd))
                 --mm->count;

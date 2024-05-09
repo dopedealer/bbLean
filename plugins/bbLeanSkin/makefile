@@ -80,9 +80,9 @@ readstyle.obj : $(BBAPI)/settings.cpp
 
 # For some reason the gcc 3.4 (rt 3.7) hangs in it's _DllMainCRTStartup
 # That's why it is bypassed here by starting with DllMain directly
-ifeq "$(USING_MINGW)" "1"
-EXTRA_LFLAGS = -Wl,-e,_DllMain@12
-endif
+#ifeq "$(USING_MINGW)" "1"
+#EXTRA_LFLAGS = -Wl,-e,_DllMain@12
+#endif
 
 # --------------------------------------------------------------------
 endif
