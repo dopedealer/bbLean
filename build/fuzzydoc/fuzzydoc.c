@@ -875,7 +875,7 @@ void print_toc(FILE *op, struct line_node *lines)
             while (h < l)
                 fprintf(op, "</UL>\n"), --l;
             while (h > l)
-                fprintf(op, "<UL>\n", ++l);
+                fprintf(op, "<UL>\n"), ++l;
             fprintf(op, "<LI>");
         }
 

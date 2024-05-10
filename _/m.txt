@@ -1,10 +1,10 @@
 
-- make valid build g++ x86
-    * fix errors
-    - fix warnings
-- make valid build g++ x64
+* make valid build g++ x64
     * make initial build
-    - fix warnings
+    * fix warnings
+* make valid build g++ x86
+    * fix errors
+    * fix warnings
 - make valid build msvc x86
 - make valid build msvc x64
 - move to cmake
