@@ -1,8 +1,9 @@
 /* ==========================================================================
 
   This file is part of the bbLean source code
-  Copyright © 2001-2003 The Blackbox for Windows Development Team
-  Copyright © 2004-2009 grischka
+  Copyright Â© 2001-2003 The Blackbox for Windows Development Team
+  Copyright Â© 2004-2009 grischka
+  Copyright Â© 2024 kam1
 
   http://bb4win.sourceforge.net/bblean
   http://developer.berlios.de/projects/bblean
@@ -1920,6 +1921,14 @@ const char* GetBBVersion(void)
 
 HWND GetBBWnd(void)
 {
+    if (BBhwnd == NULL)
+    {
+        BBhwnd = FindWindow(szBlackboxClass, szBlackboxName);
+        if (NULL == BBhwnd)
+        {
+            BBhwnd = FindWindow("xoblite", NULL);
+        }
+    }
     return BBhwnd;
 }
 

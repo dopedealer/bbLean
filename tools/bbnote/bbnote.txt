@@ -114,3 +114,14 @@
       /i                ignore case from nowon
       /c                do not ignore case from nowon
 
+ -------------------------------------------------------------------
+ [fuzzydoc]
+    copyright   = Copyright 2003-2009 grischka
+    title       = bbnote.readme
+    version     = 1.08
+    template    = tpl_simple
+    cssfile     = bblean_style.css
+    header      = <span class="bb2">bbnote</span>&nbsp;<span class="bb3">2.1</span>
+    numbers = true
+ [endfuzzy]
+ -------------------------------------------------------------------

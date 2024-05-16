@@ -1,7 +1,7 @@
 /* ------------------------------------------------------------------ *
 
   bbSDK - Example plugin for Blackbox for Windows.
-  Copyright © 2004,2009 grischka
+  Copyright Â© 2004,2009 grischka
 
   This program is free software, released under the GNU General Public
   License (GPL version 2). See:
@@ -62,7 +62,7 @@ void about_box(void)
     char szTemp[1000];
     sprintf(szTemp,
         "%s - A plugin example for Blackbox for Windows."
-        "\n© %s %s"
+        "\nÂ© %s %s"
         "\n%s"
         , szVersion, szCopyright, szInfoEmail, szInfoLink
         );

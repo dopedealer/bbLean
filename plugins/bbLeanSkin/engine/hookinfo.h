@@ -2,7 +2,7 @@
  ============================================================================
 
   This file is part of the bbLeanSkin source code.
-  Copyright © 2003-2009 grischka (grischka@users.sourceforge.net)
+  Copyright Â© 2003-2009 grischka (grischka@users.sourceforge.net)
 
   bbLeanSkin is a plugin for Blackbox for Windows
 

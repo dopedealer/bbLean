@@ -3,7 +3,7 @@
   This file is part of the bbLeanBar source code.
 
   bbLeanBar is a plugin for BlackBox for Windows
-  Copyright © 2003-2009 grischka
+  Copyright Â© 2003-2009 grischka
 
   http://bb4win.sourceforge.net/bblean/
 

@@ -4,8 +4,8 @@
 
  bsetroot is a tool for Blackbox for Windows.
 
-   © 2001-2003 The Blackbox for Windows Development Team
-   © 2003-2009 grischka at-users-dot-sourceforge.net
+   Â© 2001-2003 The Blackbox for Windows Development Team
+   Â© 2003-2009 grischka at-users-dot-sourceforge.net
    http://bb4win.sourceforge.net/bblean/
    http://bb4win.org/
 
@@ -293,7 +293,7 @@
     title       = bsetroot.readme
     version     = 2.1
     template    = tpl_simple
-    cssfile     = ../../docs/bblean_style.css
+    cssfile     = bblean_style.css
     header      = <span class="bb2">bsetroot</span>&nbsp;<span class="bb3">2.1</span>
     numbers = true
  [endfuzzy]

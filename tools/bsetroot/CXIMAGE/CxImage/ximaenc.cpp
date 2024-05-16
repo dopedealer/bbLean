@@ -415,7 +415,7 @@ CxImage::CxImage(const char * filename, DWORD imagetype)
 }
 ////////////////////////////////////////////////////////////////////////////////
 // Stream constructor
-// ง the file is always closed by the constructor.
+// ยง the file is always closed by the constructor.
 // > stream: file with "rb" access
 // > imagetype: specify the image format (CXIMAGE_FORMAT_BMP,...)
 CxImage::CxImage(FILE * stream, DWORD imagetype)

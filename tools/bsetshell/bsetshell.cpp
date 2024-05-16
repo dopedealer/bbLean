@@ -3,7 +3,7 @@
   bsetshell - a shell changer for Blackbox for Windows under 9x/ME/2k/XP
 
   This file is part of the bbLean source code
-  Copyright © 2004-2009 grischka
+  Copyright Â© 2004-2009 grischka
 
   http://bb4win.sourceforge.net/bblean
 

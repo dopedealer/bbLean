@@ -1,27 +1,50 @@
 # bbLean
+
 A blackbox for windows up-to-date code with bug fixes
+Copyright (©) 2004-2009 grischka
+Copyright (©) 2024 kam1  ; xmalkut@gmail.com, kam1@jabber.ru
 
 Project goals:
+- keeping maximum stability and error-freeness as possible. No unstable code in main branch allowed.
 - keeping fast work
-- backward compatibility with original blackbox on configs & stytes level
-- binary compatibility with bblean 1.17 plugins and interface
-- providing compilation with most used windows compilers
+- backward compatibility with original blackbox on configs & stytes level as possible
+- binary compatibility with bblean 1.17 plugins and interface as possible
+- providing compilation with most used modern windows compilers
 - fixing known bugs
 - increasing the quality of code
 - minimal needed customisations
+- adopting to new windows os versions
 
-# Original base code info:
+# Building
 
-This is the source code for bbLean
-Copyright © 2004-2009 grischka
+  Prerequisites:
+    - A modern c++ compiler (usually MinGW or MSVC)
+    - A googletest library or sources
 
-http://bb4win.sourceforge.net/bblean
-http://developer.berlios.de/projects/bblean
+  Build steps:
+    mkdir b
+    cd b
+    cmake .. 
+    cmake --build . -t package -j 16 
+
+  End user build only allows not to use google test:
+    cmake .. -DBUILD_TESTS=OFF -DCMAKE_BUILD_TYPE=Release
+    cmake --build . -t package
+
+Currently old build way is retained. Will be removed later.
 
 bbLean is free software, released under the GNU General Public
 License (GPL version 2). For details see:
 
 http://www.fsf.org/licenses/gpl.html
+
+# Original base code info:
+
+Original source code for bbLean from:
+Copyright © 2004-2009 grischka
+
+http://bb4win.sourceforge.net/bblean
+http://developer.berlios.de/projects/bblean 
 
 # Old build info:
 

@@ -1,23 +1,61 @@
 
-* make valid build g++ x64
-    * make initial build
-    * fix warnings
-* make valid build g++ x86
-    * fix errors
-    * fix warnings
-- make valid build msvc x86
-    * make correct build
-    - fix warnings
-- make valid build msvc x64
-- move to cmake
-    - make tree file with list of result artifacts
-    - add head cmakefile 
-    - add every artifact cmakefile build case
-    - add generating commands
-    - add making of package
-    - test on mingw, msvsc
+* move to cmake 'as is'
+
+- make cmake compilation correct and split
+    - move bbcore from blackbox exe to static lib compilation
+        - resolve: exports in original are exported from exe and plugins use it
+            - cover bblib exported api with tests
+            - make possible compilation of bbcore as static and as dynamic lib
+    - reorganise/split cmake files to separate cmake file - each on every target
+    - carefully split build of blackbox to bbcore static lib and blackbox app
+    - think about result structure of output artifacts + generated files and
+      used config + resources
+    - fix dynamic build of bbcore + bbapp
+    - cleanup cmake files from commented code
+    - remove plugin dependency of import from blackbox.exe
+    - resolve ambiguity of bblib and bbcore - is really need two libs?
+    - split bbnote to separate cmake files (exe, dll)
+    - remove hack in bbnote - in-compile sources from other dir
+    - split bdf2fon cmake file to 2 separate cmake files
+    - remove duplication of files  bblean_style.css (all except one in docs dir)
+    - add missing dummy Figure figure1.jpg needed for fuzzydoc docs
+    - move fuzzydoc util + it's files to tools/fuzzydoc folder
+    - rename bbLeanSkinEng32 to correct one ('english' ? 32 bits?)
+    - move projects from build folder and remove build folder
+    - remove readme.txt from bbstylemaker
+    - add correspondance between 'project version' in root cmakelists.txt and data in bbversion.h
+    ? add changelog file ?
+
+- rename cximage artifact to libimage or something
+- remove __BBCORE__ macro usage in blackbox.exe
+- add 'no skin' variant to use original grey skin
 - change structure - source + include dirs for plugins
 - gathering of needed compiler runtime for deploy of installation
-- add optional gtest
-- move to wchar_t paths usage
-? add spleen font type usage
+- move to wchar_t paths usage (inside)
+? fix shared build of bblib
+- remove direct cpp file include from:
+    - bbleanBar
+- in bbLeanSkinEng remove direct in-compile hack of ../../blackbox/BImage.cpp !!!
+? bblean skin plugin don't work without loaded bblean bar !
+- split bblean sking cmake 2 dll build to separater cmake files
+? possibly calling 'about' corrupts string due to conversion from utf-8
+- fix about text (encoding currupted) show in: bsetbg, bsetroot
+- remove hack compilations of cpp files from bbstylemaker
+- change fuzzygen:
+    - search for template files in it's exe directory
+    - add possibility to set output dir via cmdline arg
+    - refactor docs generating subproj using new possibilities of fuzzydoc
+    - move to utf-8 input files proceeding
+- make bbnote doc more fuzzy syntax compatible - more like vanilla bbnote.htm
+
+- make external utf-8 only in char* args
+- windows 10, 11 full support - hook mode and native
+? add spleen font type usage from openbsd
+- possibly add install-provided 'cmake' export libraries for plugin
+  developement
+
+- bbkeys refactoring
+    - change traverse of hotkeys to hashmap instead of list
+? update CXIMAGE version ?
+- remove explicit definitions WIN64 and _WIN64
+- move copy artifacts function to one common upper level cmake file and use by subprojects

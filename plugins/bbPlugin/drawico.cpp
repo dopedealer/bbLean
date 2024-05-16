@@ -1,8 +1,8 @@
 /* ==========================================================================
 
   This file is part of the bbLean source code
-  Copyright © 2001-2003 The Blackbox for Windows Development Team
-  Copyright © 2004-2009 grischka
+  Copyright Â© 2001-2003 The Blackbox for Windows Development Team
+  Copyright Â© 2004-2009 grischka
 
   http://bb4win.sourceforge.net/bblean
   http://developer.berlios.de/projects/bblean

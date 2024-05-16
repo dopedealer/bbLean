@@ -17,7 +17,7 @@
  * Parts of the code come from FreeImage 2
  * Design and implementation by 
  * - Floris van den Berg (flvdberg@wxs.nl)
- * - Hervé Drolon (drolon@iut.univ-lehavre.fr)
+ * - HervÐ¹ Drolon (drolon@iut.univ-lehavre.fr)
  * - Markus Loibl (markus.loibl@epost.de)
  * - Luca Piergentili (l.pierge@terra.es)
  *

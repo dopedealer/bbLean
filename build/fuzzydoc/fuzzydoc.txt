@@ -398,6 +398,6 @@ MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.
     footer      = copyright 2004-2009 grischka@users.sourceforge.net
     title       = fuzzydoc
     template    = tpl_simple
-    cssfile     = style.css
+    cssfile     = bblean_style.css
 [endfuzzy]
 -------------------------------------------------------------------------

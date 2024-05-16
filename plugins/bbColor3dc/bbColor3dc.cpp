@@ -1,7 +1,7 @@
 /*============================================================================
 
   bbColor3dc is a plugin for Blackbox for Windows
-  copyright © 2004-2009 grischka
+  copyright Â© 2004-2009 grischka
 
   grischka@users.sourceforge.net
   http://bb4win.sourceforge.net/bblean

@@ -3,7 +3,7 @@
 
   This file is part of the bbLean source code.
 
-  Copyright © 2004-2009 grischka
+  Copyright Â© 2004-2009 grischka
   http://bb4win.sf.net/bblean
 
   bbLean is free software, released under the GNU General Public License

@@ -4,7 +4,7 @@
   This file is part of bbIconBox source code.
   bbIconBox is a plugin for Blackbox for Windows
 
-  Copyright © 2004-2009 grischka
+  Copyright Â© 2004-2009 grischka
   http://bb4win.sf.net/bblean
 
   bbIconBox is free software, released under the GNU General Public License

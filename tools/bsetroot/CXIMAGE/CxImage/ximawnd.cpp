@@ -40,7 +40,7 @@ HANDLE CxImage::CopyToHandle()
 }
 ////////////////////////////////////////////////////////////////////////////////
 // Global object (clipboard paste) constructor
-// § the clipboard format must be CF_DIB.
+// Â§ the clipboard format must be CF_DIB.
 // > hMem: source bitmap object
 bool CxImage::CreateFromHANDLE(HANDLE hMem)
 {
@@ -62,7 +62,7 @@ bool CxImage::CreateFromHANDLE(HANDLE hMem)
 		SetXDPI((long)floor(head.biXPelsPerMeter * 254.0 / 10000.0 + 0.5));
 		SetYDPI((long)floor(head.biYPelsPerMeter * 254.0 / 10000.0 + 0.5));
 		//copy the pixels
-		if((pHead->biCompression != BI_RGB) || (pHead->biBitCount == 32)){ //<Jörgen Alfredsson>
+		if((pHead->biCompression != BI_RGB) || (pHead->biBitCount == 32)){ //<JÑ†rgen Alfredsson>
 			// BITFIELD case
 			// set the internal header in the dib
 			memcpy(pDib,&head,sizeof(head));
