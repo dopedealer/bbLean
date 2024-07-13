@@ -59,3 +59,14 @@
 ? update CXIMAGE version ?
 - remove explicit definitions WIN64 and _WIN64
 - move copy artifacts function to one common upper level cmake file and use by subprojects
+
+bugs to fix:
+-----------
+- correct work under windows 10
+- correct work under windows 11
+- correct work 'as shell' under windows 10
+- correct work 'as shell' under windows 11
+
+features request:
+----------------
+- work with Wallpaper Engine app
