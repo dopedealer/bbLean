@@ -128,5 +128,5 @@ add_custom_command(
     TARGET ${PROJECT}
     POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E make_directory "${ARTIFACTS_OUTPUT_DIR}/buttons"
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different "${CMAKE_CURRENT_LIST_DIR}/buttons.bmp" "${ARTIFACTS_OUTPUT_DIR}/buttons/buttons_11x11.bmp"
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different "${CMAKE_CURRENT_LIST_DIR}/buttons/buttons_11x11.bmp" "${ARTIFACTS_OUTPUT_DIR}/buttons/buttons_11x11.bmp"
 )

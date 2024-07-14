@@ -30,7 +30,7 @@ Prerequisites:
     mkdir b
     cd b
     cmake .. 
-    cmake --build . -t package -j 16 
+    cmake --build . -j 16 
 
   End user build only allows not to use google test:
   

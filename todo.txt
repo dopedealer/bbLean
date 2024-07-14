@@ -1,6 +1,7 @@
 
 * move to cmake 'as is'
 
+- try to add and load x86 plugins from http://xoblite.net/plugins.html
 - make cmake compilation correct and split
     - move bbcore from blackbox exe to static lib compilation
         - resolve: exports in original are exported from exe and plugins use it
