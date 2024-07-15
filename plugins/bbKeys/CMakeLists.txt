@@ -5,7 +5,7 @@ project (${PROJECT})
 
 set (INCLUDE_DIRS
     .
-    ../../blackbox/
+    ${BBCORE_INCLUDE_DIR}
     ) 
 
 set (LINK_DIRS
@@ -18,7 +18,7 @@ set (SOURCES
 ) 
 
 set (LIBS
-    blackbox
+    ${BBCORE_LIBRARY}
 )
 
 if (WIN32)

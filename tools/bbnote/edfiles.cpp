@@ -40,7 +40,9 @@ struct bufpage {
 #define inbuff (buf_e-buf_a)
 
 /*----------------------------------------------------------------------------*/
-ST void ins_pg(void) {
+static
+void ins_pg(void)
+{
     struct bufpage *p;
     p=(struct bufpage *)c_alloc(sizeof(struct bufpage));
     p->next=next_pg;
@@ -50,7 +52,9 @@ ST void ins_pg(void) {
     next_pg=p;
 }
 
-ST void del_pg(void) {
+static
+void del_pg(void)
+{
     struct bufpage *p;
     p=next_pg;
     next_pg=p->next;
@@ -60,7 +64,9 @@ ST void del_pg(void) {
     m_free(p);
 }
 
-ST int flush_out(int m) {
+static
+int flush_out(int m)
+{
     int l;
     l=imin(inbuff,BLS);
     ins_pg();
@@ -69,11 +75,15 @@ ST int flush_out(int m) {
     return l;
 }
 
-ST void flush_last(void){
+static
+void flush_last(void)
+{
     buf_e-=flush_out(inbuff-BLS);
 }
 
-ST void flush_first(void){
+static
+void flush_first(void)
+{
     int o;
     buf_a+=o=flush_out(0);
     memmove(buffer,buffer+o,inbuff);
@@ -81,7 +91,9 @@ ST void flush_first(void){
     next_pg=next_pg->next;
 }
 
-ST void insert_first(void){
+static
+void insert_first(void)
+{
     int s;
     next_pg=prev_pg;
     prev_pg=next_pg->prev;
@@ -92,7 +104,9 @@ ST void insert_first(void){
     del_pg();
 }
 
-ST void insert_last(void){
+static
+void insert_last(void)
+{
     int s;
     if (next_pg==NULL) return;
     s=next_pg->size;
@@ -101,21 +115,27 @@ ST void insert_last(void){
     del_pg();
 }
 
-ST void flush_all(void) {
+static
+void flush_all(void)
+{
     for (;inbuff;) {
         if (inbuff<BLS) insert_last();
         flush_first();
     }
 }
 
-ST struct bufpage *getstart(void) {
+static
+struct bufpage *getstart(void)
+{
     struct bufpage *p,*n;
     n=next_pg; p=prev_pg;
     for (;NULL!=p;p=(n=p)->prev);
     return n;
 }
 
-ST void fill_buffer(int o){
+static
+void fill_buffer(int o)
+{
     struct bufpage *p,*n;
     int i;
     i=o/BLS; buf_a=buf_e=i*BLS;
@@ -125,19 +145,24 @@ ST void fill_buffer(int o){
     for (;i--;) insert_last();
 }
 
-ST void shift_dn(void) {
+static
+void shift_dn(void)
+{
     if (inbuff > EDSZ-BLS) flush_last();
     insert_first();
 }
 
-ST void shift_up(void) {
+static
+void shift_up(void)
+{
     if (inbuff > EDSZ-BLS) flush_first();
     insert_last();
 }
 
 /*----------------------------------------------------------------------------*/
-ST char *getmem(int o) {
-
+static
+char *getmem(int o)
+{
     for (;o<buf_a;) {
         if (buf_a-o>QFLSH) goto p2;
         shift_dn();
@@ -636,7 +661,8 @@ void insfile(struct edvars *p) {
     settitle();
 }
 
-void NewFile(void) {
+void NewFile(void)
+{
     static int filn=0;
     addfile();
     sprintf(filename,"new file %d",++filn);

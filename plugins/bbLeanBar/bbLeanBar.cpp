@@ -47,8 +47,6 @@
 #define MK_ALT 32
 #endif
 
-#define ST static
-
 #define MY_BROAM "@bbLeanBar"
 
 #ifdef BBTINY
@@ -74,8 +72,8 @@ extern "C" API_EXPORT
 void bbDrawPix(HDC hDC, RECT *p_rect, COLORREF picColor, int style);
 
 #ifndef NO_DROP
-ST class TinyDropTarget *init_drop_targ(HWND hwnd);
-ST void exit_drop_targ(class TinyDropTarget *m_TinyDropTarget);
+static class TinyDropTarget *init_drop_targ(HWND hwnd);
+static void exit_drop_targ(class TinyDropTarget *m_TinyDropTarget);
 #endif
 
 #define CLOCK_TIMER 2
@@ -92,19 +90,19 @@ ST void exit_drop_targ(class TinyDropTarget *m_TinyDropTarget);
 
 //====================
 HWND BBhwnd;
-ST int currentScreen;
-ST char screenName[80];
+static int currentScreen;
+static char screenName[80];
 
-ST StyleItem NTaskStyle;
-ST StyleItem ATaskStyle;
+static StyleItem NTaskStyle;
+static StyleItem ATaskStyle;
 
 int TBJustify;
 
-ST int styleBevelWidth;
-ST int styleBorderWidth;
-ST COLORREF styleBorderColor;
+static int styleBevelWidth;
+static int styleBorderWidth;
+static COLORREF styleBorderColor;
 
-struct plugin_info *g_PI;
+struct plugin_info *g_PI{};
 
 //====================
 #define NIF_INFO 0x00000010
@@ -623,7 +621,7 @@ struct barinfo : plugin_info
 //#define TESTF
 
 enum cfg_types { R_BOL = 0, R_INT, R_STR } ;
-ST bool nobool;
+static bool nobool;
 
 #define CFG_255 1
 #define CFG_INT 2

@@ -26,12 +26,11 @@
 #include "win0x500.h"
 #include "bblib.h"
 
-#define ST static
-
 static char usingNT, usingXP;
 static const char sys_command[] = "SysCommand %p,%x";
 
-ST HMENU get_sysmenu(HWND Window)
+static
+HMENU get_sysmenu(HWND Window)
 {
     BOOL iconic = IsIconic(Window);
     BOOL zoomed = IsZoomed(Window);

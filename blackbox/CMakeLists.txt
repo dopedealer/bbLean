@@ -1,11 +1,20 @@
 cmake_minimum_required (VERSION 3.13)
 
+# Exported variables:
+# BBLIB_INCLUDE_DIR - dir with helper lib headers
+# BBCORE_INCLUDE_DIR - dir with blackbox core headers
+# BLACKBOX_INCLUDES - both dirs with headers of bblib and bbcore
+#
+# BBLIB_LIBRARY - helper library
+# BBCORE_LIBRARY - blackbox core library
+# BLACKBOX_LIBRARIES - contains both bblib and bbcore libs
+
 set (PROJECT blackbox) 
 project (${PROJECT})
 
 set (INCLUDE_DIRS
     .
-    ../lib/
+    ${BBLIB_INCLUDE_DIR}
     ) 
 
 set (LINK_DIRS
@@ -59,7 +68,7 @@ set (SOURCES
 ) 
 
 set (LIBS
-    bblib
+    ${BBLIB_LIBRARY}
 )
 
 if (WIN32)
@@ -81,6 +90,14 @@ endif()
 if(UNIX AND (CMAKE_COMPILER_IS_GNUCC OR CMAKE_COMPILER_IS_GNUCXX) )
   list(APPEND LIBS dl) 
 endif()
+
+# export include variables 
+set(BBCORE_INCLUDE_DIR ${CMAKE_CURRENT_LIST_DIR}/. CACHE INTERNAL "") 
+set(BLACKBOX_INCLUDES ${BBCORE_INCLUDE_DIR} ${BBLIB_INCLUDE_DIR} CACHE INTERNAL "") 
+
+# export libs variables
+set(BBCORE_LIBRARY ${PROJECT} CACHE INTERNAL "") 
+set(BLACKBOX_LIBRARIES ${BBLIB_LIBRARY} ${BBCORE_LIBRARY} CACHE INTERNAL "") 
 
 # main executable
 add_executable (${PROJECT} ${GUI_TYPE} ${HEADERS} ${SOURCES}) 

@@ -25,7 +25,6 @@
 #include "BB.h"
 #include "Settings.h"
 #include "bbroot.h"
-#define ST static
 
 //===========================================================================
 #ifndef BBTINY
@@ -84,7 +83,8 @@ HBITMAP make_root_bmp(const char *command)
     return bmp;
 }
 
-static HBITMAP read_bitmap(const char* path, bool delete_after)
+static
+HBITMAP read_bitmap(const char* path, bool delete_after)
 {
     HWND hwnd_desk = GetDesktopWindow();
     HDC hdc_desk = GetDC(hwnd_desk);
@@ -142,7 +142,8 @@ static HBITMAP read_bitmap(const char* path, bool delete_after)
 #endif //ndef BBTINY
 //===========================================================================
 
-ST bool is_bsetroot_command(const char **cptr)
+static
+bool is_bsetroot_command(const char **cptr)
 {
     char token[MAX_PATH];
     *(char*)file_extension(NextToken(token, cptr, NULL)) = 0;

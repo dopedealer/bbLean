@@ -41,11 +41,10 @@
 #define RCFILE_HTS 40 // hash table size
 // #define DEBUG_READER
 
-#define ST static
 #define true 1
 #define false 0
 
-ST struct rcreader_init *g_rc;
+static struct rcreader_init *g_rc;
 
 void init_rcreader(struct rcreader_init *init)
 {
@@ -64,12 +63,13 @@ int set_translate_065(int f)
     return r;
 }
 
-ST struct lin_list *search_line(
-    struct fil_list *fl, const char *key, int fwild, LONG *p_seekpos);
+static
+struct lin_list * search_line(struct fil_list *fl, const char *key, int fwild, LONG *p_seekpos);
 
 /* ------------------------------------------------------------------------- */
 
-ST int translate_key070(char *key)
+static
+int translate_key070(char *key)
 {
     static const char * const checklist [] = {
         "^toolbar"       ,
@@ -179,7 +179,8 @@ void make_style070(struct fil_list *fl)
 }
 
 /* ------------------------------------------------------------------------- */
-ST bool translate_key065(char *key)
+static
+bool translate_key065(char *key)
 {
     static const char *pairs [] =
     {
@@ -240,7 +241,8 @@ void make_style065(struct fil_list *fl)
 // this one tries to satisfy a plugin that queries an 0.65 item
 // from a style that has 0.70 syntax
 
-ST struct lin_list *search_line_065(struct fil_list *fl, const char *key)
+static
+struct lin_list *search_line_065(struct fil_list *fl, const char *key)
 {
     char buff[MAX_KEYWORD_LENGTH];
     int f;
@@ -314,7 +316,8 @@ FILE *create_rcfile(const char *path)
     return fp;
 }
 
-ST void write_rcfile(struct fil_list *fl)
+static
+void write_rcfile(struct fil_list *fl)
 {
     FILE *fp;
     unsigned ml = 0;
@@ -346,20 +349,23 @@ ST void write_rcfile(struct fil_list *fl)
     fl->dirty = false;
 }
 
-ST void mark_rc_dirty(struct fil_list *fl)
+static
+void mark_rc_dirty(struct fil_list *fl)
 {
     fl->dirty = true;
 }
 
 /* ------------------------------------------------------------------------- */
-ST void delete_lin_list(struct fil_list *fl)
+static
+void delete_lin_list(struct fil_list *fl)
 {
     freeall(&fl->lines);
     memset(fl->ht, 0, sizeof fl->ht);
     fl->wild = NULL;
 }
 
-ST void delete_fil_list(struct fil_list *fl)
+static
+void delete_fil_list(struct fil_list *fl)
 {
     if (fl->dirty)
         write_rcfile(fl);
@@ -378,7 +384,8 @@ void reset_rcreader(void)
 
 /* ------------------------------------------------------------------------- */
 
-ST VOID CALLBACK reset_reader_proc(HWND hwnd, UINT uMsg, UINT_PTR idEvent, DWORD dwTime)
+static
+VOID CALLBACK reset_reader_proc(HWND hwnd, UINT uMsg, UINT_PTR idEvent, DWORD dwTime)
 {
     if (g_rc) {
         if (g_rc->used) {
@@ -392,7 +399,8 @@ ST VOID CALLBACK reset_reader_proc(HWND hwnd, UINT uMsg, UINT_PTR idEvent, DWORD
     KillTimer(hwnd, idEvent);
 }
 
-ST void set_reader_timer(void)
+static
+void set_reader_timer(void)
 {
     if (g_rc->timer_set)
         return;
@@ -541,7 +549,8 @@ struct lin_list *make_line (struct fil_list *fl, const char *key, const char *va
     return tl;
 }
 
-ST void del_from_list(void *tlp, void *tl, void *n)
+static
+void del_from_list(void *tlp, void *tl, void *n)
 {
     void *v; int o = (char*)n - (char*)tl;
     while (NULL != (v = *(void**)tlp)) {
@@ -563,8 +572,8 @@ void free_line(struct fil_list *fl, struct lin_list *tl)
     m_free(tl);
 }
 
-ST struct lin_list *search_line(
-    struct fil_list *fl, const char *key, int fwild, LONG *p_seekpos)
+static
+struct lin_list * search_line(struct fil_list *fl, const char *key, int fwild, LONG *p_seekpos)
 {
     int key_len, n;
     char buff[MAX_KEYWORD_LENGTH];
@@ -715,7 +724,8 @@ const char* read_value(const char* path, const char* szKey, long *ptr)
 // Find out a good place where to put an item if it was not yet found in the
 // rc-file previously.
 
-ST int simkey(const char *a0, const char *b0)
+static
+int simkey(const char *a0, const char *b0)
 {
     const char *a = a0, *b = b0, *aa, *bb;
     int ca, cb, na, nb, m, f, e;
@@ -884,7 +894,7 @@ int read_next_line(FILE *fp, char* szBuffer, unsigned dwLength)
 /* ------------------------------------------------------------------------- */
 // parse a given string and assigns settings to a StyleItem class
 
-ST const struct styleprop styleprop_1[] = {
+static const struct styleprop styleprop_1[] = {
  {"solid"        ,B_SOLID           },
  {"horizontal"   ,B_HORIZONTAL      },
  {"vertical"     ,B_VERTICAL        },
@@ -897,14 +907,14 @@ ST const struct styleprop styleprop_1[] = {
  {NULL           ,-1                }
  };
 
-ST const struct styleprop styleprop_2[] = {
+static const struct styleprop styleprop_2[] = {
  {"flat"        ,BEVEL_FLAT     },
  {"raised"      ,BEVEL_RAISED   },
  {"sunken"      ,BEVEL_SUNKEN   },
  {NULL          ,-1             }
  };
 
-ST const struct styleprop styleprop_3[] = {
+static const struct styleprop styleprop_3[] = {
  {"bevel1"      ,BEVEL1 },
  {"bevel2"      ,BEVEL2 },
  {"bevel3"      ,BEVEL2+1 },

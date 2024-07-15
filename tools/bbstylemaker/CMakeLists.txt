@@ -5,8 +5,7 @@ project (${PROJECT})
 
 set (INCLUDE_DIRS
     .
-    ../../lib/
-    ../../blackbox/
+    ${BLACKBOX_INCLUDES}
     ) 
 
 set (LINK_DIRS
@@ -21,12 +20,12 @@ set (SOURCES
     main.cpp
     writestyle.cpp
     resource.rc
-    ../../blackbox/Settings.cpp # hack!! remove!!
-    ../../blackbox/BImage.cpp   # hack!! remove!!
+    ${BBCORE_INCLUDE_DIR}/Settings.cpp # hack!! remove!!
+    ${BBCORE_INCLUDE_DIR}/BImage.cpp   # hack!! remove!!
 ) 
 
 set (LIBS
-    bblib
+    ${BBLIB_LIBRARY}
 )
 
 if (WIN32)

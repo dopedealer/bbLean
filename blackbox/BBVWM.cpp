@@ -22,7 +22,6 @@
 #include "BB.h"
 #include "BBVWM.h"
 
-#define ST static
 #define SCREEN_DIST 10
 
 typedef struct winlist
@@ -47,14 +46,14 @@ typedef struct winlist
     HWND root;
 } winlist;
 
-ST bool vwm_alt_method;
-ST bool vwm_styleXPFix;
-ST bool vwm_enabled;
-ST struct winlist *vwm_WL;
+static bool vwm_alt_method;
+static bool vwm_styleXPFix;
+static bool vwm_enabled;
+static struct winlist *vwm_WL;
 
-ST bool belongs_to_app(winlist *wl, winlist *wl2);
-ST HWND get_root(HWND hwnd);
-ST bool is_shadow(HWND hwnd, LONG ex_style);
+static bool belongs_to_app(winlist *wl, winlist *wl2);
+static HWND get_root(HWND hwnd);
+static bool is_shadow(HWND hwnd, LONG ex_style);
 
 //=========================================================
 // helper functions
@@ -113,7 +112,8 @@ winlist* vwm_add_window(HWND hwnd)
     return wl;
 }
 
-ST BOOL CALLBACK win_enum_proc(HWND hwnd, LPARAM lParam)
+static
+BOOL CALLBACK win_enum_proc(HWND hwnd, LPARAM lParam)
 {
     vwm_add_window(hwnd);
     return TRUE;
@@ -170,7 +170,8 @@ void vwm_update_winlist(void)
 
 //============================================================
 
-ST bool is_shadow(HWND hwnd, LONG ex_style)
+static
+bool is_shadow(HWND hwnd, LONG ex_style)
 {
     char class_name[20];
     const unsigned wstyle = WS_EX_TRANSPARENT|WS_EX_TOOLWINDOW|WS_EX_LAYERED;
@@ -183,7 +184,8 @@ ST bool is_shadow(HWND hwnd, LONG ex_style)
 //============================================================
 // Some stuff to make shure that windows aren't lost in nirwana
 
-ST void fix_window(int *left, int *top, int width, int height)
+static
+void fix_window(int *left, int *top, int width, int height)
 {
     RECT x, d, w;
     int x0, y0, dx, dy;
@@ -205,7 +207,8 @@ ST void fix_window(int *left, int *top, int width, int height)
     }
 }
 
-ST void center_window(int *left, int *top, int width, int height)
+static
+void center_window(int *left, int *top, int width, int height)
 {
     int x0, dx, w2;
     x0 = VScreenX - SCREEN_DIST;
@@ -216,7 +219,8 @@ ST void center_window(int *left, int *top, int width, int height)
 }
 
 // WINDOWPLACEMENT's rcNormalPosition seems to be relative to the workarea:
-ST void add_workarea(RECT *p, int d)
+static
+void add_workarea(RECT *p, int d)
 {
     POINT m; RECT w; int dx, dy;
     m.x = (p->left + p->right)/2;
@@ -230,7 +234,8 @@ ST void add_workarea(RECT *p, int d)
     p->bottom += dy;
 }
 
-ST bool set_normal_position(HWND hwnd, RECT *p)
+static
+bool set_normal_position(HWND hwnd, RECT *p)
 {
     WINDOWPLACEMENT wp;
     wp.length = sizeof wp;
@@ -242,7 +247,8 @@ ST bool set_normal_position(HWND hwnd, RECT *p)
     return FALSE != SetWindowPlacement(hwnd, &wp);
 }
 
-ST bool get_normal_position(HWND hwnd, RECT *p)
+static
+bool get_normal_position(HWND hwnd, RECT *p)
 {
     WINDOWPLACEMENT wp;
     wp.length = sizeof wp;
@@ -255,7 +261,8 @@ ST bool get_normal_position(HWND hwnd, RECT *p)
 
 //=========================================================
 
-ST HWND get_root(HWND hwnd)
+static
+HWND get_root(HWND hwnd)
 {
     HWND parent, deskwnd = GetDesktopWindow();
     while (NULL != (parent = GetWindow(hwnd, GW_OWNER)) && deskwnd != parent)
@@ -263,7 +270,8 @@ ST HWND get_root(HWND hwnd)
     return hwnd;
 }
 
-ST bool belongs_to_app(winlist *win, winlist *app)
+static
+bool belongs_to_app(winlist *win, winlist *app)
 {
     if (win->root == app->root)
         return true;
@@ -272,7 +280,8 @@ ST bool belongs_to_app(winlist *win, winlist *app)
     return false;
 }
 
-ST void check_appwindows(winlist *wl_app)
+static
+void check_appwindows(winlist *wl_app)
 {
     winlist *wl;
     if (wl_app->istool)
@@ -286,7 +295,8 @@ ST void check_appwindows(winlist *wl_app)
 }
 
 //=========================================================
-ST void defer_windows(int newdesk)
+static
+void defer_windows(int newdesk)
 {
     winlist *wl;
     HDWP dwp, dwp_new;
@@ -405,7 +415,8 @@ ST void defer_windows(int newdesk)
 
 //=========================================================
 
-ST void explicit_move(winlist *wl)
+static
+void explicit_move(winlist *wl)
 {
     if (!wl->iconic && !is_frozen(wl->hwnd))
         SetWindowPos(wl->hwnd, NULL,
@@ -417,7 +428,8 @@ ST void explicit_move(winlist *wl)
             );
 }
 
-ST bool set_location_helper(HWND hwnd, struct taskinfo *t, unsigned flags)
+static
+bool set_location_helper(HWND hwnd, struct taskinfo *t, unsigned flags)
 {
     winlist *wl;
     int dx, dy, new_desk, switch_desk, window_desk;
@@ -547,7 +559,8 @@ bool vwm_set_sticky(HWND hwnd, bool set)
     return true;
 }
 
-static void bottomize(HWND hwnd)
+static
+void bottomize(HWND hwnd)
 {
     if (!is_frozen(hwnd))
         SetWindowPos(hwnd, HWND_BOTTOM, 0, 0, 0, 0,

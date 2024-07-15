@@ -5,8 +5,7 @@ project (${PROJECT})
 
 set (INCLUDE_DIRS
     .
-    ../../blackbox/
-    ../../lib/
+    ${BLACKBOX_INCLUDES}
     ../bbPlugin/
     ) 
 
@@ -20,9 +19,8 @@ set (SOURCES
     ) 
 
 set (LIBS
-    bblib
+    ${BLACKBOX_LIBRARIES}
     bbPlugin
-    blackbox
 )
 
 if (WIN32)

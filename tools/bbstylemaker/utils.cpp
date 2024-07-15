@@ -58,7 +58,8 @@ COLORREF get_mixed_color(StyleItem *pSI)
 
 //===========================================================================
 
-ST UINT_PTR APIENTRY OFNHookProc(HWND hdlg, UINT uiMsg, WPARAM wParam, LPARAM lParam)
+static
+UINT_PTR APIENTRY OFNHookProc(HWND hdlg, UINT uiMsg, WPARAM wParam, LPARAM lParam)
 {
     if (WM_INITDIALOG == uiMsg) {
         // center dialog on screen
@@ -238,7 +239,8 @@ RGBREF _RGBtoHSL(RGBREF lRGBColor)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-static float HueToRGB(float n1, float n2, float hue)
+static
+float HueToRGB(float n1, float n2, float hue)
 {
     //<F. Livraghi> fixed implementation for HSL2RGB routine
     float rValue;

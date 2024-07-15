@@ -1,12 +1,37 @@
 
 * move to cmake 'as is'
 
-- try to add and load x86 plugins from http://xoblite.net/plugins.html
 - make cmake compilation correct and split
-    - move bbcore from blackbox exe to static lib compilation
+    * remove everywhere ST to static
+    * rename lib to bblib
+    - move bbcore from blackbox exe to separate lib compilation
+        - make separate projects bbcore and blackbox
+            * make export cmake BBCORE_LIB
+            * change main cmake file to variables usage
+            * change in-compile hacks to variable usage
+            * fix in bbleanskin eng usage to variable
+            - make bbcore library project
+                - remove all 'extern' variable in bbcore, bblib headers physically (replace with functions)
+                - make raw project
+                - remove from it blackbox exe related functions
+        - make separate blackbox app lib project dependent on bbcore
+    - make bblib compilation as dynamic/static based on option
+        - remove global variable in rc functionality 
+    - try to resolve in-copmpile blackbox hacks
+        ? bsetroot requires static in-compilation of bimage.cpp
+            ? needs functions bimage_init bimage_create bimage_destroy bimage_getpixels
+                ? try move bimage functions to bblib
+                    ? bimage uses global static variables
+                        - try remove bimage global variables
+            ? bbstylemaker requires in-compile Settings.cpp, BImage.cpp
+                ? stylemaker defines it's macro BBSETTING_STYLEREADER_ONLY and causes compilation different code in Settings.cpp
+                ? requires functions parse_font, ReadStyle, GetStyleItems, StyleStructPtr
+            ? bbnote requres in-compile sources: Settings.cpp, BImage.cpp
+                ? adds macroses BBSETTING_STYLEREADER_ONLY BBSETTING_NOWINDOW that changes compiled code
+                ? missing in-compile functions: bimage_init, ReadStyle
         - resolve: exports in original are exported from exe and plugins use it
             - cover bblib exported api with tests
-            - make possible compilation of bbcore as static and as dynamic lib
+            ? make possible compilation of bbcore as static and as dynamic lib 
     - reorganise/split cmake files to separate cmake file - each on every target
     - carefully split build of blackbox to bbcore static lib and blackbox app
     - think about result structure of output artifacts + generated files and
@@ -26,12 +51,18 @@
     - remove readme.txt from bbstylemaker
     - add correspondance between 'project version' in root cmakelists.txt and data in bbversion.h
     ? add changelog file ?
+    - remove duplicate code from fuzzydoc - bblib
+        - add library bblib dep
+        - add runtime dep gathering if needed
+    - remove global variables in bblib (rc global state)
+    * replace direct include of blackbox dir to cmake exported variable usage
+    - remove old build files + old instruction steps
+    - try to remove include blackbox dir from bblib
+    - move sources to src folder
 
-- rename cximage artifact to libimage or something
-- remove __BBCORE__ macro usage in blackbox.exe
+? remove __BBCORE__ macro usage in blackbox.exe
 - add 'no skin' variant to use original grey skin
-- change structure - source + include dirs for plugins
-- gathering of needed compiler runtime for deploy of installation
+? change structure - source + include dirs for plugins
 - move to wchar_t paths usage (inside)
 ? fix shared build of bblib
 - remove direct cpp file include from:
@@ -48,18 +79,23 @@
     - refactor docs generating subproj using new possibilities of fuzzydoc
     - move to utf-8 input files proceeding
 - make bbnote doc more fuzzy syntax compatible - more like vanilla bbnote.htm
+- make export functions commented in doxygen style
 
 - make external utf-8 only in char* args
 - windows 10, 11 full support - hook mode and native
 ? add spleen font type usage from openbsd
 - possibly add install-provided 'cmake' export libraries for plugin
   developement
+- figure out how generated fonts used and how can be used
+- modify default styles to show user's windows wallpaper
+    - test style with wallpaper engine
 
 - bbkeys refactoring
     - change traverse of hotkeys to hashmap instead of list
 ? update CXIMAGE version ?
 - remove explicit definitions WIN64 and _WIN64
 - move copy artifacts function to one common upper level cmake file and use by subprojects
+- figure out: maybe usage of read_file causes horribly memory leaks
 
 bugs to fix:
 -----------

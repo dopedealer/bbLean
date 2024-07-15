@@ -5,8 +5,7 @@ project (${PROJECT})
 
 set (INCLUDE_DIRS
     .
-    ../../blackbox/
-    ../../lib/
+    ${BLACKBOX_INCLUDES}
     ) 
 
 set (LINK_DIRS

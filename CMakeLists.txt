@@ -42,7 +42,7 @@ set_output_subdir(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "lib")
 set_output_subdir(CMAKE_LIBRARY_OUTPUT_DIRECTORY "lib")
 
 add_subdirectory ("build/" "${CMAKE_BINARY_DIR}/i/inst")
-add_subdirectory ("lib/" "${CMAKE_BINARY_DIR}/i/bblib")
+add_subdirectory ("bblib/" "${CMAKE_BINARY_DIR}/i/bblib")
 add_subdirectory ("blackbox/" "${CMAKE_BINARY_DIR}/i/blackbox")
 
 set_output_subdir(CMAKE_RUNTIME_OUTPUT_DIRECTORY "tools/fuzzydoc")
@@ -147,7 +147,7 @@ set(CPACK_GENERATOR  "ZIP")
 get_path_normalized_dirs(PATH_ENV_NORMALIZED) 
 
 # add executables
-install(TARGETS blackbox bbnote bbstylemaker bsetroot bsetbg bsetshell inst
+install(TARGETS ${BBCORE_LIBRARY} bbnote bbstylemaker bsetroot bsetbg bsetshell inst
     RUNTIME_DEPENDENCIES
     PRE_EXCLUDE_REGEXES "api-ms-" "ext-ms-"
     POST_EXCLUDE_REGEXES ".*system32/.*\\.dll"
@@ -214,7 +214,7 @@ install (FILES ${ARTIFACTS_OUTPUT_DIR}/bbstylemaker.txt DESTINATION docs)
 # plugin developement headers
 install (FILES 
     blackbox/BBApi.h
-    lib/bblib.h
+    bblib/bblib.h
     DESTINATION include
     )
 

@@ -22,7 +22,6 @@
 #include "BB.h"
 #include "bbrc.h"
 #include "PluginManager.h"
-#define ST static
 
 struct plugins
 {
@@ -57,18 +56,18 @@ static const char* const function_names[] = {
 };
 
 // Privat variables
-ST struct plugins *bbplugins; // list of plugins
-ST HWND hSlit;  // BBSlit window
-ST FILETIME rc_filetime; // plugins.rc filetime
+static struct plugins *bbplugins; // list of plugins
+static HWND hSlit;  // BBSlit window
+static FILETIME rc_filetime; // plugins.rc filetime
 
 // Forward decls
-ST void apply_plugin_state(void);
-ST int load_plugin(struct plugins *q, HWND hSlit);
-ST int unload_plugin(struct plugins *q);
-ST void free_plugin(struct plugins **q);
-ST struct plugins *append_plugin(const char *rcline);
-ST bool write_plugins(void);
-ST void plugin_error(struct plugins *q, int error);
+static void apply_plugin_state(void);
+static int load_plugin(struct plugins *q, HWND hSlit);
+static int unload_plugin(struct plugins *q);
+static void free_plugin(struct plugins **q);
+static struct plugins *append_plugin(const char *rcline);
+static bool write_plugins(void);
+static void plugin_error(struct plugins *q, int error);
 
 enum plugin_errors
 {
@@ -135,7 +134,8 @@ void EnumPlugins (PLUGINENUMPROC lpEnumFunc, LPARAM lParam)
 //===========================================================================
 // parse a line from plugins,rc and put it into the pluginlist struct
 
-ST struct plugins *append_plugin(const char *rcline)
+static
+struct plugins *append_plugin(const char *rcline)
 {
     struct plugins *q = c_new(struct plugins);
 
@@ -191,7 +191,8 @@ ST struct plugins *append_plugin(const char *rcline)
     return q;
 }
 
-ST void free_plugin(struct plugins **pp)
+static
+void free_plugin(struct plugins **pp)
 {
     struct plugins *q = *pp;
     if (q) {
@@ -205,7 +206,8 @@ ST void free_plugin(struct plugins **pp)
 //===========================================================================
 // run through plugin list and load/unload changed plugins
 
-ST void check_plugin(struct plugins *q)
+static
+void check_plugin(struct plugins *q)
 {
     int error = 0;
     if (q->hmodule) {
@@ -226,7 +228,8 @@ ST void check_plugin(struct plugins *q)
     plugin_error(q, error);
 }
 
-ST void apply_plugin_state(void)
+static
+void apply_plugin_state(void)
 {
     struct plugins *q;
 
@@ -252,7 +255,8 @@ ST void apply_plugin_state(void)
 //===========================================================================
 // plugin error message
 
-ST void plugin_error(struct plugins *q, int error)
+static
+void plugin_error(struct plugins *q, int error)
 {
     const char *msg;
     switch (error)
@@ -312,7 +316,8 @@ ST void plugin_error(struct plugins *q, int error)
 //===========================================================================
 // load/unload one plugin
 
-ST int unload_plugin(struct plugins *q)
+static
+int unload_plugin(struct plugins *q)
 {
     int error = 0;
     if (q->hmodule)
@@ -333,7 +338,8 @@ ST int unload_plugin(struct plugins *q)
     return error;
 }
 
-ST int load_plugin(struct plugins *q, HWND hSlit)
+static
+int load_plugin(struct plugins *q, HWND hSlit)
 {
     HINSTANCE hModule = NULL;
     int error = 0;
@@ -445,7 +451,8 @@ ST int load_plugin(struct plugins *q, HWND hSlit)
 //===========================================================================
 // write back the plugin list to "plugins.rc"
 
-ST bool write_plugins(void)
+static
+bool write_plugins(void)
 {
     FILE *fp;
     struct plugins *q;
@@ -515,7 +522,8 @@ void PluginManager_aboutPlugins(void)
 #ifndef OPENFILENAME_SIZE_VERSION_400
 #define OPENFILENAME_SIZE_VERSION_400  CDSIZEOF_STRUCT(OPENFILENAME,lpTemplateName)
 #endif // (_WIN32_WINNT >= 0x0500)
-ST UINT_PTR APIENTRY OFNHookProc(HWND hdlg, UINT uiMsg, WPARAM wParam, LPARAM lParam)
+static
+UINT_PTR APIENTRY OFNHookProc(HWND hdlg, UINT uiMsg, WPARAM wParam, LPARAM lParam)
 {
     if (WM_INITDIALOG == uiMsg)
     {
@@ -536,7 +544,8 @@ ST UINT_PTR APIENTRY OFNHookProc(HWND hdlg, UINT uiMsg, WPARAM wParam, LPARAM lP
     return 0;
 }
 
-ST bool browse_file(char *buffer, const char *title, const char *filters)
+static
+bool browse_file(char *buffer, const char *title, const char *filters)
 {
     OPENFILENAME ofCmdFile;
     static BOOL (WINAPI *pGetOpenFileName)(LPOPENFILENAME lpofn);
@@ -577,7 +586,8 @@ ST bool browse_file(char *buffer, const char *title, const char *filters)
 //===========================================================================
 // The plugin configuration menu
 
-ST Menu *get_menu(const char *title, char *menu_id, bool pop, struct plugins **qp, bool b_slit)
+static
+Menu *get_menu(const char *title, char *menu_id, bool pop, struct plugins **qp, bool b_slit)
 {
     struct plugins *q;
     char *end_id;

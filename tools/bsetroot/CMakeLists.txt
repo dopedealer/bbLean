@@ -7,8 +7,7 @@ project (${PROJECT})
 
 set (INCLUDE_DIRS
     .
-    ../../lib/
-    ../../blackbox/
+    ${BLACKBOX_INCLUDES}
     ) 
 
 if (USING_CXIMAGELIB)
@@ -22,7 +21,7 @@ set (HEADERS
 ) 
 set (SOURCES
     bsetroot.cpp
-    ../../blackbox/BImage.cpp # hack!! remove in future !
+    ${BBCORE_INCLUDE_DIR}/BImage.cpp # hack!! remove in future !
     bsrt-rsc.rc
 ) 
 
@@ -31,7 +30,7 @@ if (USING_CXIMAGELIB)
 endif()
 
 set (LIBS
-    bblib
+    ${BBLIB_LIBRARY}
     ${CXIMAGE_LIBRARIES}
 )
 

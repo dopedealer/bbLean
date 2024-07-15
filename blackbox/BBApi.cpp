@@ -25,8 +25,6 @@
 #include "bbrc.h"
 #include <tlhelp32.h>
 
-#define ST static
-
 //===========================================================================
 // API: Tokenize
 // Purpose: Put first token of 'string' (seperated by one of delims)
@@ -102,13 +100,14 @@ bool IsInString(const char* inputString, const char* searchString)
 }
 
 //===========================================================================
-ST void fn_write_error(const char *filename)
+static
+void fn_write_error(const char *filename)
 {
     BBMessageBox(MB_OK, NLS2("$Error_WriteFile$",
         "Error: Could not open \"%s\" for writing."), filename);
 }
 
-ST struct rcreader_init g_rc =
+static struct rcreader_init g_rc =
 {
     NULL,               // struct fil_list *rc_files;
     fn_write_error,     // void (*write_error)(const char *filename);
@@ -340,7 +339,8 @@ char* ReplaceShellFolders(char* string)
 //===========================================================================
 
 //===========================================================================
-ST bool find_resource_file(char* pszOut, const char* filename, const char* basedir)
+static
+bool find_resource_file(char* pszOut, const char* filename, const char* basedir)
 {
     char temp[MAX_PATH];
 
@@ -705,7 +705,8 @@ HMONITOR (WINAPI *pMonitorFromPoint)(POINT pt, DWORD dwFlags);
 BOOL     (WINAPI *pGetMonitorInfoA)(HMONITOR hMonitor, LPMONITORINFO lpmi);
 BOOL     (WINAPI* pEnumDisplayMonitors)(HDC, LPCRECT, MONITORENUMPROC, LPARAM);
 
-ST void get_mon_rect(HMONITOR hMon, RECT *s, RECT *w)
+static
+void get_mon_rect(HMONITOR hMon, RECT *s, RECT *w)
 {
     if (hMon) {
         MONITORINFO mi;
@@ -861,7 +862,8 @@ void get_custom_margin(RECT *pcm, int screen)
     } while (++i < 4);
 }
 
-ST BOOL CALLBACK fnEnumMonProc(HMONITOR hMon, HDC hdcOptional, RECT *prcLimit, LPARAM dwData)
+static
+BOOL CALLBACK fnEnumMonProc(HMONITOR hMon, HDC hdcOptional, RECT *prcLimit, LPARAM dwData)
 {
     struct _screen * s;
     struct _screen_list *i;
@@ -969,9 +971,9 @@ struct snap_info { struct edges *h; struct edges *v;
     bool sizing; bool same_level; int pad; HWND self; HWND parent; };
 
 // Local fuctions
-//ST void snap_to_grid(struct edges *h, struct edges *v, bool sizing, int grid, int pad);
-ST void snap_to_edge(struct edges *h, struct edges *v, bool sizing, bool same_level, int pad);
-ST BOOL CALLBACK SnapEnumProc(HWND hwnd, LPARAM lParam);
+//static void snap_to_grid(struct edges *h, struct edges *v, bool sizing, int grid, int pad);
+static void snap_to_edge(struct edges *h, struct edges *v, bool sizing, bool same_level, int pad);
+static BOOL CALLBACK SnapEnumProc(HWND hwnd, LPARAM lParam);
 
 void SnapWindowToEdge(WINDOWPOS* wp, LPARAM nDist, UINT flags, ...)
 {
@@ -1110,7 +1112,8 @@ void SnapWindowToEdge(WINDOWPOS* wp, LPARAM nDist, UINT flags, ...)
 
 //*****************************************************************************
 
-ST BOOL CALLBACK SnapEnumProc(HWND hwnd, LPARAM lParam)
+static
+BOOL CALLBACK SnapEnumProc(HWND hwnd, LPARAM lParam)
 {
     struct snap_info *si = (struct snap_info *)lParam;
     LONG style = GetWindowLong(hwnd, GWL_STYLE);
@@ -1144,7 +1147,8 @@ ST BOOL CALLBACK SnapEnumProc(HWND hwnd, LPARAM lParam)
 
 //*****************************************************************************
 /*
-ST void snap_to_grid(struct edges *h, struct edges *v, bool sizing, int grid, int pad)
+static
+void snap_to_grid(struct edges *h, struct edges *v, bool sizing, int grid, int pad)
 {
     for (struct edges *g = h;;g = v)
     {
@@ -1167,7 +1171,8 @@ ST void snap_to_grid(struct edges *h, struct edges *v, bool sizing, int grid, in
 }
 */
 //*****************************************************************************
-ST void snap_to_edge(
+static
+void snap_to_edge(
     struct edges *h,
     struct edges *v,
     bool sizing,

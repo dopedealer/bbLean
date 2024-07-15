@@ -33,10 +33,9 @@
 #include "Stylestruct.h"
 #include "bbstylemaker.h"
 
-#define ST static
 #define NLS2(a,b) b
 
-ST char stylerc_path[MAX_PATH];
+static char stylerc_path[MAX_PATH];
 
 LPCSTR extensionsrcPath(LPCSTR extensionsrcFileName)
 {
@@ -63,13 +62,14 @@ char *rgb_string(char *buffer, COLORREF value)
 #define BBSETTINGS_INTERNAL
 #include "Settings.h"
 
-ST void fn_write_error(const char *filename)
+static
+void fn_write_error(const char *filename)
 {
     BBMessageBox(MB_OK, NLS2("$Error_WriteFile$",
         "Error: Could not open \"%s\" for writing."), filename);
 }
 
-ST struct rcreader_init g_rc =
+static struct rcreader_init g_rc =
 {
     NULL,               // struct fil_list *rc_files;
     fn_write_error,     // void (*write_error)(const char *filename);
@@ -665,7 +665,8 @@ const char * get_bullet_string (int s)
 }
 
 
-static const char *getweight_string (int w)
+static
+const char *getweight_string (int w)
 {
     static const char *fontweightstrings[] = {
     "thin",
@@ -769,7 +770,8 @@ int make_fontstring(StyleItem *si, char *out)
 
 
 //===========================================================================
-static void write_style_item (const char * style, StyleStruct *pStyle, StyleItem *si, const char *key, int v, int sn)
+static
+void write_style_item (const char * style, StyleStruct *pStyle, StyleItem *si, const char *key, int v, int sn)
 {
     struct s_prop { const char *k; short mode; short v; };
 

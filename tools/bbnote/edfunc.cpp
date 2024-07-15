@@ -1274,7 +1274,8 @@ void ed_cnext(void) {
 }
 
 /*----------------------------------------------------------------------------*/
-ST int is_empty_line(int p)
+static
+int is_empty_line(int p)
 {
     int x, n = linelen(p);
     for (x = 0; x < n; x++)
@@ -1283,7 +1284,9 @@ ST int is_empty_line(int p)
     return 1;
 }
 
-ST void para_hlp_1(int f) {
+static
+void para_hlp_1(int f)
+{
     int o,p,e,i,n;
     o=lpos; e=f?fixline(flen):0;
     for (i=0; i<2; )

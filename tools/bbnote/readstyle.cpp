@@ -21,8 +21,6 @@
 #define BBSETTINGS_INTERNAL
 #include "Settings.h"
 
-#define ST static
-
 StyleStruct mStyle;
 menu_setting Settings_menu;
 bool Settings_menusBroamMode = false;

@@ -37,16 +37,15 @@
 #define APPNAME "bsetshell"
 
 #ifndef RC_INVOKED
-#define ST
 
-ST char szBlackbox[MAX_PATH];
-ST char shellpath[MAX_PATH];
-ST HWND g_hDlg;
+static char szBlackbox[MAX_PATH];
+static char shellpath[MAX_PATH];
+static HWND g_hDlg;
 
-ST bool is_usingNT;
-ST bool is_admin;
-ST bool is_per_user;
-ST bool is_blackbox;
+static bool is_usingNT;
+static bool is_admin;
+static bool is_per_user;
+static bool is_blackbox;
 
 #ifndef KEY_WOW64_64KEY
 #define KEY_WOW64_64KEY 0x0100
@@ -82,11 +81,11 @@ int message(int flg, const char *fmt, ...)
 
 /* ======================================================================== */
 
-ST char inimapstr       [] = "Software\\Microsoft\\Windows NT\\CurrentVersion\\IniFileMapping\\system.ini\\boot";
-ST char sys_bootOption  [] = "SYS:Microsoft\\Windows NT\\CurrentVersion\\Winlogon";
-ST char usr_bootOption  [] = "USR:Software\\Microsoft\\Windows NT\\CurrentVersion\\Winlogon";
-ST char logonstr        [] = "Software\\Microsoft\\Windows NT\\CurrentVersion\\Winlogon";
-ST char szExplorer      [] = "explorer.exe";
+static char inimapstr       [] = "Software\\Microsoft\\Windows NT\\CurrentVersion\\IniFileMapping\\system.ini\\boot";
+static char sys_bootOption  [] = "SYS:Microsoft\\Windows NT\\CurrentVersion\\Winlogon";
+static char usr_bootOption  [] = "USR:Software\\Microsoft\\Windows NT\\CurrentVersion\\Winlogon";
+static char logonstr        [] = "Software\\Microsoft\\Windows NT\\CurrentVersion\\Winlogon";
+static char szExplorer      [] = "explorer.exe";
 
 enum {
     A_RD = 1,
@@ -97,7 +96,8 @@ enum {
     A_TEST = A_WR|A_DEL
 };
 
-ST bool rw_reg(int action, HKEY root, const char *ckey, const char *cval, const char *cdata)
+static
+bool rw_reg(int action, HKEY root, const char *ckey, const char *cval, const char *cdata)
 {
     HKEY k;
     LONG r;
@@ -149,7 +149,8 @@ ST bool rw_reg(int action, HKEY root, const char *ckey, const char *cval, const 
 }                
 
 /* read/write from/to system.ini (for windows 9x/me) */
-ST bool rw_ini (int action, char *shell)
+static
+bool rw_ini (int action, char *shell)
 {
     char path[MAX_PATH];
     GetWindowsDirectory(path, sizeof(path));
@@ -161,7 +162,8 @@ ST bool rw_ini (int action, char *shell)
     return 0;
 }
 
-ST bool get_shell(char *buffer)
+static
+bool get_shell(char *buffer)
 {
     buffer[0] = 0;
     if (0 == is_usingNT)
@@ -172,7 +174,8 @@ ST bool get_shell(char *buffer)
         return rw_reg(A_RD|A_SZ, HKEY_LOCAL_MACHINE, logonstr, "Shell", buffer);
 }
 
-ST bool get_per_user(void)
+static
+bool get_per_user(void)
 {
     char buffer[MAX_PATH];
     buffer[0] = 0;
@@ -182,7 +185,8 @@ ST bool get_per_user(void)
 
 /* ======================================================================== */
 
-ST INT_PTR CALLBACK dlgfunc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam)
+static
+INT_PTR CALLBACK dlgfunc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam)
 {
     int id, f, option;
     char buffer[MAX_PATH], temp[2000];

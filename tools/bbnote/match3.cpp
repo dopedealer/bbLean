@@ -44,14 +44,12 @@ enum codes {
 /*---------------------------------------------------------------------------*/
 #include <string.h>
 
-#define ST static
-
 #define ECP '/'
 #define EOS 0
 #define CLSZ 32
 
-ST unsigned char *cp,*outp,*outm;
-ST unsigned char cflg,inclass,m_grp;
+static unsigned char *cp,*outp,*outm;
+static unsigned char cflg,inclass,m_grp;
 
 enum {
 
@@ -82,7 +80,9 @@ enum {
     n_fail = 512
 };
 
-ST short nextchar(void) {
+static
+short nextchar(void)
+{
     short c;
 p0:
     if (EOS!=(c=*cp)) cp++;
@@ -129,29 +129,39 @@ ecp:
     }}
 
 
-ST void storecode(short code) {
+static
+void storecode(short code)
+{
     if (outp<outm) *outp=(unsigned char)code;
     outp++;
 }
 
-ST void storejmp(unsigned char *qp, short code, short dist) {
+static
+void storejmp(unsigned char *qp, short code, short dist)
+{
     if (qp+3<=outm)
         qp[0]=(unsigned char)code, *(short*)&qp[1]=dist;
 }
 
-ST short nextcomp(unsigned char code) {
+static
+short nextcomp(unsigned char code)
+{
     storecode(code);
     return nextchar();
 }
 
-ST void comp_que (unsigned char *qp) {
+static
+void comp_que (unsigned char *qp)
+{
     short l=outp-qp;
     if (outp+3<=outm) memmove(qp+3,qp,l);
     storejmp(qp,e_que,l);
     outp+=3;
 }
 
-ST void comp_pls (unsigned char *qp) {
+static
+void comp_pls (unsigned char *qp)
+{
     outp+=3;
     storejmp(outp-3,e_back,qp-outp);
 }
@@ -174,7 +184,9 @@ unsigned char lwc_ger(unsigned char c) {
     return c;
 }
 
-ST int ignore(short *s) {
+static
+int ignore(short *s)
+{
     unsigned char d;
     if (cflg==0) return 0;
     *s=d=lwc_ger((unsigned char)*s);
@@ -182,7 +194,9 @@ ST int ignore(short *s) {
 }
 
 
-ST short comp_class(void){
+static
+short comp_class(void)
+{
     short n,i,a,b,c,d;
     unsigned char buf[CLSZ];
 
@@ -225,9 +239,11 @@ ST short comp_class(void){
 }
 
 
-ST short comp_expr(void);
+static short comp_expr(void);
 
-ST short comp_seq(short c) {
+static
+short comp_seq(short c)
+{
     unsigned char *qp;
 
     if (c>=n_que) return n_fail;
@@ -294,7 +310,9 @@ ST short comp_seq(short c) {
 }
 
 
-ST short comp_expr(void) {
+static
+short comp_expr(void)
+{
     short c;
     unsigned char *qp;
 

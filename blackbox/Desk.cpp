@@ -37,20 +37,18 @@
 #define XBUTTON3 0x0004
 #endif
 
-#define ST static
-
 HWND hDesktopWnd;
 
 #ifndef BBTINY
 
-ST const char szDesktopName[] = "DesktopBackgroundClass";
-ST struct RootInfo {
+static const char szDesktopName[] = "DesktopBackgroundClass";
+static struct RootInfo {
     HBITMAP bmp;
     char command[MAX_PATH];
 } Root;
 
-ST LRESULT CALLBACK Desk_WndProc (HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
-ST void set_bitmap(HBITMAP bmp);
+static LRESULT CALLBACK Desk_WndProc (HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
+static void set_bitmap(HBITMAP bmp);
 
 // in bbroot.cpp
 extern HBITMAP load_desk_bitmap(const char* command, bool makebmp);
@@ -58,10 +56,10 @@ extern HBITMAP load_desk_bitmap(const char* command, bool makebmp);
 static int get_drop_command(const char *filename, int flags);
 unsigned get_modkeys(void);
 
-ST void (*pSetHooks)(HWND BlackboxWnd, int flags);
+static void (*pSetHooks)(HWND BlackboxWnd, int flags);
 static const char deskhook_dll [] = "deskhook.dll";
 
-ST class DeskDropTarget *m_DeskDropTarget;
+static class DeskDropTarget *m_DeskDropTarget;
 static void init_DeskDropTarget(HWND hwnd);
 static void exit_DeskDropTarget(HWND hwnd);
 
@@ -117,7 +115,8 @@ void Desk_Exit(void)
 
 //===========================================================================
 
-ST void Desk_SetPosition(void)
+static
+void Desk_SetPosition(void)
 {
     SetWindowPos(
         hDesktopWnd,
@@ -127,7 +126,8 @@ ST void Desk_SetPosition(void)
         );
 }
 
-ST void set_bitmap(HBITMAP bmp)
+static
+void set_bitmap(HBITMAP bmp)
 {
     if (Root.bmp)
         DeleteObject(Root.bmp);
@@ -182,7 +182,8 @@ void Desk_new_background(const char *p)
 //===========================================================================
 // Desktop's window procedure
 
-ST LRESULT CALLBACK Desk_WndProc (HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
+static
+LRESULT CALLBACK Desk_WndProc (HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
     static const UINT msgs [] = { BB_DRAGTODESKTOP, BB_REDRAWGUI, 0 };
     static bool button_down, dblclk;
@@ -316,7 +317,8 @@ ST LRESULT CALLBACK Desk_WndProc (HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lP
 //===========================================================================
 // figure out whether we want the file (images and styles, that is)
 
-static int get_drop_command(const char *filename, int flags)
+static
+int get_drop_command(const char *filename, int flags)
 {
     const char *e;
 
@@ -371,10 +373,13 @@ const char * Desk_extended_rootCommand(const char *p)
 
 static const unsigned char mk_mods[] =
 { MK_ALT, MK_SHIFT, MK_CONTROL, MK_LBUTTON, MK_RBUTTON, MK_MBUTTON };
+
 static const char modkey_strings[][6] =
 { "Alt", "Shift", "Ctrl", "Left", "Right", "Mid"  };
+
 static const unsigned short vk_codes[] =
 { VK_MENU, VK_SHIFT, VK_CONTROL, VK_LBUTTON, VK_RBUTTON, VK_MBUTTON };
+
 static const char button_strings[][7] =
 { "Left", "Right", "Mid", "X1", "X2", "X3", "Double" };
 
@@ -431,15 +436,17 @@ bool Desk_mousebutton_event(int button)
 //===========================================================================
 // Show / Hide Explorer parts when running on top of the native shell
 
-ST struct hwnd_list *basebarlist;
+static struct hwnd_list *basebarlist;
 
-ST void hidewnd (HWND hwnd)
+static
+void hidewnd (HWND hwnd)
 {
     if (hwnd && ShowWindow(hwnd, SW_HIDE))
         cons_node(&basebarlist, new_node(hwnd));
 }
 
-ST BOOL CALLBACK HideBaseBars(HWND hwnd, LPARAM lParam)
+static
+BOOL CALLBACK HideBaseBars(HWND hwnd, LPARAM lParam)
 {
     char temp[32];
     if (GetClassName(hwnd, temp, sizeof temp)
@@ -601,13 +608,15 @@ COM_DECLSPEC_NOTHROW STDMETHODIMP DeskDropTarget::DragLeave()
 }
 
 //===========================================================================
-static void init_DeskDropTarget(HWND hwnd)
+static
+void init_DeskDropTarget(HWND hwnd)
 {
     m_DeskDropTarget = new DeskDropTarget();
     RegisterDragDrop(hwnd, m_DeskDropTarget);
 }
 
-static void exit_DeskDropTarget (HWND hwnd)
+static
+void exit_DeskDropTarget (HWND hwnd)
 {
     RevokeDragDrop(hwnd);
     m_DeskDropTarget->Release();

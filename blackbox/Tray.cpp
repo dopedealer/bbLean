@@ -29,8 +29,6 @@
 #define INCLUDE_NIDS
 #include "Tray.h"
 
-#define ST static
-
 //===========================================================================
 /*
 #define NIM_ADD         0x00000000
@@ -99,27 +97,27 @@ typedef struct systemTrayNode
 
 //===========================================================================
 // the 'Shell_TrayWnd'
-ST HWND hTrayWnd;
+static HWND hTrayWnd;
 
 // the icon vector
-ST systemTrayNode *trayIconList;
+static systemTrayNode *trayIconList;
 
 // under explorer, setting hTrayWnd to topmost lets it receive the
 // messages before explorer does.
-ST bool tray_on_top;
-ST bool tray_utf8;
-ST int tray_edge;
-ST HWND tray_mouseover;
+static bool tray_on_top;
+static bool tray_utf8;
+static int tray_edge;
+static HWND tray_mouseover;
 
-ST void RemoveTrayIcon(systemTrayNode *p, bool post);
+static void RemoveTrayIcon(systemTrayNode *p, bool post);
 
 void LoadShellServiceObjects(void);
 void UnloadShellServiceObjects(void);
 
 // Carsomyr's tray redirect trick
 // (Vista compatible icons with older plugins, e.f. SystembarEx)
-ST int trayredirect_id;
-ST UINT trayredirect_message;
+static int trayredirect_id;
+static UINT trayredirect_message;
 
 // #define TRAY_SHOWPOPUPS
 
@@ -140,7 +138,8 @@ int GetTraySize(void)
 // API: GetTrayIcon
 //===========================================================================
 
-static systemTrayNode *nth_icon(int i)
+static
+systemTrayNode *nth_icon(int i)
 {
     systemTrayNode *p;
     dolist (p, trayIconList)
@@ -186,7 +185,8 @@ void CleanTray(void)
 // API: ForwardTrayMessage
 //===========================================================================
 
-ST void tray_notify(systemTrayNode *p, UINT message)
+static
+void tray_notify(systemTrayNode *p, UINT message)
 {
     if (p->version >= 4) {
         WPARAM wParam = MAKELPARAM(p->pt.x, p->pt.y);
@@ -197,7 +197,8 @@ ST void tray_notify(systemTrayNode *p, UINT message)
     }
 }
 
-ST int forward_tray_message(systemTrayNode *p, UINT message, systemTrayIconPos *pos)
+static
+int forward_tray_message(systemTrayNode *p, UINT message, systemTrayIconPos *pos)
 {
     HWND hwnd;
     systemTrayNode *q;
@@ -310,7 +311,8 @@ int ForwardTrayMessage(int icon_index, UINT message, systemTrayIconPos *pos)
 // Function: reset_icon - clear the HICON and related entries
 //===========================================================================
 
-ST void reset_icon(systemTrayNode *p)
+static
+void reset_icon(systemTrayNode *p)
 {
     if (false == p->shared) {
         systemTrayNode *s;
@@ -328,7 +330,8 @@ ST void reset_icon(systemTrayNode *p)
 // Function: send_tray_message
 //===========================================================================
 
-ST LRESULT send_tray_message(systemTrayNode *p, unsigned uChanged, unsigned msg)
+static
+LRESULT send_tray_message(systemTrayNode *p, unsigned uChanged, unsigned msg)
 {
     if (p->hidden || 0 == uChanged)
         return 0;
@@ -340,7 +343,8 @@ ST LRESULT send_tray_message(systemTrayNode *p, unsigned uChanged, unsigned msg)
 // Function: RemoveTrayIcon
 //===========================================================================
 
-ST void RemoveTrayIcon(systemTrayNode *p, bool post)
+static
+void RemoveTrayIcon(systemTrayNode *p, bool post)
 {
     reset_icon(p);
     remove_node(&trayIconList, p);
@@ -353,7 +357,8 @@ ST void RemoveTrayIcon(systemTrayNode *p, bool post)
 // Function: convert_string
 //===========================================================================
 
-ST bool convert_string(char *dest, const void *src, int nmax, bool is_unicode)
+static
+bool convert_string(char *dest, const void *src, int nmax, bool is_unicode)
 {
     char buffer[256];
     if (is_unicode) {
@@ -369,7 +374,8 @@ ST bool convert_string(char *dest, const void *src, int nmax, bool is_unicode)
 
 //===========================================================================
 
-ST void log_tray(DWORD trayCommand, NIDBB *pnid)
+static
+void log_tray(DWORD trayCommand, NIDBB *pnid)
 {
     char class_name[100], tip[100];
     tip[0] = class_name[0] = 0;
@@ -500,7 +506,8 @@ LRESULT AppBarEvent(void *data, unsigned size)
 
 //===========================================================================
 
-ST LRESULT TrayEvent(void *data, unsigned size)
+static
+LRESULT TrayEvent(void *data, unsigned size)
 {
     DWORD trayCommand = ((SHELLTRAYDATA*)data)->dwMessage;
     void *pData = &((SHELLTRAYDATA*)data)->iconData;
@@ -746,7 +753,8 @@ ST LRESULT TrayEvent(void *data, unsigned size)
 }
 
 //===========================================================================
-ST LRESULT TrayInfoEvent(void *data, unsigned size)
+static
+LRESULT TrayInfoEvent(void *data, unsigned size)
 {
     struct NOTIFYICONIDENTIFIER_MSGV1* s = (NOTIFYICONIDENTIFIER_MSGV1*)data;
 
@@ -786,7 +794,8 @@ ST LRESULT TrayInfoEvent(void *data, unsigned size)
     return 0;
 }
 
-ST LRESULT TrayTestEvent(void *data, unsigned size)
+static
+LRESULT TrayTestEvent(void *data, unsigned size)
 {
 #if 0
     char s_guid[40];
@@ -811,8 +820,8 @@ ST LRESULT TrayTestEvent(void *data, unsigned size)
 // TrayWnd Callback
 //===========================================================================
 
-ST LRESULT CALLBACK TrayWndProc(
-    HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
+static
+LRESULT CALLBACK TrayWndProc( HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
     if (message == WM_COPYDATA) {
         void *data;
@@ -874,9 +883,9 @@ typedef struct sso_list_t
 } sso_list_t;
 
 // the shell service objects vector
-ST sso_list_t *sso_list;
-ST HANDLE BBSSO_Stop;
-ST HANDLE BBSSO_Thread;
+static sso_list_t *sso_list;
+static HANDLE BBSSO_Stop;
+static HANDLE BBSSO_Thread;
 
 #if defined __GNUC__ && __GNUC__ < 3
 MDEFINE_GUID(CGID_ShellServiceObject, 0x000214D2L, 0, 0,0xC0,0,0,0,0,0,0,0x46);
@@ -889,7 +898,8 @@ MDEFINE_GUID(CGID_ShellServiceObject, 0x000214D2L, 0, 0,0xC0,0,0,0,0,0,0,0x46);
 void LSDeactivateActCtx(HANDLE hActCtx,  DWORD_PTR* pulCookie);
 HANDLE LSActivateActCtxForClsid(REFCLSID rclsid, DWORD_PTR* pulCookie);
 
-ST int sso_load(const char *name, const char *guid)
+static
+int sso_load(const char *name, const char *guid)
 {
     WCHAR wszCLSID[200];
     CLSID clsid;
@@ -938,7 +948,8 @@ ST int sso_load(const char *name, const char *guid)
     return 1;
 }
 
-ST DWORD WINAPI SSO_Thread(void *pv)
+static
+DWORD WINAPI SSO_Thread(void *pv)
 {
     HKEY hk0, hk1;
     sso_list_t *t;
@@ -1027,22 +1038,25 @@ void UnloadShellServiceObjects(void)
 #endif //ndef BBTINY
 //===========================================================================
 
-ST void broadcast_tbcreated(void)
+static
+void broadcast_tbcreated(void)
 {
     SendNotifyMessage(HWND_BROADCAST, RegisterWindowMessage("TaskbarCreated"), 0, 0);
 }
 
-ST const char TrayNotifyClass [] = "TrayNotifyWnd";
-ST const char TrayClockClass [] = "TrayClockWClass";
+static const char TrayNotifyClass [] = "TrayNotifyWnd";
+static const char TrayClockClass [] = "TrayClockWClass";
 
-ST LRESULT CALLBACK TrayNotifyWndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
+static
+LRESULT CALLBACK TrayNotifyWndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
     //log_printf((LOG_TRAY, "Tray: TrayNotifyWnd %04x msg %04x wp %08x lp %08x", hwnd, message, wParam, lParam));
     //dbg_printf("Tray: TrayNotifyWnd %04x msg %04x wp %08x lp %08x", hwnd, message, wParam, lParam);
     return DefWindowProc(hwnd, message, wParam, lParam);
 }
 
-ST HWND create_tray_child(HWND hwndParent, const char *class_name)
+static
+HWND create_tray_child(HWND hwndParent, const char *class_name)
 {
     BBRegisterClass(class_name, TrayNotifyWndProc, 0);
     return CreateWindow(
@@ -1074,8 +1088,8 @@ void Tray_SetEncoding(void)
 //===========================================================================
 // hook tray when running under explorer
 
-ST const char *trayClassName;
-ST int (*trayHookDll_EntryFunc)(HWND);
+static const char *trayClassName;
+static int (*trayHookDll_EntryFunc)(HWND);
 
 
 //===========================================================================

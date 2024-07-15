@@ -26,8 +26,6 @@
 #include "BBVWM.h"
 #include "MessageManager.h"
 
-#define ST static
-
 //====================
 // public variables
 
@@ -49,63 +47,63 @@ struct sticky_list {
 };
 
 // workspace names
-ST struct string_node *deskNames;
+static struct string_node *deskNames;
 
 // application listed in StickyWindows.ini
-ST struct string_node * stickyNamesList;
+static struct string_node * stickyNamesList;
 
 // the list of tasks, in order as they were added
-ST struct tasklist  * taskList;
+static struct tasklist  * taskList;
 
 // the list of tasks, in order as they were recently active
-ST struct toptask   * pTopTask;
+static struct toptask   * pTopTask;
 
 // the current active taskwindow or NULL
-ST HWND activeTaskWindow;
+static HWND activeTaskWindow;
 
 // minimized windows by 'MinimizeAllWindows'
-ST list_node *toggled_windows;
+static list_node *toggled_windows;
 
 // Sticky plugins & apps
-ST struct sticky_list* sticky_list;
+static struct sticky_list* sticky_list;
 
 //====================
 // local functions
 
-ST void WS_LoadStickyNamesList(void);
+static void WS_LoadStickyNamesList(void);
 
-ST int next_desk (int d);
-ST void MoveWindowToWkspc(HWND, int desk, bool switchto);
-ST void NextWindow(bool, int);
+static int next_desk (int d);
+static void MoveWindowToWkspc(HWND, int desk, bool switchto);
+static void NextWindow(bool, int);
 
-ST void switchToDesktop(int desk);
-ST void setDesktop(HWND hwnd, int desk, bool switchto);
+static void switchToDesktop(int desk);
+static void setDesktop(HWND hwnd, int desk, bool switchto);
 
-ST void SetWorkspaceNames(const char *names);
-ST void AddDesktop(int);
-ST void SetNames(void);
+static void SetWorkspaceNames(const char *names);
+static void AddDesktop(int);
+static void SetNames(void);
 
-ST void exit_tasks(void);
-ST void init_tasks(void);
+static void exit_tasks(void);
+static void init_tasks(void);
 
-ST int is_valid_task(HWND hwnd);
-ST int FindTask(HWND hwnd);
-ST void SetTopTask(struct tasklist *, int f);
-ST HWND get_top_window(int scrn);
+static int is_valid_task(HWND hwnd);
+static int FindTask(HWND hwnd);
+static void SetTopTask(struct tasklist *, int f);
+static HWND get_top_window(int scrn);
 
-ST void WS_ShadeWindow(HWND hwnd);
-ST void WS_GrowWindowHeight(HWND hwnd);
-ST void WS_GrowWindowWidth(HWND hwnd);
-ST void WS_LowerWindow(HWND hwnd);
-ST void WS_RaiseWindow(HWND hwnd);
-ST void WS_MaximizeWindow(HWND hwnd);
-ST void WS_MinimizeWindow(HWND hwnd);
-ST void WS_CloseWindow(HWND hwnd);
-ST void WS_RestoreWindow(HWND hwnd);
-ST void WS_BringToFront(HWND hwnd, bool to_current);
+static void WS_ShadeWindow(HWND hwnd);
+static void WS_GrowWindowHeight(HWND hwnd);
+static void WS_GrowWindowWidth(HWND hwnd);
+static void WS_LowerWindow(HWND hwnd);
+static void WS_RaiseWindow(HWND hwnd);
+static void WS_MaximizeWindow(HWND hwnd);
+static void WS_MinimizeWindow(HWND hwnd);
+static void WS_CloseWindow(HWND hwnd);
+static void WS_RestoreWindow(HWND hwnd);
+static void WS_BringToFront(HWND hwnd, bool to_current);
 
-ST void MinimizeAllWindows(void);
-ST void RestoreAllWindows(void);
+static void MinimizeAllWindows(void);
+static void RestoreAllWindows(void);
 
 void send_desk_refresh(void);
 void send_task_refresh(void);
@@ -173,7 +171,8 @@ bool Workspaces_GetScreenMetrics(void)
 
 //===========================================================================
 
-ST void SetWorkspaceNames(const char *names)
+static
+void SetWorkspaceNames(const char *names)
 {
     if (names) {
         strcpy(Settings_workspaceNames, names);
@@ -191,7 +190,8 @@ ST void SetWorkspaceNames(const char *names)
     send_desk_refresh();
 }
 
-ST void SetNames(void)
+static
+void SetNames(void)
 {
     const char *names; int i;
 
@@ -208,7 +208,8 @@ ST void SetNames(void)
 }
 
 //===========================================================================
-ST HWND get_default_window(HWND hwnd)
+static
+HWND get_default_window(HWND hwnd)
 {
     if (NULL == hwnd) {
         hwnd = GetForegroundWindow();
@@ -219,14 +220,16 @@ ST HWND get_default_window(HWND hwnd)
     return hwnd;
 }
 
-ST LRESULT send_syscommand(HWND hwnd, WPARAM SC_XXX)
+static
+LRESULT send_syscommand(HWND hwnd, WPARAM SC_XXX)
 {
     DWORD_PTR dwResult = 0;
     SendMessageTimeout(hwnd, WM_SYSCOMMAND, SC_XXX, 0, SMTO_ABORTIFHUNG|SMTO_NORMAL, 1000, &dwResult);
     return dwResult;
 }
 
-ST DWORD_PTR send_bbls_command(HWND hwnd, WPARAM wParam, LPARAM lParam)
+static
+DWORD_PTR send_bbls_command(HWND hwnd, WPARAM wParam, LPARAM lParam)
 {
     DWORD_PTR result = 0;
     SendMessageTimeout(hwnd,
@@ -248,14 +251,16 @@ void get_desktop_info(DesktopInfo *deskInfo, int i)
         strcpy(deskInfo->name, sp->str);
 }
 
-ST BOOL list_desktops_func(DesktopInfo *DI, LPARAM lParam)
+static
+BOOL list_desktops_func(DesktopInfo *DI, LPARAM lParam)
 {
     SendMessage((HWND)lParam, BB_DESKTOPINFO, 0, (LPARAM)DI);
     return TRUE;
 }
 
 /*
-ST void post_message_if_needed(UINT message, WPARAM wParam, LPARAM lParam)
+static
+void post_message_if_needed(UINT message, WPARAM wParam, LPARAM lParam)
 {
     MSG msg;
     if (!PeekMessage(&msg, BBhwnd, message, message, PM_NOREMOVE))
@@ -263,7 +268,8 @@ ST void post_message_if_needed(UINT message, WPARAM wParam, LPARAM lParam)
 }
 */
 
-ST void send_task_message(HWND hwnd, UINT msg)
+static
+void send_task_message(HWND hwnd, UINT msg)
 {
     SendMessage(BBhwnd, BB_TASKSUPDATE, (WPARAM)hwnd, msg);
 }
@@ -513,7 +519,8 @@ LRESULT Workspaces_Command(UINT msg, WPARAM wParam, LPARAM lParam)
 
 //===========================================================================
 
-ST void WS_BringToFront(HWND hwnd, bool to_current)
+static
+void WS_BringToFront(HWND hwnd, bool to_current)
 {
     int windesk;
 
@@ -554,7 +561,8 @@ void SwitchToBBWnd (void)
 
 //===========================================================================
 
-ST void get_rect(HWND hwnd, RECT *rp)
+static
+void get_rect(HWND hwnd, RECT *rp)
 {
     GetWindowRect(hwnd, rp);
     if (WS_CHILD & GetWindowLong(hwnd, GWL_STYLE))
@@ -565,7 +573,8 @@ ST void get_rect(HWND hwnd, RECT *rp)
     }
 }
 
-ST void window_set_pos(HWND hwnd, RECT rc)
+static
+void window_set_pos(HWND hwnd, RECT rc)
 {
     int width = rc.right - rc.left;
     int height = rc.bottom - rc.top;
@@ -574,7 +583,8 @@ ST void window_set_pos(HWND hwnd, RECT rc)
         SWP_NOZORDER|SWP_NOACTIVATE);
 }
 
-ST int get_shade_height(HWND hwnd)
+static
+int get_shade_height(HWND hwnd)
 {
     int shade, border, caption;
 
@@ -597,7 +607,8 @@ ST int get_shade_height(HWND hwnd)
     return 2*border + caption;
 }
 
-ST void WS_ShadeWindow(HWND hwnd)
+static
+void WS_ShadeWindow(HWND hwnd)
 {
     RECT rc;
     int h1, h2, height;
@@ -627,7 +638,8 @@ ST void WS_ShadeWindow(HWND hwnd)
 }
 
 //===========================================================================
-ST bool check_for_restore(HWND hwnd)
+static
+bool check_for_restore(HWND hwnd)
 {
     WINDOWPLACEMENT wp;
 
@@ -644,7 +656,8 @@ ST bool check_for_restore(HWND hwnd)
     return true;
 }
 
-ST void grow_window(HWND hwnd, bool v)
+static
+void grow_window(HWND hwnd, bool v)
 {
     RECT r1, r2;
 
@@ -662,44 +675,51 @@ ST void grow_window(HWND hwnd, bool v)
     LockWindowUpdate(NULL);
 }
 
-ST void WS_GrowWindowHeight(HWND hwnd)
+static
+void WS_GrowWindowHeight(HWND hwnd)
 {
     grow_window(hwnd, true);
 }
 
-ST void WS_GrowWindowWidth(HWND hwnd)
+static
+void WS_GrowWindowWidth(HWND hwnd)
 {
     grow_window(hwnd, false);
 }
 
-ST void WS_MaximizeWindow(HWND hwnd)
+static
+void WS_MaximizeWindow(HWND hwnd)
 {
     if (check_for_restore(hwnd))
         return;
     send_syscommand(hwnd, SC_MAXIMIZE);
 }
 
-ST void WS_RestoreWindow(HWND hwnd)
+static
+void WS_RestoreWindow(HWND hwnd)
 {
     if (check_for_restore(hwnd))
         return;
     send_syscommand(hwnd, SC_RESTORE);
 }
 
-ST void WS_MinimizeWindow(HWND hwnd)
+static
+void WS_MinimizeWindow(HWND hwnd)
 {
     if (have_imp(pAllowSetForegroundWindow))
         pAllowSetForegroundWindow(ASFW_ANY);
     send_syscommand(hwnd, SC_MINIMIZE);
 }
 
-ST void WS_CloseWindow(HWND hwnd)
+static
+void WS_CloseWindow(HWND hwnd)
 {
     send_syscommand(hwnd, SC_CLOSE);
     PostMessage(BBhwnd, BB_BRINGTOFRONT, 0, 0);
 }
 
-ST void WS_RaiseWindow(HWND hwnd_notused)
+static
+void WS_RaiseWindow(HWND hwnd_notused)
 {
     struct tasklist *tl = NULL;
     struct toptask *lp;
@@ -710,7 +730,8 @@ ST void WS_RaiseWindow(HWND hwnd_notused)
         WS_BringToFront(tl->hwnd, false);
 }
 
-ST void WS_LowerWindow(HWND hwnd)
+static
+void WS_LowerWindow(HWND hwnd)
 {
     struct tasklist *tl;
     SwitchToBBWnd();
@@ -793,7 +814,8 @@ bool CheckSticky(HWND hwnd)
 }
 
 //===========================================================================
-ST void WS_LoadStickyNamesList(void)
+static
+void WS_LoadStickyNamesList(void)
 {
     char path[MAX_PATH];
     char buffer[MAX_PATH];
@@ -828,13 +850,15 @@ bool check_sticky_name(HWND hwnd)
 //===========================================================================
 struct mr_info { list_node *p; int cmd; bool iconic; };
 
-ST bool mr_checktask(HWND hwnd)
+static
+bool mr_checktask(HWND hwnd)
 {
     struct tasklist *tl = (struct tasklist *)assoc(taskList, hwnd);
     return tl && tl->wkspc == currentScreen;
 }
 
-ST BOOL CALLBACK mr_enumproc(HWND hwnd, LPARAM lParam)
+static
+BOOL CALLBACK mr_enumproc(HWND hwnd, LPARAM lParam)
 {
     if (mr_checktask(hwnd)) {
         struct mr_info* mr = (struct mr_info*)lParam;
@@ -844,7 +868,8 @@ ST BOOL CALLBACK mr_enumproc(HWND hwnd, LPARAM lParam)
     return TRUE;
 }
 
-ST void min_rest_helper(int cmd)
+static
+void min_rest_helper(int cmd)
 {
     struct mr_info mri, *mr = &mri;
     list_node **pp, *p;
@@ -880,12 +905,14 @@ ST void min_rest_helper(int cmd)
     freeall(&mr->p);
 }
 
-ST void MinimizeAllWindows(void)
+static
+void MinimizeAllWindows(void)
 {
     min_rest_helper(0); //SC_MINIMIZE);
 }
 
-ST void RestoreAllWindows(void)
+static
+void RestoreAllWindows(void)
 {
     min_rest_helper(SC_RESTORE);
 }
@@ -893,7 +920,8 @@ ST void RestoreAllWindows(void)
 //================================================================
 // get the top window in the z-order of the current workspace
 
-ST HWND get_top_window(int scrn)
+static
+HWND get_top_window(int scrn)
 {
     struct toptask *lp;
     dolist (lp, pTopTask)
@@ -922,7 +950,8 @@ bool focus_top_window(void)
 //================================================================
 // is this window a valid task
 
-ST int is_valid_task(HWND hwnd)
+static
+int is_valid_task(HWND hwnd)
 {
     if (FALSE == IsWindow(hwnd))
         return 0;
@@ -945,7 +974,8 @@ void Workspaces_GatherWindows(void)
 
 //===========================================================================
 // the internal switchToDesktop
-ST void switchToDesktop(int n)
+static
+void switchToDesktop(int n)
 {
     // steel focus and wait for apps to close their menus, because that
     // could leave defunct dropshadows on the screen otherwise
@@ -954,13 +984,15 @@ ST void switchToDesktop(int n)
     vwm_switch(n);
 }
 
-ST void setDesktop(HWND hwnd, int n, bool switchto)
+static
+void setDesktop(HWND hwnd, int n, bool switchto)
 {
     vwm_set_desk (hwnd, n, switchto);
 }
 
 //===========================================================================
-ST int next_desk (int d)
+static
+int next_desk (int d)
 {
     int n = currentScreen + d;
     int m = nScreens - 1;
@@ -969,7 +1001,8 @@ ST int next_desk (int d)
     return n;
 }
 
-ST void AddDesktop(int d)
+static
+void AddDesktop(int d)
 {
     Settings_workspaces = imax(1, Settings_workspaces + d);
     Settings_WriteRCSetting(&Settings_workspaces);
@@ -1001,7 +1034,8 @@ void Workspaces_DeskSwitch(int i)
 
 //====================
 
-ST void MoveWindowToWkspc(HWND hwnd, int desk, bool switchto)
+static
+void MoveWindowToWkspc(HWND hwnd, int desk, bool switchto)
 {
     if (NULL == hwnd)
         return;
@@ -1021,7 +1055,8 @@ ST void MoveWindowToWkspc(HWND hwnd, int desk, bool switchto)
 
 //====================
 
-ST void NextWindow(bool allDesktops, int dir)
+static
+void NextWindow(bool allDesktops, int dir)
 {
     int s,i,j; struct tasklist *tl;
     s = GetTaskListSize();
@@ -1060,7 +1095,8 @@ void ToggleWindowVisibility(HWND hwnd)
 //===========================================================================
 // Task - Support
 
-ST void del_from_toptasks(struct tasklist *tl)
+static
+void del_from_toptasks(struct tasklist *tl)
 {
     struct toptask **lpp, *lp;
     lpp = (struct toptask**)assoc_ptr(&pTopTask, tl);
@@ -1068,7 +1104,8 @@ ST void del_from_toptasks(struct tasklist *tl)
         *lpp=(lp=*lpp)->next, m_free(lp);
 }
 
-ST void SetTopTask(struct tasklist *tl, int set_where)
+static
+void SetTopTask(struct tasklist *tl, int set_where)
 {
     if (NULL==tl)
         return;
@@ -1081,7 +1118,8 @@ ST void SetTopTask(struct tasklist *tl, int set_where)
         append_node(&pTopTask, new_node(tl));
 }
 
-ST void get_caption(struct tasklist *tl, int force)
+static
+void get_caption(struct tasklist *tl, int force)
 {
     if (force || 0 == tl->caption[0])
         get_window_text(tl->hwnd, tl->caption, sizeof tl->caption);
@@ -1103,7 +1141,8 @@ void Workspaces_GetCaptions()
 
 //==================================
 
-ST struct tasklist *AddTask(HWND hwnd)
+static
+struct tasklist *AddTask(HWND hwnd)
 {
     struct tasklist *tl = c_new(struct tasklist);
     tl->hwnd = hwnd;
@@ -1114,7 +1153,8 @@ ST struct tasklist *AddTask(HWND hwnd)
     return tl;
 }
 
-ST void RemoveTask(struct tasklist *tl)
+static
+void RemoveTask(struct tasklist *tl)
 {
     HWND hwnd;
     if (tl->icon)
@@ -1125,7 +1165,8 @@ ST void RemoveTask(struct tasklist *tl)
     send_task_message(hwnd, TASKITEM_REMOVED);
 }
 
-ST int FindTask(HWND hwnd)
+static
+int FindTask(HWND hwnd)
 {
     struct tasklist *tl; int i = 0;
     dolist(tl, taskList) {
@@ -1148,19 +1189,22 @@ void CleanTasks(void)
 }
 
 //==================================
-ST BOOL CALLBACK TaskProc(HWND hwnd, LPARAM lParam)
+static
+BOOL CALLBACK TaskProc(HWND hwnd, LPARAM lParam)
 {
     if (IsAppWindow(hwnd))
         SetTopTask(AddTask(hwnd), 2);
     return TRUE;
 }
 
-ST void init_tasks(void)
+static
+void init_tasks(void)
 {
     EnumWindows(TaskProc, 0);
 }
 
-ST void exit_tasks(void)
+static
+void exit_tasks(void)
 {
     while (taskList)
         RemoveTask(taskList);
@@ -1194,7 +1238,8 @@ void workspaces_set_desk(void)
 
 //===========================================================================
 #if 0
-ST void debug_tasks(WPARAM wParam, HWND hwnd, int is_task)
+static
+void debug_tasks(WPARAM wParam, HWND hwnd, int is_task)
 {
     static const char * const actions[] = {
         "null", "add", "remove", "activateshell",

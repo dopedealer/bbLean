@@ -21,9 +21,7 @@
 #include "BImage.h"
 #include "bbrc.h"
 
-#define ST static
-
-ST struct rcreader_init g_rc =
+static struct rcreader_init g_rc =
 {
     NULL,   // struct fil_list *rc_files;
     NULL,   // void (*write_error)(const char *filename);

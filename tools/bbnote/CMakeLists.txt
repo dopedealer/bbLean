@@ -5,8 +5,7 @@ project (${PROJECT})
 
 set (INCLUDE_DIRS
     .
-    ../../blackbox/
-    ../../lib/
+    ${BLACKBOX_INCLUDES}
     ) 
 
 set (LINK_DIRS
@@ -27,13 +26,13 @@ set (SOURCES
     edproc.cpp
     match3.cpp
     readstyle.cpp
-    ../../blackbox/Settings.cpp     # hack!! remove
-    ../../blackbox/BImage.cpp       # hack!! remove
+    ${BBCORE_INCLUDE_DIR}/Settings.cpp     # hack!! remove
+    ${BBCORE_INCLUDE_DIR}/BImage.cpp       # hack!! remove
     resource.rc
 ) 
 
 set (LIBS
-    bblib
+    ${BBLIB_LIBRARY}
 )
 
 if (WIN32)
@@ -91,16 +90,16 @@ set (PROJECT_BBNOTEDLL bbnote_proxy)
 
 set (INCLUDE_DIRS_BBNOTEDLL
     .
-    ../../blackbox/
-    ../../lib/
+    ${BLACKBOX_INCLUDES}
     ) 
+
 set (SOURCES_BBNOTEDLL
     bbnote-proxy.cpp    ##
 ) 
 
 set (LIBS_BBNOTEDLL
     #bblib
-    blackbox
+    ${BBCORE_LIBRARY}
 )
 
 if (WIN32)

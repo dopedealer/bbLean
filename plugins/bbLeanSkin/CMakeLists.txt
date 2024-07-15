@@ -5,8 +5,7 @@ project (${PROJECT})
 
 set (INCLUDE_DIRS
     .
-    ../../blackbox/
-    ../../lib/
+    ${BLACKBOX_INCLUDES}
     engine/
     ../bbPlugin/
     ) 
@@ -23,8 +22,7 @@ set (SOURCES
 ) 
 
 set (LIBS
-    bblib
-    blackbox
+    ${BLACKBOX_LIBRARIES}
     bbPlugin
 )
 
@@ -73,7 +71,7 @@ endif()
 set (SOURCES_SECONDARY
     engine/hookctl.cpp
     engine/subclass.cpp
-    ../../blackbox/BImage.cpp # hack! remove!!!
+    ${BBCORE_INCLUDE_DIR}/BImage.cpp # hack! remove!!!
 ) 
 
 add_library (bbLeanSkinEng SHARED ${HEADERS} ${SOURCES_SECONDARY})

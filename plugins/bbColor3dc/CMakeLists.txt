@@ -5,8 +5,7 @@ project (${PROJECT})
 
 set (INCLUDE_DIRS
     .
-    ../../blackbox/
-    ../../lib/
+    ${BLACKBOX_INCLUDES}
     ) 
 
 set (LINK_DIRS
@@ -19,8 +18,7 @@ set (SOURCES
 ) 
 
 set (LIBS
-    bblib
-    blackbox
+    ${BLACKBOX_LIBRARIES}
 )
 
 if (WIN32)

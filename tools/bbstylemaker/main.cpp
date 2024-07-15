@@ -41,8 +41,6 @@
 #include <time.h>
 #include <locale.h>
 
-#define ST static
-
 const char HELPMSG[] =
     APPNAME_VER
     "\n---"

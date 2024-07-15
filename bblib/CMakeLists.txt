@@ -42,18 +42,13 @@ endif()
 source_group ("Header Files" FILES ${HEADERS})
 source_group ("Source Files" FILES ${SOURCES}) 
 
-## suppress console window in gui apps
-#if(WIN32)
-  #set (GUI_TYPE WIN32)
-#else()
-  #set (GUI_TYPE )
-#endif() 
-# console type
-#set (GUI_TYPE)
-
 if(UNIX AND (CMAKE_COMPILER_IS_GNUCC OR CMAKE_COMPILER_IS_GNUCXX) )
   list(APPEND LIBS dl) 
 endif()
+
+# export variables
+set(BBLIB_INCLUDE_DIR ${CMAKE_CURRENT_LIST_DIR}/. CACHE INTERNAL "") 
+set(BBLIB_LIBRARY ${PROJECT} CACHE INTERNAL "") 
 
 # library 
 add_library (${PROJECT} STATIC ${HEADERS} ${SOURCES})

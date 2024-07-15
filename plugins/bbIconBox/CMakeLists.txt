@@ -5,8 +5,7 @@ project (${PROJECT})
 
 set (INCLUDE_DIRS
     .
-    ../../blackbox/
-    ../../lib/
+    ${BLACKBOX_INCLUDES}
     ../bbPlugin/
     ) 
 
@@ -27,8 +26,7 @@ set (SOURCES
 ) 
 
 set (LIBS
-    bblib
-    blackbox
+    ${BLACKBOX_LIBRARIES}
     bbPlugin
 )
 

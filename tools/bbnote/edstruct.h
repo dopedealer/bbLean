@@ -25,8 +25,6 @@
 #include "bblib.h"
 #include "eddef.h"
 
-#define ST static
-
 #ifdef _MSC_VER
 #pragma warning(disable: 4244) // convert int to short
 #endif

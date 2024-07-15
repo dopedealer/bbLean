@@ -35,8 +35,6 @@ ToolbarInfo TBInfo;
 #include <locale.h>
 #include <shellapi.h>
 
-#define ST static
-
 static const struct cfgmenu tb_sub_placement[] = {
     { NLS0("Top Left")      , "placement topLeft"       , &Settings_toolbar.placement },
     { NLS0("Top Center")    , "placement topCenter"     , &Settings_toolbar.placement },
@@ -65,7 +63,7 @@ static const struct cfgmenu tb_main[] = {
     { NULL }
 };
 
-ST const char * const placement_strings[] =
+static const char * const placement_strings[] =
 {
     "topLeft"       ,   //#define PLACEMENT_TOP_LEFT     0
     "topCenter"     ,   //#define PLACEMENT_TOP_CENTER   1
@@ -76,36 +74,36 @@ ST const char * const placement_strings[] =
     NULL
 };
 
-ST const char Toolbar_ClassName[] = "BBToolbar"; // Window class etc.
+static const char Toolbar_ClassName[] = "BBToolbar"; // Window class etc.
 
 // window procedure
-ST LRESULT CALLBACK Toolbar_WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam);
+static LRESULT CALLBACK Toolbar_WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam);
 
 void Toolbar_ShowMenu(bool pop);
 void Toolbar_UpdatePosition(void);
 
-ST void Toolbar_AutoHide(bool);
-ST void Toolbar_set_pos(void);
+static void Toolbar_AutoHide(bool);
+static void Toolbar_set_pos(void);
 
-ST bool Toolbar_ShowingExternalLabel;
-ST char Toolbar_CurrentWindow[100];
-ST char Toolbar_CurrentTime[100];
-ST char Toolbar_WorkspaceName[100];
+static bool Toolbar_ShowingExternalLabel;
+static char Toolbar_CurrentWindow[100];
+static char Toolbar_CurrentTime[100];
+static char Toolbar_WorkspaceName[100];
 
-ST int Toolbar_HideY;
-ST HFONT Toolbar_hFont;
-ST bool Toolbar_hidden;
-ST bool Toolbar_moving;
-ST HWND Toolbar_hwnd;
-ST bool Toolbar_force_button_pressed;
-ST int tbClockW;
+static int Toolbar_HideY;
+static HFONT Toolbar_hFont;
+static bool Toolbar_hidden;
+static bool Toolbar_moving;
+static HWND Toolbar_hwnd;
+static bool Toolbar_force_button_pressed;
+static int tbClockW;
 
-ST int tbButtonWH;
-ST int tbLabelH;
-ST int tbLabelIndent;
-ST int tbMargin;
+static int tbButtonWH;
+static int tbLabelH;
+static int tbLabelIndent;
+static int tbMargin;
 
-ST struct button
+static struct button
 {
     RECT r;
     bool pressed;
@@ -161,7 +159,8 @@ void endToolbar(HINSTANCE hi)
 }
 
 //===========================================================================
-ST void Toolbar_set_pos(void)
+static
+void Toolbar_set_pos(void)
 {
     if (false == Toolbar_hidden)
         SetTransparency(Toolbar_hwnd, mStyle.toolbarAlpha);
@@ -308,7 +307,8 @@ void Toolbar_button_event(UINT message, LPARAM i)
 
 //===========================================================================
 
-ST void Toolbar_setlabel(void)
+static
+void Toolbar_setlabel(void)
 {
     // Get current workspace name...
     DesktopInfo DI;
@@ -337,7 +337,8 @@ ST void Toolbar_setlabel(void)
     get_window_text(hwnd, Toolbar_CurrentWindow, sizeof Toolbar_CurrentWindow);
 }
 
-ST void Toolbar_setclock(void)
+static
+void Toolbar_setclock(void)
 {
     time_t systemTime;
     struct tm *ltp;
@@ -368,7 +369,8 @@ ST void Toolbar_setclock(void)
 
 //===========================================================================
 
-ST bool check_mouse(HWND hwnd)
+static
+bool check_mouse(HWND hwnd)
 {
     POINT pt; RECT rct;
     GetCursorPos(&pt);
@@ -376,7 +378,8 @@ ST bool check_mouse(HWND hwnd)
     return FALSE != PtInRect(&rct, pt);
 }
 
-ST int get_text_extend(HDC hdc, const char *cp)
+static
+int get_text_extend(HDC hdc, const char *cp)
 {
     RECT s = {0,0,0,0};
     bbDrawText(hdc, cp, &s, DT_CALCRECT|DT_NOPREFIX, 0);
@@ -384,7 +387,8 @@ ST int get_text_extend(HDC hdc, const char *cp)
 }
 
 //===========================================================================
-ST void PaintToolbar(HDC hdc, RECT *rcPaint)
+static
+void PaintToolbar(HDC hdc, RECT *rcPaint)
 {
     RECT r;
     StyleItem *pSI;
@@ -530,7 +534,7 @@ ST void PaintToolbar(HDC hdc, RECT *rcPaint)
 }
 
 //===========================================================================
-ST LRESULT CALLBACK Toolbar_WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
+static LRESULT CALLBACK Toolbar_WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
     static const UINT msgs[] =
     {
@@ -882,7 +886,7 @@ void Toolbar_UpdatePosition(void)
 
 //===========================================================================
 
-ST void Toolbar_AutoHide(bool hidden)
+static void Toolbar_AutoHide(bool hidden)
 {
     if (TBInfo.autohidden != hidden)
     {

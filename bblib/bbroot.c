@@ -23,8 +23,6 @@
 #include "bbroot.h"
 #include "bbrc.h"
 
-#define ST static
-
 void init_root(struct rootinfo *r)
 {
     // clear and set some default values
@@ -46,7 +44,8 @@ const char *get_root_switch(int n)
     return n >= E_solid && n < E_last ? switches[n-E_solid] : "";
 }
 
-ST int next_token(struct rootinfo *r)
+static
+int next_token(struct rootinfo *r)
 {
     int s = E_eos;
     strlwr(NextToken(r->token, &r->cptr, " "));
@@ -61,7 +60,8 @@ ST int next_token(struct rootinfo *r)
     return s;
 }
 
-ST int read_color(const char *token, COLORREF *pCR)
+static
+int read_color(const char *token, COLORREF *pCR)
 {
     COLORREF CR = ReadColorFromString(token);
     if ((COLORREF)-1 == CR) return false;
@@ -69,7 +69,8 @@ ST int read_color(const char *token, COLORREF *pCR)
     return true;
 }
 
-ST int read_int(const char *token, int *ip)
+static
+int read_int(const char *token, int *ip)
 {
     const char *p = token;
     if ('-' == *p) ++p;

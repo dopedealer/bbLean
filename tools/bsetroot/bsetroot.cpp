@@ -30,8 +30,6 @@ const char *szAppName = "bsetroot 2.1-tiny";
 const char *szAppName = "bsetroot 2.1";
 #endif
 
-#define ST static
-
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 void show_help(void)
 {
