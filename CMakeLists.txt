@@ -1,4 +1,4 @@
-cmake_minimum_required (VERSION 3.21)
+cmake_minimum_required (VERSION 3.30)
 
 # Options:
 # BUILD_TESTS - building tests. Strictly needed for developing. Allowed
