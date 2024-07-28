@@ -10,8 +10,15 @@
             * change main cmake file to variables usage
             * change in-compile hacks to variable usage
             * fix in bbleanskin eng usage to variable
+            - make bblib buildable as dynamic
+                - make compilation
+                - make sure needed defs defined based on option
+                - set correct artifacts gaterhing to instaler build
             - make bbcore library project
                 - remove all 'extern' variable in bbcore, bblib headers physically (replace with functions)
+                    - remove extern in bbcore
+                        - find how to work with resoved imports in bbcore (pCreateToolhelp32Snapshot, ...)
+                        ? resolve runtime imports must be performed in main
                 - make raw project
                 - remove from it blackbox exe related functions
         - make separate blackbox app lib project dependent on bbcore
@@ -96,6 +103,8 @@
 - remove explicit definitions WIN64 and _WIN64
 - move copy artifacts function to one common upper level cmake file and use by subprojects
 - figure out: maybe usage of read_file causes horribly memory leaks
+- make incremental adding compiled plugins to config ini
+- in bbroot.h remove statics
 
 bugs to fix:
 -----------
