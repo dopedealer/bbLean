@@ -112,7 +112,7 @@ target_link_directories(${PROJECT_BBNOTEDLL} PRIVATE ${LINK_DIRS})
 target_include_directories (${PROJECT_BBNOTEDLL} PRIVATE ${INCLUDE_DIRS_BBNOTEDLL} )
 target_link_libraries (${PROJECT_BBNOTEDLL} PRIVATE ${LIBS_BBNOTEDLL})
 #target_compile_definitions(${PROJECT_BBNOTEDLL} PRIVATE BBSETTING_STYLEREADER_ONLY BBSETTING_NOWINDOW)
-target_compile_definitions(${PROJECT_BBNOTEDLL} PRIVATE)
+target_compile_definitions(${PROJECT_BBNOTEDLL} PRIVATE) 
 
 # add optional compile options
 if( MSVC ) 
@@ -135,3 +135,6 @@ endif ()
 if(CMAKE_SIZEOF_VOID_P EQUAL 8)  # means x64
     target_compile_definitions(${PROJECT_BBNOTEDLL} PRIVATE _WIN64 WIN64)
 endif() 
+
+# removing "lib" prefix
+set_target_properties(${PROJECT_BBNOTEDLL} PROPERTIES PREFIX "")

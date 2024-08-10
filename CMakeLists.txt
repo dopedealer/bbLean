@@ -134,6 +134,7 @@ if (BUILD_TESTS)
     endif() 
 
     add_subdirectory ("tests/dummy/")
+    add_subdirectory ("tests/test_bblib/")
     # {ADD TESTS HERE}
 else()
     message("-- not using tests")

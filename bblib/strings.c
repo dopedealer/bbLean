@@ -213,6 +213,68 @@ char *m_format(const char *fmt, ...)
     return m_formatv(fmt, arg_list);
 }
 
+BBLIB_EXPORT int wchar_to_utf8(const wchar_t *src, char *str, int len)
+{
+    if (len > 0)
+    {
+        int x, n;
+        for (x = -1;;)
+        {
+            n = WideCharToMultiByte(CP_UTF8 , 0, src, x, str, len, NULL, NULL);
+            if (n)
+            {
+                return n;
+            }
+            if (x < 0)
+            {
+                x = len;
+            }
+            if (--x == 0)
+            {
+                break;
+            }
+        }
+        str[0] = 0;
+    }
+    return 0;
+}
+
+BBLIB_EXPORT int wchar_to_utf8_length(const wchar_t *src)
+{
+    return WideCharToMultiByte(CP_UTF8, 0, src, -1, NULL, 0, NULL, NULL);
+}
+
+BBLIB_EXPORT int utf8_to_wchar(const char *src, wchar_t * wstr, int numSumbols)
+{
+    if (numSumbols > 0)
+    {
+        int x, n;
+        for (x = -1;;)
+        {
+            n = MultiByteToWideChar(CP_UTF8, 0x0, src, x, wstr, numSumbols);
+            if (n)
+            {
+                return n;
+            }
+            if (x < 0)
+            {
+                x = numSumbols;
+            }
+            if (--x == 0)
+            {
+                break;
+            }
+        }
+        wstr[0] = 0;
+    }
+    return 0;
+} 
+
+BBLIB_EXPORT int utf8_to_wchar_length(const char *src)
+{
+    return MultiByteToWideChar(CP_UTF8, 0x0, src, -1, NULL, 0);
+} 
+
 /* ------------------------------------------------------------------------- */
 
 // strlwr a keyword, calculate hash value and length

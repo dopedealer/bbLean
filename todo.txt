@@ -10,10 +10,9 @@
             * change main cmake file to variables usage
             * change in-compile hacks to variable usage
             * fix in bbleanskin eng usage to variable
-            - make bblib buildable as dynamic
-                - make compilation
-                - make sure needed defs defined based on option
-                - set correct artifacts gaterhing to instaler build
+            * make convert wchar to utf-8 string fn in bblib
+            * make tests for wchar to utf-8 string fn
+            * make convert from utf-8 to wchar fn + tests
             - make bbcore library project
                 - remove all 'extern' variable in bbcore, bblib headers physically (replace with functions)
                     - remove extern in bbcore
@@ -66,6 +65,17 @@
     - remove old build files + old instruction steps
     - try to remove include blackbox dir from bblib
     - move sources to src folder
+    - make bblib buildable as dynamic
+        - make compilation
+            - error: undefined symbol: bbWC2MB in pidl.c (located in blackbox)
+                - move bbWC2MB,bbWC2MB to strings.c and exported with usage and forwarding export in blackbox
+                    * create helper wchar string convertin func in bblib
+                    ? pidl uses bbWC2MB that depends on flag
+                    ? the bbWC2MB depends on property Settings_UTF8Encoding in blackbox
+                    - make tests for wchar_to_mbs
+            - undefined symbol: defaultrcPath in pidl.c (located in blackbox)
+        - make sure needed defs defined based on option
+        - set correct artifacts gaterhing to instaler build
 
 ? remove __BBCORE__ macro usage in blackbox.exe
 - add 'no skin' variant to use original grey skin
@@ -88,6 +98,7 @@
 - make bbnote doc more fuzzy syntax compatible - more like vanilla bbnote.htm
 - make export functions commented in doxygen style
 
+- move bblib c files to cpp with careful export conventions
 - make external utf-8 only in char* args
 - windows 10, 11 full support - hook mode and native
 ? add spleen font type usage from openbsd
@@ -96,6 +107,7 @@
 - figure out how generated fonts used and how can be used
 - modify default styles to show user's windows wallpaper
     - test style with wallpaper engine
+- replace explicit imports for functions that present at least from vista/xp
 
 - bbkeys refactoring
     - change traverse of hotkeys to hashmap instead of list

@@ -135,6 +135,32 @@ BBLIB_EXPORT char *concat_str(const char *s1, const char *s2);
 BBLIB_EXPORT char *m_formatv(const char *fmt, va_list arg_list);
 BBLIB_EXPORT char *m_format(const char *fmt, ...);
 
+/// \brief Converts wide charactes string to utf-8 and puts to output buffer.
+///        Ending zero added if there is enough space
+/// \param src Input wide char zero ending string
+/// \param str Output char buffer
+/// \param len Maximum size of output buffer
+/// \returns Number of written bytes
+BBLIB_EXPORT int wchar_to_utf8(const wchar_t *src, char *str, int len);
+
+/// \brief Returns number of bytes needed to get the full conversion result
+/// \param src The zero terminated wchar string
+/// \return Number of bytes needed for converstion including terminating zero
+BBLIB_EXPORT int wchar_to_utf8_length(const wchar_t *src);
+
+/// \brief Converts utf-8 string to wide char sring and puts result to output buffer
+///        Adds ending zero if there is enought space
+/// \param src Zero terminated string in utf-8 encoding
+/// \param wstr Pointer to output wchar_t symbols buffer
+/// \param numSumbols Length of outout buffer in symbols
+/// \returns Number of written symbols
+BBLIB_EXPORT int utf8_to_wchar(const char *src, wchar_t * wstr, int numSumbols);
+
+/// \brief Returns number of 'symbols' needed to get the full conversion result
+/// \param src The zero terminated utf-8 char string
+/// \return Number of symbols needed for converstion including terminating zero
+BBLIB_EXPORT int utf8_to_wchar_length(const char *src);
+
 /* tokenize.c */
 
 BBLIB_EXPORT int nexttoken(const char **p_out, const char **p_in, const char *delims);
