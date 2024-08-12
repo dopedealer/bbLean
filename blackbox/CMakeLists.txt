@@ -1,13 +1,15 @@
 cmake_minimum_required (VERSION 3.21)
 
 # Exported variables:
+# Includes:
 # BBLIB_INCLUDE_DIR - dir with helper lib headers
-# BBCORE_INCLUDE_DIR - dir with blackbox core headers
-# BLACKBOX_INCLUDES - both dirs with headers of bblib and bbcore
+# BLACKBOX_INCLUDE_DIR - dir with blackbox core headers
+# BLACKBOX_INCLUDES - both dirs with headers of bblib and blackbox
 #
+# Libraries:
 # BBLIB_LIBRARY - helper library
-# BBCORE_LIBRARY - blackbox core library
-# BLACKBOX_LIBRARIES - contains both bblib and bbcore libs
+# BLACKBOX_LIBRARY - blackbox core library
+# BLACKBOX_LIBRARIES - contains both bblib and blackbox libs
 
 set (PROJECT blackbox) 
 project (${PROJECT})
@@ -92,12 +94,12 @@ if(UNIX AND (CMAKE_COMPILER_IS_GNUCC OR CMAKE_COMPILER_IS_GNUCXX) )
 endif()
 
 # export include variables 
-set(BBCORE_INCLUDE_DIR ${CMAKE_CURRENT_LIST_DIR}/. CACHE INTERNAL "") 
-set(BLACKBOX_INCLUDES ${BBCORE_INCLUDE_DIR} ${BBLIB_INCLUDE_DIR} CACHE INTERNAL "") 
+set(BLACKBOX_INCLUDE_DIR ${CMAKE_CURRENT_LIST_DIR}/. CACHE INTERNAL "") 
+set(BLACKBOX_INCLUDES ${BLACKBOX_INCLUDE_DIR} ${BBLIB_INCLUDE_DIR} CACHE INTERNAL "") 
 
 # export libs variables
-set(BBCORE_LIBRARY ${PROJECT} CACHE INTERNAL "") 
-set(BLACKBOX_LIBRARIES ${BBLIB_LIBRARY} ${BBCORE_LIBRARY} CACHE INTERNAL "") 
+set(BLACKBOX_LIBRARY ${PROJECT} CACHE INTERNAL "") 
+set(BLACKBOX_LIBRARIES ${BBLIB_LIBRARY} ${BLACKBOX_LIBRARY} CACHE INTERNAL "") 
 
 # main executable
 add_executable (${PROJECT} ${GUI_TYPE} ${HEADERS} ${SOURCES}) 
@@ -106,7 +108,9 @@ target_include_directories (${PROJECT} PRIVATE ${INCLUDE_DIRS} )
 target_link_libraries (${PROJECT} PRIVATE ${LIBS})
 target_compile_definitions(${PROJECT} PRIVATE __BBCORE__ BBCORE_STATIC)
 
-## !!! TODO: This enables export functions as from dll. Must be removed in future !!
+## It is a dirty hack but existing compiled plugins do import functions
+## directly from blackbox.exe. So we just cannot to remove it without breaking
+## compatibility with existing plugins.
 set_property(TARGET ${PROJECT} PROPERTY ENABLE_EXPORTS 1)
 
 # add optional compile options

@@ -135,7 +135,7 @@ if (BUILD_TESTS)
 
     add_subdirectory ("tests/dummy/")
     add_subdirectory ("tests/test_bblib/")
-    # {ADD TESTS HERE}
+    add_subdirectory ("tests/test_blackbox/")
 else()
     message("-- not using tests")
 endif()
@@ -148,7 +148,7 @@ set(CPACK_GENERATOR  "ZIP")
 get_path_normalized_dirs(PATH_ENV_NORMALIZED) 
 
 # add executables
-install(TARGETS ${BBCORE_LIBRARY} bbnote bbstylemaker bsetroot bsetbg bsetshell inst
+install(TARGETS ${BLACKBOX_LIBRARY} bbnote bbstylemaker bsetroot bsetbg bsetshell inst
     RUNTIME_DEPENDENCIES
     PRE_EXCLUDE_REGEXES "api-ms-" "ext-ms-"
     POST_EXCLUDE_REGEXES ".*system32/.*\\.dll"

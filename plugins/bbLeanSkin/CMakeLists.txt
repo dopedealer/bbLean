@@ -71,7 +71,7 @@ endif()
 set (SOURCES_SECONDARY
     engine/hookctl.cpp
     engine/subclass.cpp
-    ${BBCORE_INCLUDE_DIR}/BImage.cpp # hack! remove!!!
+    ${BLACKBOX_INCLUDE_DIR}/BImage.cpp # hack! remove!!!
 ) 
 
 add_library (bbLeanSkinEng SHARED ${HEADERS} ${SOURCES_SECONDARY})

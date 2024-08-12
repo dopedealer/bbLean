@@ -44,6 +44,15 @@ License (GPL version 2). For details see:
 
 http://www.fsf.org/licenses/gpl.html
 
+# Code style rules
+- camel case style. If legacy subproject uses snake case then snake case
+  retained.
+- allowed only pure C export. No c++ classes or mangled functions allowed.
+  Exception: Allowed only c++ classes that are not exported, but fully contained in only
+  one hpp file in bblib
+- Not changing public interfaces for retaining compatibility with already built
+  plugins
+
 # Original base code info:
 
 Original source code for bbLean from:

@@ -1,28 +1,8 @@
 
-* move to cmake 'as is'
-
 - make cmake compilation correct and split
     * remove everywhere ST to static
     * rename lib to bblib
-    - move bbcore from blackbox exe to separate lib compilation
-        - make separate projects bbcore and blackbox
-            * make export cmake BBCORE_LIB
-            * change main cmake file to variables usage
-            * change in-compile hacks to variable usage
-            * fix in bbleanskin eng usage to variable
-            * make convert wchar to utf-8 string fn in bblib
-            * make tests for wchar to utf-8 string fn
-            * make convert from utf-8 to wchar fn + tests
-            - make bbcore library project
-                - remove all 'extern' variable in bbcore, bblib headers physically (replace with functions)
-                    - remove extern in bbcore
-                        - find how to work with resoved imports in bbcore (pCreateToolhelp32Snapshot, ...)
-                        ? resolve runtime imports must be performed in main
-                - make raw project
-                - remove from it blackbox exe related functions
-        - make separate blackbox app lib project dependent on bbcore
-    - make bblib compilation as dynamic/static based on option
-        - remove global variable in rc functionality 
+    x move bbcore from blackbox exe to separate lib compilation
     - try to resolve in-copmpile blackbox hacks
         ? bsetroot requires static in-compilation of bimage.cpp
             ? needs functions bimage_init bimage_create bimage_destroy bimage_getpixels
@@ -39,7 +19,6 @@
             - cover bblib exported api with tests
             ? make possible compilation of bbcore as static and as dynamic lib 
     - reorganise/split cmake files to separate cmake file - each on every target
-    - carefully split build of blackbox to bbcore static lib and blackbox app
     - think about result structure of output artifacts + generated files and
       used config + resources
     - fix dynamic build of bbcore + bbapp
@@ -65,7 +44,7 @@
     - remove old build files + old instruction steps
     - try to remove include blackbox dir from bblib
     - move sources to src folder
-    - make bblib buildable as dynamic
+    - make bblib buildable as dynamic based on option
         - make compilation
             - error: undefined symbol: bbWC2MB in pidl.c (located in blackbox)
                 - move bbWC2MB,bbWC2MB to strings.c and exported with usage and forwarding export in blackbox
@@ -76,6 +55,7 @@
             - undefined symbol: defaultrcPath in pidl.c (located in blackbox)
         - make sure needed defs defined based on option
         - set correct artifacts gaterhing to instaler build
+        - remove global variable in rc functionality 
 
 ? remove __BBCORE__ macro usage in blackbox.exe
 - add 'no skin' variant to use original grey skin
@@ -117,6 +97,7 @@
 - figure out: maybe usage of read_file causes horribly memory leaks
 - make incremental adding compiled plugins to config ini
 - in bbroot.h remove statics
+? uwp gui-based windows case ?
 
 bugs to fix:
 -----------
@@ -128,3 +109,4 @@ bugs to fix:
 features request:
 ----------------
 - work with Wallpaper Engine app
+- xoblite_bb5_rc4 plugins compatibility

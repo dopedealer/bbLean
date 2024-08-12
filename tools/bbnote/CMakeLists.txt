@@ -26,8 +26,8 @@ set (SOURCES
     edproc.cpp
     match3.cpp
     readstyle.cpp
-    ${BBCORE_INCLUDE_DIR}/Settings.cpp     # hack!! remove
-    ${BBCORE_INCLUDE_DIR}/BImage.cpp       # hack!! remove
+    ${BLACKBOX_INCLUDE_DIR}/Settings.cpp     # hack!! remove
+    ${BLACKBOX_INCLUDE_DIR}/BImage.cpp       # hack!! remove
     resource.rc
 ) 
 
@@ -99,7 +99,7 @@ set (SOURCES_BBNOTEDLL
 
 set (LIBS_BBNOTEDLL
     #bblib
-    ${BBCORE_LIBRARY}
+    ${BLACKBOX_LIBRARY}
 )
 
 if (WIN32)
