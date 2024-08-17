@@ -1,8 +1,22 @@
 
 - make cmake compilation correct and split
-    * remove everywhere ST to static
-    * rename lib to bblib
     x move bbcore from blackbox exe to separate lib compilation
+    - reorganise/split cmake files to separate cmake file - each on every target
+    - remove plugin dependency of import from blackbox.exe
+    - split bbnote to separate cmake files (exe, dll)
+    - split bdf2fon cmake file to 2 separate cmake files
+    - remove duplication of files  bblean_style.css (all except one in docs dir)
+    - add missing dummy Figure figure1.jpg needed for fuzzydoc docs
+    - move fuzzydoc util + it's files to tools/fuzzydoc folder
+    ? rename bbLeanSkinEng32 to correct one ('english' ? 32 bits?)
+    - remove readme.txt from bbstylemaker
+    - add correspondance between 'project version' in root cmakelists.txt and data in bbversion.h
+    ? add changelog file ?
+    - remove duplicate code from fuzzydoc - bblib
+        - add library bblib dep
+        - add runtime dep gathering if needed
+    - remove global variables in bblib (rc global state)
+    - try to remove include blackbox dir from bblib
     - try to resolve in-copmpile blackbox hacks
         ? bsetroot requires static in-compilation of bimage.cpp
             ? needs functions bimage_init bimage_create bimage_destroy bimage_getpixels
@@ -18,32 +32,7 @@
         - resolve: exports in original are exported from exe and plugins use it
             - cover bblib exported api with tests
             ? make possible compilation of bbcore as static and as dynamic lib 
-    - reorganise/split cmake files to separate cmake file - each on every target
-    - think about result structure of output artifacts + generated files and
-      used config + resources
-    - fix dynamic build of bbcore + bbapp
-    - cleanup cmake files from commented code
-    - remove plugin dependency of import from blackbox.exe
-    - resolve ambiguity of bblib and bbcore - is really need two libs?
-    - split bbnote to separate cmake files (exe, dll)
-    - remove hack in bbnote - in-compile sources from other dir
-    - split bdf2fon cmake file to 2 separate cmake files
-    - remove duplication of files  bblean_style.css (all except one in docs dir)
-    - add missing dummy Figure figure1.jpg needed for fuzzydoc docs
-    - move fuzzydoc util + it's files to tools/fuzzydoc folder
-    - rename bbLeanSkinEng32 to correct one ('english' ? 32 bits?)
-    - move projects from build folder and remove build folder
-    - remove readme.txt from bbstylemaker
-    - add correspondance between 'project version' in root cmakelists.txt and data in bbversion.h
-    ? add changelog file ?
-    - remove duplicate code from fuzzydoc - bblib
-        - add library bblib dep
-        - add runtime dep gathering if needed
-    - remove global variables in bblib (rc global state)
-    * replace direct include of blackbox dir to cmake exported variable usage
-    - remove old build files + old instruction steps
-    - try to remove include blackbox dir from bblib
-    - move sources to src folder
+        - remove hack in bbnote - in-compile sources from other dir
     - make bblib buildable as dynamic based on option
         - make compilation
             - error: undefined symbol: bbWC2MB in pidl.c (located in blackbox)
@@ -80,7 +69,7 @@
 
 - move bblib c files to cpp with careful export conventions
 - make external utf-8 only in char* args
-- windows 10, 11 full support - hook mode and native
+- make windows 10, 11 full support - hook mode and native
 ? add spleen font type usage from openbsd
 - possibly add install-provided 'cmake' export libraries for plugin
   developement
