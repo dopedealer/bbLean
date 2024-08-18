@@ -2,6 +2,7 @@
 - make cmake compilation correct and split
     x move bbcore from blackbox exe to separate lib compilation
     - reorganise/split cmake files to separate cmake file - each on every target
+        * split font utils
     - remove plugin dependency of import from blackbox.exe
     - split bbnote to separate cmake files (exe, dll)
     - split bdf2fon cmake file to 2 separate cmake files

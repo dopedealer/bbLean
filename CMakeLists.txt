@@ -92,8 +92,9 @@ add_subdirectory ("tools/bsetroot/" "${CMAKE_BINARY_DIR}/i/bsetroot")
 add_subdirectory ("tools/bbstylemaker/" "${CMAKE_BINARY_DIR}/i/bbstylemaker")
 add_subdirectory ("tools/bbnote/" "${CMAKE_BINARY_DIR}/i/bbnote")
 
-set_output_subdir(CMAKE_RUNTIME_OUTPUT_DIRECTORY "tools/bdf2fon")
-add_subdirectory ("build/bdf2fon/" "${CMAKE_BINARY_DIR}/i/bdf2fon")
+set_output_subdir(CMAKE_RUNTIME_OUTPUT_DIRECTORY "tools/fonttools")
+add_subdirectory ("tools/fonttools/fnt2fon/" "${CMAKE_BINARY_DIR}/i/fnt2fon")
+add_subdirectory ("tools/fonttools/bdf2fnt/" "${CMAKE_BINARY_DIR}/i/bdf2fnt")
 
 if (USE_RES_GENERATION)
     set_output_subdir(CMAKE_RUNTIME_OUTPUT_DIRECTORY "fonts")
@@ -162,7 +163,7 @@ install(TARGETS bdf2fnt fnt2fon
     PRE_EXCLUDE_REGEXES "api-ms-" "ext-ms-"
     POST_EXCLUDE_REGEXES ".*system32/.*\\.dll"
     DIRECTORIES ${PATH_ENV_NORMALIZED}
-    RUNTIME DESTINATION tools/bdf2fnt
+    RUNTIME DESTINATION tools/fonttools
 )
 
 install(TARGETS fuzzydoc
