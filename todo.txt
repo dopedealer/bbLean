@@ -3,15 +3,19 @@
     x move bbcore from blackbox exe to separate lib compilation
     - reorganise/split cmake files to separate cmake file - each on every target
         * split font utils
-    - remove plugin dependency of import from blackbox.exe
-    - split bbnote to separate cmake files (exe, dll)
-    - split bdf2fon cmake file to 2 separate cmake files
+        * split bbnote to separate cmake files (exe, dll)
+        - split bdf2fon cmake file to 2 separate cmake files
+        - split bsetroot cmake
+        - split bbLeanSkin cmake
+    ? remove plugin dependency of import from blackbox.exe
     - remove duplication of files  bblean_style.css (all except one in docs dir)
     - add missing dummy Figure figure1.jpg needed for fuzzydoc docs
     - move fuzzydoc util + it's files to tools/fuzzydoc folder
     ? rename bbLeanSkinEng32 to correct one ('english' ? 32 bits?)
     - remove readme.txt from bbstylemaker
     - add correspondance between 'project version' in root cmakelists.txt and data in bbversion.h
+    - move inst proj to tools
+    - move fuzzydoc proj to tools
     ? add changelog file ?
     - remove duplicate code from fuzzydoc - bblib
         - add library bblib dep
@@ -100,3 +104,4 @@ features request:
 ----------------
 - work with Wallpaper Engine app
 - xoblite_bb5_rc4 plugins compatibility
+- custom control panel app - 'restoring' classic one

@@ -115,7 +115,7 @@ add_fuzzydocs_target(GenerateDocsBsetroot "${RESOURCE_FILES_BSETROOT}"
 
 # bbnote docs
 set (RESOURCE_FILES_BBNOTE
-    ${CMAKE_CURRENT_LIST_DIR}/../tools/bbnote/bbnote.txt
+    ${CMAKE_CURRENT_LIST_DIR}/../tools/bbnote/app/bbnote.txt
 )
 set (GENERATED_FILES_BBNOTE
     bbnote.htm
