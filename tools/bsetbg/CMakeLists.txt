@@ -1,37 +1,23 @@
-cmake_minimum_required (VERSION 3.13)
+cmake_minimum_required (VERSION 3.30)
 
 option(USING_CXIMAGELIB "-- using cximage library instead of FreeImage library" ON)
 
-set (PROJECT bsetroot) 
-project (${PROJECT})
+# bsetbg executable
+set (PROJECT bsetbg) 
 
 set (INCLUDE_DIRS
-    .
-    ${BLACKBOX_INCLUDES}
     ) 
-
-if (USING_CXIMAGELIB)
-    list(APPEND INCLUDE_DIRS ${CXIMAGE_INCLUDE_DIRS})
-endif()
-
 set (LINK_DIRS
     ) 
 
 set (HEADERS
 ) 
 set (SOURCES
-    bsetroot.cpp
-    ${BLACKBOX_INCLUDE_DIR}/BImage.cpp # hack!! remove in future !
-    bsrt-rsc.rc
+    bsetbg.cpp
+    bsbg-rsc.rc
 ) 
 
-if (USING_CXIMAGELIB)
-    list(APPEND SOURCES image_cx.cpp)
-endif()
-
 set (LIBS
-    ${BBLIB_LIBRARY}
-    ${CXIMAGE_LIBRARIES}
 )
 
 if (WIN32)
@@ -47,7 +33,6 @@ if(WIN32)
 else()
   set (GUI_TYPE )
 endif() 
-# console type
 
 if(UNIX AND (CMAKE_COMPILER_IS_GNUCC OR CMAKE_COMPILER_IS_GNUCXX) )
   list(APPEND LIBS dl) 
@@ -77,15 +62,8 @@ elseif ( MINGW )
     target_link_options(${PROJECT} PRIVATE $<$<CONFIG:RELEASE>:-s>)
 endif ()
 
+
 # determine architecture - bitness
 if(CMAKE_SIZEOF_VOID_P EQUAL 8)  # means x64
     target_compile_definitions(${PROJECT} PRIVATE _WIN64 WIN64)
 endif() 
-
-# copy resource files
-if (NEED_COPY_FILES)
-    set (RESOURCE_FILES_TOCOPY
-        bsetroot.rc
-    )
-    add_target_copy_files_to_output_dir(${PROJECT} "${RESOURCE_FILES_TOCOPY}")
-endif()

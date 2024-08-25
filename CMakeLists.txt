@@ -89,6 +89,7 @@ add_subdirectory ("tools/bsetshell/" "${CMAKE_BINARY_DIR}/i/bsetshell")
 
 add_subdirectory ("tools/bsetroot/CXIMAGE/" "${CMAKE_BINARY_DIR}/i/CxImage")
 add_subdirectory ("tools/bsetroot/" "${CMAKE_BINARY_DIR}/i/bsetroot")
+add_subdirectory ("tools/bsetbg/" "${CMAKE_BINARY_DIR}/i/bsetbg")
 add_subdirectory ("tools/bbstylemaker/" "${CMAKE_BINARY_DIR}/i/bbstylemaker")
 add_subdirectory ("tools/bbnote/app" "${CMAKE_BINARY_DIR}/i/bbnoteapp")
 add_subdirectory ("tools/bbnote/proxylib" "${CMAKE_BINARY_DIR}/i/bbnoteproxylib")

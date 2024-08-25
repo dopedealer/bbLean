@@ -1,6 +1,6 @@
 #include "bsetshell.cpp"
 
-1 ICON "../bsetroot/Blackbox_inverted.ico"
+1 ICON "Bsetshell.ico"
 
 IDD_DLG1 DIALOGEX 0,0,252,104
 

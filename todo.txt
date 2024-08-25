@@ -4,9 +4,9 @@
     - reorganise/split cmake files to separate cmake file - each on every target
         * split font utils
         * split bbnote to separate cmake files (exe, dll)
-        - split bdf2fon cmake file to 2 separate cmake files
-        - split bsetroot cmake
+        * split bsetroot cmake
         - split bbLeanSkin cmake
+    - fix build on 'classic' mingw compilation with cmake
     ? remove plugin dependency of import from blackbox.exe
     - remove duplication of files  bblean_style.css (all except one in docs dir)
     - add missing dummy Figure figure1.jpg needed for fuzzydoc docs
@@ -60,7 +60,6 @@
     - bbleanBar
 - in bbLeanSkinEng remove direct in-compile hack of ../../blackbox/BImage.cpp !!!
 ? bblean skin plugin don't work without loaded bblean bar !
-- split bblean sking cmake 2 dll build to separater cmake files
 ? possibly calling 'about' corrupts string due to conversion from utf-8
 - fix about text (encoding currupted) show in: bsetbg, bsetroot
 - remove hack compilations of cpp files from bbstylemaker

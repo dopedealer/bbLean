@@ -1,8 +1,8 @@
 /* ==========================================================================
 
   This file is part of the bbLean source code
-  Copyright © 2001-2003 The Blackbox for Windows Development Team
-  Copyright © 2004-2009 grischka
+  Copyright Â© 2001-2003 The Blackbox for Windows Development Team
+  Copyright Â© 2004-2009 grischka
 
   http://bb4win.sourceforge.net/bblean
   http://developer.berlios.de/projects/bblean
@@ -28,7 +28,7 @@ LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
 //
 // Icon
 //
-100 ICON DISCARDABLE "Blackbox_inverted.ico"
+100 ICON DISCARDABLE "Bsetroot.ico"
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -53,7 +53,7 @@ BEGIN
         BEGIN
             VALUE "FileVersion", "2.1\0"
             VALUE "FileDescription", "A tool for Blackbox for Windows.\0"
-            VALUE "LegalCopyright", "Copyright © 2004-2009 grischka\0"
+            VALUE "LegalCopyright", "Copyright Â© 2004-2009 grischka\0"
             VALUE "OriginalFilename", "bsetroot.exe\0"
             VALUE "ProductName", "Blackbox for Windows\0"
             VALUE "Comments", "bsetroot.exe is a Blackbox for Windows tool to set your desktop background.\0"
