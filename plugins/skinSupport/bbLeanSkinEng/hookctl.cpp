@@ -26,8 +26,8 @@
 #include "BBApi.h"
 #include "win0x500.h"
 #include "BImage.h"
-#include "hookinfo.h"
-#include "subclass.h"
+#include "engine/hookinfo.h"
+#include "engine/subclass.h"
 
 #ifdef __GNUC__
 #define SHARED(T,X) T X __attribute__((section(".shared"), shared)) = (T)0

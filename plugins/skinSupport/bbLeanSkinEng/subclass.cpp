@@ -26,8 +26,8 @@
 #include "BBApi.h"
 #include "win0x500.h"
 #include "BImage.h"
-#include "hookinfo.h"
-#include "subclass.h"
+#include "engine/hookinfo.h"
+#include "engine/subclass.h"
 #include "drawico.h"
 
 #define array_count(ary) (sizeof(ary) / sizeof(ary[0]))

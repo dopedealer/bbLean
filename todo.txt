@@ -1,13 +1,8 @@
 
 - make cmake compilation correct and split
     x move bbcore from blackbox exe to separate lib compilation
-    - reorganise/split cmake files to separate cmake file - each on every target
-        * split font utils
-        * split bbnote to separate cmake files (exe, dll)
-        * split bsetroot cmake
-        - split bbLeanSkin cmake
+    * reorganise/split cmake files to separate cmake file - each on every target
     - fix build on 'classic' mingw compilation with cmake
-    ? remove plugin dependency of import from blackbox.exe
     - remove duplication of files  bblean_style.css (all except one in docs dir)
     - add missing dummy Figure figure1.jpg needed for fuzzydoc docs
     - move fuzzydoc util + it's files to tools/fuzzydoc folder

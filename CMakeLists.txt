@@ -64,7 +64,8 @@ set_output_subdir(CMAKE_RUNTIME_OUTPUT_DIRECTORY "plugins/bbLeanBar")
 add_subdirectory ("plugins/bbLeanBar/" "${CMAKE_BINARY_DIR}/i/bbLeanBar")
 
 set_output_subdir(CMAKE_RUNTIME_OUTPUT_DIRECTORY "plugins/bbLeanSkin")
-add_subdirectory ("plugins/bbLeanSkin/" "${CMAKE_BINARY_DIR}/i/bbLeanSkin")
+add_subdirectory ("plugins/skinSupport/bbLeanSkin/" "${CMAKE_BINARY_DIR}/i/bbLeanSkin")
+add_subdirectory ("plugins/skinSupport/bbLeanSkinEng/" "${CMAKE_BINARY_DIR}/i/bbLeanSkinEng")
 
 set_output_subdir(CMAKE_RUNTIME_OUTPUT_DIRECTORY "plugins/bbSlit")
 add_subdirectory ("plugins/bbSlit/" "${CMAKE_BINARY_DIR}/i/bbSlit")
