@@ -3,6 +3,8 @@
  * CxImage version 5.50 07/Jan/2003
  */
 
+#include <algorithm>
+
 #include "ximage.h"
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -217,7 +219,7 @@ void CxImage::RGBtoBGR(BYTE *buffer, int length)
 {
 	if (buffer && (head.biClrUsed==0)){
 		BYTE temp;
-		length = min(length,(int)info.dwEffWidth);
+		length = (std::min)(length,(int)info.dwEffWidth);
 		for (int i=0;i<length;i+=3){
 			temp = buffer[i]; buffer[i] = buffer[i+2]; buffer[i+2] = temp;
 		}
@@ -257,7 +259,7 @@ void CxImage::SetPalette(DWORD n, BYTE *r, BYTE *g, BYTE *b)
 	if (!g) g = r;
 	if (!b) b = g;
 	RGBQUAD* ppal=GetPalette();
-	DWORD m=min(n,head.biClrUsed);
+	DWORD m= (std::min)(n,head.biClrUsed);
 	for (DWORD i=0; i<m;i++){
 		ppal[i].rgbRed=r[i];
 		ppal[i].rgbGreen=g[i];
@@ -270,7 +272,7 @@ void CxImage::SetPalette(rgb_color *rgb,DWORD nColors)
 {
 	if ((!rgb)||(pDib==NULL)||(head.biClrUsed==0)) return;
 	RGBQUAD* ppal=GetPalette();
-	DWORD m=min(nColors,head.biClrUsed);
+	DWORD m= (std::min)(nColors,head.biClrUsed);
 	for (DWORD i=0; i<m;i++){
 		ppal[i].rgbRed=rgb[i].r;
 		ppal[i].rgbGreen=rgb[i].g;
@@ -281,7 +283,7 @@ void CxImage::SetPalette(rgb_color *rgb,DWORD nColors)
 void CxImage::SetPalette(RGBQUAD* pPal,DWORD nColors)
 {
 	if ((pPal==NULL)||(pDib==NULL)||(head.biClrUsed==0)) return;
-	memcpy(GetPalette(),pPal,min(GetPaletteSize(),nColors*sizeof(RGBQUAD)));
+	memcpy(GetPalette(), pPal, (std::min)(size_t(GetPaletteSize()), size_t(nColors*sizeof(RGBQUAD))) );
 }
 ////////////////////////////////////////////////////////////////////////////////
 void CxImage::SetGrayPalette()

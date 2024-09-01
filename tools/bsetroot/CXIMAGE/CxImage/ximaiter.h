@@ -29,6 +29,8 @@
 #if !defined(__ImaIter_h)
 #define __ImaIter_h
 
+#include <algorithm>
+
 #include "ximage.h"
 #include "ximadefs.h"
 
@@ -138,7 +140,7 @@ inline void CImageIterator::SetY(int y)
 inline void CImageIterator::SetRow(BYTE *buf, int n)
 {
     if (n<0) n = (int)ima->GetEffWidth();
-    else n = min(n,(int)ima->GetEffWidth());
+    else n = (std::min)(n,(int)ima->GetEffWidth());
 
     if (IterImage) memcpy(IterImage,buf,n);
 }

@@ -5,6 +5,8 @@
  * CxImage version 5.50 07/Jan/2003
  */
 
+#include <algorithm>
+
 #include "ximagif.h"
 
 #if CXIMAGE_SUPPORT_GIF
@@ -375,7 +377,7 @@ bool CxImageGIF::Encode(CxFile * fp, CxImage ** pImages, int pagecount, bool bLo
 	ghost.EncodeHeader(fp);
 
 	if (m_loops!=1){
-		ghost.SetLoops(max(0,m_loops-1));
+		ghost.SetLoops((std::max)(0,m_loops-1));
 		ghost.EncodeLoopExtension(fp);
 	}
 
@@ -1192,8 +1194,8 @@ void CxImageGIF::GetComment(char* sz_comment_out)
 ////////////////////////////////////////////////////////////////////////////////
 void CxImageGIF::GifMix(CxImage & imgsrc2, long lxOffset, long lyOffset)
 {
-    long lWide = min(GetWidth(),imgsrc2.GetWidth()-lxOffset);
-    long lHeight = min(GetHeight(),imgsrc2.GetHeight()-lyOffset);
+    long lWide = (std::min)(GetWidth(),imgsrc2.GetWidth()-lxOffset);
+    long lHeight = (std::min)(GetHeight(),imgsrc2.GetHeight()-lyOffset);
 
 	BYTE ibg2= (BYTE)imgsrc2.GetTransIndex();
     BYTE i2;

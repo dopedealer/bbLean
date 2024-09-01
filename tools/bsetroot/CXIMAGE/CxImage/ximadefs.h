@@ -28,14 +28,6 @@
  #define CXIMAGE_SUPPORT_WINDOWS 0
 #endif
 
-#ifndef min
-#define min(a,b) (((a)<(b))?(a):(b))
-#endif
-#ifndef max
-#define max(a,b) (((a)>(b))?(a):(b))
-#endif
-
-
 #ifdef WIN32
 #include <windows.h>
 //#include <tchar.h>

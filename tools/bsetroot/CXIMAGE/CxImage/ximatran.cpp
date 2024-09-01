@@ -3,6 +3,8 @@
  * CxImage version 5.50 07/Jan/2003
  */
 
+#include <algorithm>
+
 #include "ximage.h"
 
 #if CXIMAGE_SUPPORT_BASICTRANSFORMATIONS
@@ -379,10 +381,10 @@ bool CxImage::Rotate(float angle, CxImage* iDst)
     newP4.x = (long)(p4.x*cos_angle - p4.y*sin_angle);
     newP4.y = (long)(p4.x*sin_angle + p4.y*cos_angle);
 
-    leftTop.x = min(min(newP1.x,newP2.x),min(newP3.x,newP4.x));
-    leftTop.y = min(min(newP1.y,newP2.y),min(newP3.y,newP4.y));
-    rightBottom.x = max(max(newP1.x,newP2.x),max(newP3.x,newP4.x));
-    rightBottom.y = max(max(newP1.y,newP2.y),max(newP3.y,newP4.y));
+    leftTop.x = (std::min)((std::min)(newP1.x,newP2.x),(std::min)(newP3.x,newP4.x));
+    leftTop.y = (std::min)((std::min)(newP1.y,newP2.y),(std::min)(newP3.y,newP4.y));
+    rightBottom.x = (std::max)((std::max)(newP1.x,newP2.x),(std::max)(newP3.x,newP4.x));
+    rightBottom.y = (std::max)((std::max)(newP1.y,newP2.y),(std::max)(newP3.y,newP4.y));
     leftBottom.x = leftTop.x;
     leftBottom.y = rightBottom.y;
     rightTop.x = rightBottom.x;
@@ -528,12 +530,12 @@ bool CxImage::Resample(long newx, long newy, int fast, CxImage* iDst)
                 if (info.nEscape) break;
                 fY = y * yScale;
                 ifY = (int)fY;
-                ifY1 = min(ymax, ifY+1);
+                ifY1 = (std::min)(ymax, ifY+1);
                 dy = fY - ifY;
                 for(long x=0; x<newx; x++){
                     fX = x * xScale;
                     ifX = (int)fX;
-                    ifX1 = min(xmax, ifX+1);
+                    ifX1 = (std::min)(xmax, ifX+1);
                     dx = fX - ifX;
                     // Interpolate using the four nearest pixels in the source
                     if (head.biClrUsed){
@@ -723,9 +725,9 @@ bool CxImage::DecreaseBpp(DWORD nbit, bool errordiffusion, RGBQUAD* ppal)
                 eb=(long)c.rgbBlue - (long)ce.rgbBlue;
 
                 c = GetPixelColor(x+1,y);
-                c.rgbRed = (BYTE)min(255L,max(0L,(long)c.rgbRed + ((er*7)/16)));
-                c.rgbGreen = (BYTE)min(255L,max(0L,(long)c.rgbGreen + ((eg*7)/16)));
-                c.rgbBlue = (BYTE)min(255L,max(0L,(long)c.rgbBlue + ((eb*7)/16)));
+                c.rgbRed = (BYTE)(std::min)(255L,(std::max)(0L,(long)c.rgbRed + ((er*7)/16)));
+                c.rgbGreen = (BYTE)(std::min)(255L,(std::max)(0L,(long)c.rgbGreen + ((eg*7)/16)));
+                c.rgbBlue = (BYTE)(std::min)(255L,(std::max)(0L,(long)c.rgbBlue + ((eb*7)/16)));
                 SetPixelColor(x+1,y,c);
                 int coeff = 0;
                 for(int i=-1; i<2; i++){
@@ -738,9 +740,9 @@ bool CxImage::DecreaseBpp(DWORD nbit, bool errordiffusion, RGBQUAD* ppal)
                         coeff=1; break;
                     }
                     c = GetPixelColor(x+i,y+1);
-                    c.rgbRed = (BYTE)min(255L,max(0L,(long)c.rgbRed + ((er * coeff)/16)));
-                    c.rgbGreen = (BYTE)min(255L,max(0L,(long)c.rgbGreen + ((eg * coeff)/16)));
-                    c.rgbBlue = (BYTE)min(255L,max(0L,(long)c.rgbBlue + ((eb * coeff)/16)));
+                    c.rgbRed = (BYTE)(std::min)(255L,(std::max)(0L,(long)c.rgbRed + ((er * coeff)/16)));
+                    c.rgbGreen = (BYTE)(std::min)(255L,(std::max)(0L,(long)c.rgbGreen + ((eg * coeff)/16)));
+                    c.rgbBlue = (BYTE)(std::min)(255L,(std::max)(0L,(long)c.rgbBlue + ((eb * coeff)/16)));
                     SetPixelColor(x+i,y+1,c);
                 }
             }
@@ -944,7 +946,7 @@ bool CxImage::Dither(long method)
                 }
 
                 nlevel = GetPixelIndex(x+1,y) + (error * 7)/16;
-                level = (BYTE)min(255,max(0,(int)nlevel));
+                level = (BYTE)(std::min)(255,(std::max)(0,(int)nlevel));
                 SetPixelIndex(x+1,y,level);
                 for(int i=-1; i<2; i++){
                     switch(i){
@@ -956,7 +958,7 @@ bool CxImage::Dither(long method)
                         coeff=1; break;
                     }
                     nlevel = GetPixelIndex(x+i,y+1) + (error * coeff)/16;
-                    level = (BYTE)min(255,max(0,(int)nlevel));
+                    level = (BYTE)(std::min)(255,(std::max)(0,(int)nlevel));
                     SetPixelIndex(x+i,y+1,level);
                 }
             }
@@ -973,10 +975,10 @@ bool CxImage::Crop(long left, long top, long right, long bottom, CxImage* iDst)
 {
     if (!pDib) return false;
 
-    long startx = max(0L,min(left,head.biWidth));
-    long endx = max(0L,min(right,head.biWidth));
-    long starty = head.biHeight - max(0L,min(top,head.biHeight));
-    long endy = head.biHeight - max(0L,min(bottom,head.biHeight));
+    long startx = (std::max)(0L,(std::min)(left,head.biWidth));
+    long endx = (std::max)(0L,(std::min)(right,head.biWidth));
+    long starty = head.biHeight - (std::max)(0L,(std::min)(top,head.biHeight));
+    long endy = head.biHeight - (std::max)(0L,(std::min)(bottom,head.biHeight));
 
     if (startx==endx || starty==endy) return false;
 

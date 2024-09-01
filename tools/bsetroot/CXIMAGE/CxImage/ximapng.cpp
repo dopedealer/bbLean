@@ -128,7 +128,7 @@ bool CxImagePNG::Decode(CxFile *hFile)
 		RGBQUAD* pal=GetPalette();
 		if (pal){
 			DWORD ip;
-			for (ip=0;ip<min(head.biClrUsed,(unsigned long)info_ptr->num_trans);ip++)
+			for (ip=0;ip<(std::min)(head.biClrUsed,(unsigned long)info_ptr->num_trans);ip++)
 				pal[ip].rgbReserved=info_ptr->trans[ip];
 			if (info_ptr->num_trans==1 && pal[0].rgbReserved==0){
 				info.nBkgndIndex = 0;

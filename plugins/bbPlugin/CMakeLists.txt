@@ -25,6 +25,7 @@ set (SOURCES
     ) 
 
 set (LIBS
+    ${BLACKBOX_LIBRARIES}
     )
 
 if (WIN32)

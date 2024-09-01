@@ -3,6 +3,7 @@
  * CxImage version 5.50 07/Jan/2003
  */
 
+#include <algorithm>
 #include "ximage.h"
 
 
@@ -152,10 +153,10 @@ long CxImage::Draw(HDC hdc, long x, long y, long cx, long cy, RECT* pClipRect)
 		} else { //STRETCH
 			RECT clipbox,paintbox;
 			GetClipBox(hdc,&clipbox);
-			paintbox.left = min(clipbox.right,max(clipbox.left,x));
-			paintbox.right = max(clipbox.left,min(clipbox.right,x+cx));
-			paintbox.top = min(clipbox.bottom,max(clipbox.top,y));
-			paintbox.bottom = max(clipbox.top,min(clipbox.bottom,y+cy));
+			paintbox.left = (std::min)(clipbox.right,(std::max)(clipbox.left,x));
+			paintbox.right = (std::max)(clipbox.left,(std::min)(clipbox.right,x+cx));
+			paintbox.top = (std::min)(clipbox.bottom,(std::max)(clipbox.top,y));
+			paintbox.bottom = (std::max)(clipbox.top,(std::min)(clipbox.bottom,y+cy));
 			long destw = paintbox.right - paintbox.left;
 			long desth = paintbox.bottom - paintbox.top;
 			//pixel informations
@@ -186,7 +187,7 @@ long CxImage::Draw(HDC hdc, long x, long y, long cx, long cy, RECT* pClipRect)
 				float fy=(float)head.biHeight/(float)cy;
 				long sx,sy;
 				for(yy=0;yy<desth;yy++){
-					sy=max(0L,head.biHeight-(long)ceil(((ymax-yy-y)*fy)));
+					sy=(std::max)(0L,head.biHeight-(long)ceil(((ymax-yy-y)*fy)));
 					yoffset=sy*head.biWidth;
 					pdst=pbase+yy*ew;
 					for(xx=0;xx<destw;xx++){
@@ -217,10 +218,10 @@ long CxImage::Draw(HDC hdc, long x, long y, long cx, long cy, RECT* pClipRect)
 		//find the smallest area to paint
 		RECT clipbox,paintbox;
 		GetClipBox(hdc,&clipbox);
-		paintbox.left = min(clipbox.right,max(clipbox.left,x));
-		paintbox.right = max(clipbox.left,min(clipbox.right,x+cx));
-		paintbox.top = min(clipbox.bottom,max(clipbox.top,y));
-		paintbox.bottom = max(clipbox.top,min(clipbox.bottom,y+cy));
+		paintbox.left = (std::min)(clipbox.right,(std::max)(clipbox.left,x));
+		paintbox.right = (std::max)(clipbox.left,(std::min)(clipbox.right,x+cx));
+		paintbox.top = (std::min)(clipbox.bottom,(std::max)(clipbox.top,y));
+		paintbox.bottom = (std::max)(clipbox.top,(std::min)(clipbox.bottom,y+cy));
 		long destw = paintbox.right - paintbox.left;
 		long desth = paintbox.bottom - paintbox.top;
 
@@ -263,7 +264,7 @@ long CxImage::Draw(HDC hdc, long x, long y, long cx, long cy, RECT* pClipRect)
 				long sx,sy;
 				
 				for(yy=0;yy<desth;yy++){
-					sy=max(0L,head.biHeight-(long)ceil(((ymax-yy-y)*fy)));
+					sy=(std::max)(0L,head.biHeight-(long)ceil(((ymax-yy-y)*fy)));
 					yoffset=sy*head.biWidth;
 					pdst=pbase+yy*ew;
 					for(xx=0;xx<destw;xx++){

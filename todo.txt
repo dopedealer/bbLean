@@ -2,7 +2,8 @@
 - make cmake compilation correct and split
     x move bbcore from blackbox exe to separate lib compilation
     * reorganise/split cmake files to separate cmake file - each on every target
-    - fix build on 'classic' mingw compilation with cmake
+    * fix build on 'classic' mingw compilation with cmake
+    - move string tests to separate cpp file
     - remove duplication of files  bblean_style.css (all except one in docs dir)
     - add missing dummy Figure figure1.jpg needed for fuzzydoc docs
     - move fuzzydoc util + it's files to tools/fuzzydoc folder
@@ -51,13 +52,14 @@
 ? change structure - source + include dirs for plugins
 - move to wchar_t paths usage (inside)
 ? fix shared build of bblib
-- remove direct cpp file include from:
-    - bbleanBar
-- in bbLeanSkinEng remove direct in-compile hack of ../../blackbox/BImage.cpp !!!
 ? bblean skin plugin don't work without loaded bblean bar !
 ? possibly calling 'about' corrupts string due to conversion from utf-8
 - fix about text (encoding currupted) show in: bsetbg, bsetroot
-- remove hack compilations of cpp files from bbstylemaker
+- remove hack compilations of:
+    - cpp files from bbstylemaker
+    - in bbLeanSkinEng remove direct in-compile hack of ../../blackbox/BImage.cpp !!!
+    - remove direct cpp file include from:
+        - bbleanBar
 - change fuzzygen:
     - search for template files in it's exe directory
     - add possibility to set output dir via cmdline arg
