@@ -137,7 +137,7 @@ if (BUILD_TESTS)
         folder with google test sources")
     endif() 
 
-    add_subdirectory ("tests/dummy/" "${CMAKE_BINARY_DIR}/i/test_dummy")
+    add_subdirectory ("tests/test_dummy/" "${CMAKE_BINARY_DIR}/i/test_dummy")
     add_subdirectory ("tests/test_bblib/" "${CMAKE_BINARY_DIR}/i/test_bblib")
     add_subdirectory ("tests/test_blackbox/" "${CMAKE_BINARY_DIR}/i/test_blackbox")
 else()

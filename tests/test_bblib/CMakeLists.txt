@@ -20,6 +20,7 @@ set (HEADERS
 set (SOURCES
     test_main.cpp
     test_core.cpp
+    test_strings.cpp
 ) 
 
 set (LIBS

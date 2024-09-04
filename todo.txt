@@ -3,16 +3,16 @@
     x move bbcore from blackbox exe to separate lib compilation
     * reorganise/split cmake files to separate cmake file - each on every target
     * fix build on 'classic' mingw compilation with cmake
-    - move string tests to separate cpp file
-    - remove duplication of files  bblean_style.css (all except one in docs dir)
-    - add missing dummy Figure figure1.jpg needed for fuzzydoc docs
+    * move string tests to separate cpp file
+    * remove duplication of files  bblean_style.css (all except one in docs dir)
+    * add missing dummy Figure figure1.jpg needed for fuzzydoc docs
+    x fix individual build deps if missing
     - move fuzzydoc util + it's files to tools/fuzzydoc folder
-    ? rename bbLeanSkinEng32 to correct one ('english' ? 32 bits?)
     - remove readme.txt from bbstylemaker
-    - add correspondance between 'project version' in root cmakelists.txt and data in bbversion.h
     - move inst proj to tools
     - move fuzzydoc proj to tools
     ? add changelog file ?
+    - add correspondance between 'project version' in root cmakelists.txt and data in bbversion.h
     - remove duplicate code from fuzzydoc - bblib
         - add library bblib dep
         - add runtime dep gathering if needed
@@ -34,15 +34,20 @@
             - cover bblib exported api with tests
             ? make possible compilation of bbcore as static and as dynamic lib 
         - remove hack in bbnote - in-compile sources from other dir
-    - make bblib buildable as dynamic based on option
-        - make compilation
-            - error: undefined symbol: bbWC2MB in pidl.c (located in blackbox)
-                - move bbWC2MB,bbWC2MB to strings.c and exported with usage and forwarding export in blackbox
-                    * create helper wchar string convertin func in bblib
-                    ? pidl uses bbWC2MB that depends on flag
-                    ? the bbWC2MB depends on property Settings_UTF8Encoding in blackbox
-                    - make tests for wchar_to_mbs
-            - undefined symbol: defaultrcPath in pidl.c (located in blackbox)
+        - remove hack compilations of:
+            - cpp files from bbstylemaker
+            - in bbLeanSkinEng remove direct in-compile hack of ../../blackbox/BImage.cpp !!!
+            - remove direct cpp file include from:
+                - bbleanBar
+            - make bblib buildable as dynamic based on option
+                - make compilation
+                    - error: undefined symbol: bbWC2MB in pidl.c (located in blackbox)
+                        - move bbWC2MB,bbWC2MB to strings.c and exported with usage and forwarding export in blackbox
+                            * create helper wchar string convertin func in bblib
+                            ? pidl uses bbWC2MB that depends on flag
+                            ? the bbWC2MB depends on property Settings_UTF8Encoding in blackbox
+                            - make tests for wchar_to_mbs
+                    - undefined symbol: defaultrcPath in pidl.c (located in blackbox)
         - make sure needed defs defined based on option
         - set correct artifacts gaterhing to instaler build
         - remove global variable in rc functionality 
@@ -55,11 +60,6 @@
 ? bblean skin plugin don't work without loaded bblean bar !
 ? possibly calling 'about' corrupts string due to conversion from utf-8
 - fix about text (encoding currupted) show in: bsetbg, bsetroot
-- remove hack compilations of:
-    - cpp files from bbstylemaker
-    - in bbLeanSkinEng remove direct in-compile hack of ../../blackbox/BImage.cpp !!!
-    - remove direct cpp file include from:
-        - bbleanBar
 - change fuzzygen:
     - search for template files in it's exe directory
     - add possibility to set output dir via cmdline arg
@@ -67,6 +67,7 @@
     - move to utf-8 input files proceeding
 - make bbnote doc more fuzzy syntax compatible - more like vanilla bbnote.htm
 - make export functions commented in doxygen style
+? rename bbLeanSkinEng32 to correct one ('english' ? 32 bits?)
 
 - move bblib c files to cpp with careful export conventions
 - make external utf-8 only in char* args

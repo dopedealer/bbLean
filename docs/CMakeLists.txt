@@ -88,6 +88,7 @@ set (RESOURCE_FILES_BBOX
     bblean_style.css
     ${CMAKE_CURRENT_LIST_DIR}/../blackbox/nls-c.txt
     ${CMAKE_CURRENT_LIST_DIR}/../blackbox/Menu/menu-bullets.bmp
+    ${CMAKE_CURRENT_LIST_DIR}/../build/fuzzydoc/figure1.jpg
 )
 set (GENERATED_FILES_BBOX
     bblean.htm
