@@ -88,7 +88,7 @@ set (RESOURCE_FILES_BBOX
     bblean_style.css
     ${CMAKE_CURRENT_LIST_DIR}/../blackbox/nls-c.txt
     ${CMAKE_CURRENT_LIST_DIR}/../blackbox/Menu/menu-bullets.bmp
-    ${CMAKE_CURRENT_LIST_DIR}/../build/fuzzydoc/figure1.jpg
+    ${CMAKE_CURRENT_LIST_DIR}/../tools/fuzzydoc/figure1.jpg
 )
 set (GENERATED_FILES_BBOX
     bblean.htm
@@ -127,7 +127,7 @@ add_fuzzydocs_target(GenerateDocsBBnote "${RESOURCE_FILES_BBNOTE}"
 
 # fuzzydoc docs
 set (RESOURCE_FILES_BBNOTE
-    ${CMAKE_CURRENT_LIST_DIR}/../build/fuzzydoc/fuzzydoc.txt
+    ${CMAKE_CURRENT_LIST_DIR}/../tools/fuzzydoc/fuzzydoc.txt
 )
 set (GENERATED_FILES_BBNOTE
     fuzzydoc.htm

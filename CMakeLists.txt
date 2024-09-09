@@ -41,13 +41,13 @@ set_output_subdir(CMAKE_RUNTIME_OUTPUT_DIRECTORY "")
 set_output_subdir(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "lib")
 set_output_subdir(CMAKE_LIBRARY_OUTPUT_DIRECTORY "lib")
 
-add_subdirectory ("build/" "${CMAKE_BINARY_DIR}/i/inst")
+add_subdirectory ("tools/install" "${CMAKE_BINARY_DIR}/i/inst")
 add_subdirectory ("bblib/" "${CMAKE_BINARY_DIR}/i/bblib")
 add_subdirectory ("blackbox/" "${CMAKE_BINARY_DIR}/i/blackbox")
 
 set_output_subdir(CMAKE_RUNTIME_OUTPUT_DIRECTORY "tools/fuzzydoc")
 ##add_subdirectory ("blackbox/Hooks/" "${CMAKE_BINARY_DIR}/i/blackbox/Hooks") # is it needed ?
-add_subdirectory ("build/fuzzydoc/" "${CMAKE_BINARY_DIR}/i/fuzzydoc")
+add_subdirectory ("tools/fuzzydoc/" "${CMAKE_BINARY_DIR}/i/fuzzydoc")
 
 set_output_subdir(CMAKE_RUNTIME_OUTPUT_DIRECTORY "docs")
 if (USE_RES_GENERATION)

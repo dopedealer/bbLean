@@ -7,11 +7,9 @@
     * remove duplication of files  bblean_style.css (all except one in docs dir)
     * add missing dummy Figure figure1.jpg needed for fuzzydoc docs
     x fix individual build deps if missing
-    - move fuzzydoc util + it's files to tools/fuzzydoc folder
-    - remove readme.txt from bbstylemaker
-    - move inst proj to tools
-    - move fuzzydoc proj to tools
-    ? add changelog file ?
+    * move fuzzydoc util + it's files to tools/fuzzydoc folder
+    * remove readme.txt from bbstylemaker
+    * move inst proj to tools
     - add correspondance between 'project version' in root cmakelists.txt and data in bbversion.h
     - remove duplicate code from fuzzydoc - bblib
         - add library bblib dep
@@ -89,6 +87,7 @@
 - make incremental adding compiled plugins to config ini
 - in bbroot.h remove statics
 ? uwp gui-based windows case ?
+? add changelog file ?
 
 bugs to fix:
 -----------
