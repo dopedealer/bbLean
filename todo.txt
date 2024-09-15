@@ -1,16 +1,5 @@
 
-- make cmake compilation correct and split
-    x move bbcore from blackbox exe to separate lib compilation
-    * reorganise/split cmake files to separate cmake file - each on every target
-    * fix build on 'classic' mingw compilation with cmake
-    * move string tests to separate cpp file
-    * remove duplication of files  bblean_style.css (all except one in docs dir)
-    * add missing dummy Figure figure1.jpg needed for fuzzydoc docs
-    x fix individual build deps if missing
-    * move fuzzydoc util + it's files to tools/fuzzydoc folder
-    * remove readme.txt from bbstylemaker
-    * move inst proj to tools
-    - add correspondance between 'project version' in root cmakelists.txt and data in bbversion.h
+- make deeper build refactoring
     - remove duplicate code from fuzzydoc - bblib
         - add library bblib dep
         - add runtime dep gathering if needed
@@ -30,7 +19,7 @@
                 ? missing in-compile functions: bimage_init, ReadStyle
         - resolve: exports in original are exported from exe and plugins use it
             - cover bblib exported api with tests
-            ? make possible compilation of bbcore as static and as dynamic lib 
+            ? make possible compilation of bbcore as static and as dynamic lib
         - remove hack in bbnote - in-compile sources from other dir
         - remove hack compilations of:
             - cpp files from bbstylemaker

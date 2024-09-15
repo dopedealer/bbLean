@@ -87,7 +87,7 @@ BEGIN
             VALUE "LegalCopyright", "Copyright © 2004-2009 grischka\0"
             VALUE "OriginalFilename", "blackbox.exe\0"
             VALUE "ProductName", "Blackbox for Windows\0"
-            VALUE "ProductVersion", BBAPPVERSION"\0"
+            VALUE "ProductVersion", BBAPPVERSION "\0"
             VALUE "Comments", "bbLean - A new generation of Blackbox for Windows." "\r\nBased stylistically on the Blackbox window manager" " for the X Window System by Brad Hughes.\0"
         END
     END
