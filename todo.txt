@@ -1,10 +1,5 @@
 
 - make deeper build refactoring
-    - remove duplicate code from fuzzydoc - bblib
-        - add library bblib dep
-        - add runtime dep gathering if needed
-    - remove global variables in bblib (rc global state)
-    - try to remove include blackbox dir from bblib
     - try to resolve in-copmpile blackbox hacks
         ? bsetroot requires static in-compilation of bimage.cpp
             ? needs functions bimage_init bimage_create bimage_destroy bimage_getpixels
@@ -38,6 +33,13 @@
         - make sure needed defs defined based on option
         - set correct artifacts gaterhing to instaler build
         - remove global variable in rc functionality 
+    - remove global variables in bblib (rc global state)
+    - try to remove include blackbox dir from bblib
+
+- make other refactorings
+    - remove duplicate code from fuzzydoc - bblib
+        - add library bblib dep
+        - add runtime dep gathering if needed
 
 ? remove __BBCORE__ macro usage in blackbox.exe
 - add 'no skin' variant to use original grey skin
