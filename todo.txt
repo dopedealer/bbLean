@@ -93,3 +93,4 @@ features request:
 - work with Wallpaper Engine app
 - xoblite_bb5_rc4 plugins compatibility
 - custom control panel app - 'restoring' classic one
+- make app for fast replacement of old windows photo viewer (rundll32 "%ProgramFiles%\Windows Photo Viewer\PhotoViewer.dll")
