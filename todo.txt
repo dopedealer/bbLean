@@ -84,6 +84,7 @@ bugs to fix:
 - correct work under windows 11
 - correct work 'as shell' under windows 10
 - correct work 'as shell' under windows 11
+- oni.exe game does not run via menu under windows 10 x64
 
 features request:
 ----------------

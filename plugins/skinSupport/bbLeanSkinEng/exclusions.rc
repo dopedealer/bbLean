@@ -37,9 +37,12 @@
 # ---------------------------------------
 # programs which come with their own skin:
 
-  trillian.exe
   toolkit.dll
   winamp.exe
+  devenv.exe
+  Resolve.exe
+  steam.exe
+  vmware.exe
 
 # programs with trouble
 
