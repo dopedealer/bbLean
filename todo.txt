@@ -1,7 +1,15 @@
 
 - make deeper build refactoring
     - try to resolve in-copmpile blackbox hacks
-        ? bsetroot requires static in-compilation of bimage.cpp
+        - fix bsetroot requires static in-compilation of bimage.cpp
+            * move sources to src folder
+            * move configs in root, styles, etc to data folder
+            * check all compiles and generates successfully
+            - make separate static only lib bbcore with namespace bbcore inside, no exports
+            - move blackbox to use bbcore lib
+            - move all blackbox functionality to bbcore lib
+            - replace direct in-compile of cpp from ex blackbox in bsetroot to usage of static lib bbcore
+            - try remove direct in-compile of image_cx.cpp
             ? needs functions bimage_init bimage_create bimage_destroy bimage_getpixels
                 ? try move bimage functions to bblib
                     ? bimage uses global static variables

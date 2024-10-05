@@ -139,12 +139,12 @@ endif()
 # copying resources
 if (NEED_COPY_FILES)
     set (RESOURCE_FILES_TOCOPY
-        ${CMAKE_CURRENT_LIST_DIR}/../menu.rc
-        ${CMAKE_CURRENT_LIST_DIR}/../blackbox.rc
-        ${CMAKE_CURRENT_LIST_DIR}/../extensions.rc
-        ${CMAKE_CURRENT_LIST_DIR}/../plugins.rc
-        ${CMAKE_CURRENT_LIST_DIR}/../shellfolders.rc
-        ${CMAKE_CURRENT_LIST_DIR}/../stickywindows.ini
+        ${CMAKE_CURRENT_LIST_DIR}/../../data/menu.rc
+        ${CMAKE_CURRENT_LIST_DIR}/../../data/blackbox.rc
+        ${CMAKE_CURRENT_LIST_DIR}/../../data/extensions.rc
+        ${CMAKE_CURRENT_LIST_DIR}/../../data/plugins.rc
+        ${CMAKE_CURRENT_LIST_DIR}/../../data/shellfolders.rc
+        ${CMAKE_CURRENT_LIST_DIR}/../../data/stickywindows.ini
     )
     add_target_copy_files_to_output_dir(${PROJECT} "${RESOURCE_FILES_TOCOPY}")
 
@@ -154,16 +154,16 @@ if (NEED_COPY_FILES)
             TARGET ${PROJECT}
             POST_BUILD
             COMMAND ${CMAKE_COMMAND} -E make_directory "${ARTIFACTS_OUTPUT_DIR}/styles/3colours"
-            COMMAND ${CMAKE_COMMAND} -E copy_if_different "${CMAKE_CURRENT_LIST_DIR}/../styles/3colours/blue" "${ARTIFACTS_OUTPUT_DIR}/styles/3colours/blue"
-            COMMAND ${CMAKE_COMMAND} -E copy_if_different "${CMAKE_CURRENT_LIST_DIR}/../styles/3colours/green" "${ARTIFACTS_OUTPUT_DIR}/styles/3colours/green"
-            COMMAND ${CMAKE_COMMAND} -E copy_if_different "${CMAKE_CURRENT_LIST_DIR}/../styles/3colours/red" "${ARTIFACTS_OUTPUT_DIR}/styles/3colours/red"
+            COMMAND ${CMAKE_COMMAND} -E copy_if_different "${CMAKE_CURRENT_LIST_DIR}/../../data/styles/3colours/blue" "${ARTIFACTS_OUTPUT_DIR}/styles/3colours/blue"
+            COMMAND ${CMAKE_COMMAND} -E copy_if_different "${CMAKE_CURRENT_LIST_DIR}/../../data/styles/3colours/green" "${ARTIFACTS_OUTPUT_DIR}/styles/3colours/green"
+            COMMAND ${CMAKE_COMMAND} -E copy_if_different "${CMAKE_CURRENT_LIST_DIR}/../../data/styles/3colours/red" "${ARTIFACTS_OUTPUT_DIR}/styles/3colours/red"
         )
         add_custom_command(
             TARGET ${PROJECT}
             POST_BUILD
             COMMAND ${CMAKE_COMMAND} -E make_directory "${ARTIFACTS_OUTPUT_DIR}/backgrounds/3colours"
-            COMMAND ${CMAKE_COMMAND} -E copy_if_different "${CMAKE_CURRENT_LIST_DIR}/../backgrounds/3colours/blue.jpg" "${ARTIFACTS_OUTPUT_DIR}/backgrounds/3colours/blue.jpg"
-            COMMAND ${CMAKE_COMMAND} -E copy_if_different "${CMAKE_CURRENT_LIST_DIR}/../backgrounds/3colours/red.jpg" "${ARTIFACTS_OUTPUT_DIR}/backgrounds/3colours/red.jpg"
+            COMMAND ${CMAKE_COMMAND} -E copy_if_different "${CMAKE_CURRENT_LIST_DIR}/../../data/backgrounds/3colours/blue.jpg" "${ARTIFACTS_OUTPUT_DIR}/backgrounds/3colours/blue.jpg"
+            COMMAND ${CMAKE_COMMAND} -E copy_if_different "${CMAKE_CURRENT_LIST_DIR}/../../data/backgrounds/3colours/red.jpg" "${ARTIFACTS_OUTPUT_DIR}/backgrounds/3colours/red.jpg"
         )
     endif()
 endif()

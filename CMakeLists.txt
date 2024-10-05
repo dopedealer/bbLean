@@ -41,13 +41,13 @@ set_output_subdir(CMAKE_RUNTIME_OUTPUT_DIRECTORY "")
 set_output_subdir(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "lib")
 set_output_subdir(CMAKE_LIBRARY_OUTPUT_DIRECTORY "lib")
 
-add_subdirectory ("tools/install" "${CMAKE_BINARY_DIR}/i/inst")
-add_subdirectory ("bblib/" "${CMAKE_BINARY_DIR}/i/bblib")
-add_subdirectory ("blackbox/" "${CMAKE_BINARY_DIR}/i/blackbox")
+add_subdirectory ("src/tools/install" "${CMAKE_BINARY_DIR}/i/inst")
+add_subdirectory ("src/bblib/" "${CMAKE_BINARY_DIR}/i/bblib")
+add_subdirectory ("src/blackbox/" "${CMAKE_BINARY_DIR}/i/blackbox")
 
 set_output_subdir(CMAKE_RUNTIME_OUTPUT_DIRECTORY "tools/fuzzydoc")
 ##add_subdirectory ("blackbox/Hooks/" "${CMAKE_BINARY_DIR}/i/blackbox/Hooks") # is it needed ?
-add_subdirectory ("tools/fuzzydoc/" "${CMAKE_BINARY_DIR}/i/fuzzydoc")
+add_subdirectory ("src/tools/fuzzydoc/" "${CMAKE_BINARY_DIR}/i/fuzzydoc")
 
 set_output_subdir(CMAKE_RUNTIME_OUTPUT_DIRECTORY "docs")
 if (USE_RES_GENERATION)
@@ -55,53 +55,53 @@ if (USE_RES_GENERATION)
 endif()
 
 set_output_subdir(CMAKE_RUNTIME_OUTPUT_DIRECTORY "plugins/bbKeys")
-add_subdirectory ("plugins/bbKeys/" "${CMAKE_BINARY_DIR}/i/bbKeys")
+add_subdirectory ("src/plugins/bbKeys/" "${CMAKE_BINARY_DIR}/i/bbKeys")
 
 set_output_subdir(CMAKE_RUNTIME_OUTPUT_DIRECTORY "plugins/bbPlugin")
-add_subdirectory ("plugins/bbPlugin/" "${CMAKE_BINARY_DIR}/i/bbPlugin")
+add_subdirectory ("src/plugins/bbPlugin/" "${CMAKE_BINARY_DIR}/i/bbPlugin")
 
 set_output_subdir(CMAKE_RUNTIME_OUTPUT_DIRECTORY "plugins/bbLeanBar")
-add_subdirectory ("plugins/bbLeanBar/" "${CMAKE_BINARY_DIR}/i/bbLeanBar")
+add_subdirectory ("src/plugins/bbLeanBar/" "${CMAKE_BINARY_DIR}/i/bbLeanBar")
 
 set_output_subdir(CMAKE_RUNTIME_OUTPUT_DIRECTORY "plugins/bbLeanSkin")
-add_subdirectory ("plugins/skinSupport/bbLeanSkin/" "${CMAKE_BINARY_DIR}/i/bbLeanSkin")
-add_subdirectory ("plugins/skinSupport/bbLeanSkinEng/" "${CMAKE_BINARY_DIR}/i/bbLeanSkinEng")
+add_subdirectory ("src/plugins/skinSupport/bbLeanSkin/" "${CMAKE_BINARY_DIR}/i/bbLeanSkin")
+add_subdirectory ("src/plugins/skinSupport/bbLeanSkinEng/" "${CMAKE_BINARY_DIR}/i/bbLeanSkinEng")
 
 set_output_subdir(CMAKE_RUNTIME_OUTPUT_DIRECTORY "plugins/bbSlit")
-add_subdirectory ("plugins/bbSlit/" "${CMAKE_BINARY_DIR}/i/bbSlit")
+add_subdirectory ("src/plugins/bbSlit/" "${CMAKE_BINARY_DIR}/i/bbSlit")
 
 set_output_subdir(CMAKE_RUNTIME_OUTPUT_DIRECTORY "plugins/bbAnalog")
-add_subdirectory ("plugins/bbAnalog/" "${CMAKE_BINARY_DIR}/i/bbAnalog")
+add_subdirectory ("src/plugins/bbAnalog/" "${CMAKE_BINARY_DIR}/i/bbAnalog")
 
 set_output_subdir(CMAKE_RUNTIME_OUTPUT_DIRECTORY "plugins/bbIconBox")
-add_subdirectory ("plugins/bbIconBox/" "${CMAKE_BINARY_DIR}/i/bbIconBox")
+add_subdirectory ("src/plugins/bbIconBox/" "${CMAKE_BINARY_DIR}/i/bbIconBox")
 
 set_output_subdir(CMAKE_RUNTIME_OUTPUT_DIRECTORY "plugins/bbColor3dc")
-add_subdirectory ("plugins/bbColor3dc/" "${CMAKE_BINARY_DIR}/i/bbColor3dc")
+add_subdirectory ("src/plugins/bbColor3dc/" "${CMAKE_BINARY_DIR}/i/bbColor3dc")
 
 set_output_subdir(CMAKE_RUNTIME_OUTPUT_DIRECTORY "plugins/bbWorkspaceWheel")
-add_subdirectory ("plugins/bbWorkspaceWheel/" "${CMAKE_BINARY_DIR}/i/bbWorkspaceWheel")
+add_subdirectory ("src/plugins/bbWorkspaceWheel/" "${CMAKE_BINARY_DIR}/i/bbWorkspaceWheel")
 
 set_output_subdir(CMAKE_RUNTIME_OUTPUT_DIRECTORY "plugins/bbSDK")
-add_subdirectory ("plugins/bbSDK/" "${CMAKE_BINARY_DIR}/i/bbSDK")
+add_subdirectory ("src/plugins/bbSDK/" "${CMAKE_BINARY_DIR}/i/bbSDK")
 
 set_output_subdir(CMAKE_RUNTIME_OUTPUT_DIRECTORY "")
-add_subdirectory ("tools/bsetshell/" "${CMAKE_BINARY_DIR}/i/bsetshell")
+add_subdirectory ("src/tools/bsetshell/" "${CMAKE_BINARY_DIR}/i/bsetshell")
 
-add_subdirectory ("tools/bsetroot/CXIMAGE/" "${CMAKE_BINARY_DIR}/i/CxImage")
-add_subdirectory ("tools/bsetroot/" "${CMAKE_BINARY_DIR}/i/bsetroot")
-add_subdirectory ("tools/bsetbg/" "${CMAKE_BINARY_DIR}/i/bsetbg")
-add_subdirectory ("tools/bbstylemaker/" "${CMAKE_BINARY_DIR}/i/bbstylemaker")
-add_subdirectory ("tools/bbnote/app" "${CMAKE_BINARY_DIR}/i/bbnote")
-add_subdirectory ("tools/bbnote/proxylib" "${CMAKE_BINARY_DIR}/i/bbnote_proxy")
+add_subdirectory ("src/tools/bsetroot/CXIMAGE/" "${CMAKE_BINARY_DIR}/i/CxImage")
+add_subdirectory ("src/tools/bsetroot/" "${CMAKE_BINARY_DIR}/i/bsetroot")
+add_subdirectory ("src/tools/bsetbg/" "${CMAKE_BINARY_DIR}/i/bsetbg")
+add_subdirectory ("src/tools/bbstylemaker/" "${CMAKE_BINARY_DIR}/i/bbstylemaker")
+add_subdirectory ("src/tools/bbnote/app" "${CMAKE_BINARY_DIR}/i/bbnote")
+add_subdirectory ("src/tools/bbnote/proxylib" "${CMAKE_BINARY_DIR}/i/bbnote_proxy")
 
 set_output_subdir(CMAKE_RUNTIME_OUTPUT_DIRECTORY "tools/fonttools")
-add_subdirectory ("tools/fonttools/fnt2fon/" "${CMAKE_BINARY_DIR}/i/fnt2fon")
-add_subdirectory ("tools/fonttools/bdf2fnt/" "${CMAKE_BINARY_DIR}/i/bdf2fnt")
+add_subdirectory ("src/tools/fonttools/fnt2fon/" "${CMAKE_BINARY_DIR}/i/fnt2fon")
+add_subdirectory ("src/tools/fonttools/bdf2fnt/" "${CMAKE_BINARY_DIR}/i/bdf2fnt")
 
 if (USE_RES_GENERATION)
     set_output_subdir(CMAKE_RUNTIME_OUTPUT_DIRECTORY "fonts")
-    add_subdirectory ("fonts/" "${CMAKE_BINARY_DIR}/i/fonts")
+    add_subdirectory ("data/fonts/" "${CMAKE_BINARY_DIR}/i/fonts")
 endif()
 
 # restore default path
@@ -137,9 +137,9 @@ if (BUILD_TESTS)
         folder with google test sources")
     endif() 
 
-    add_subdirectory ("tests/test_dummy/" "${CMAKE_BINARY_DIR}/i/test_dummy")
-    add_subdirectory ("tests/test_bblib/" "${CMAKE_BINARY_DIR}/i/test_bblib")
-    add_subdirectory ("tests/test_blackbox/" "${CMAKE_BINARY_DIR}/i/test_blackbox")
+    add_subdirectory ("src/tests/test_dummy/" "${CMAKE_BINARY_DIR}/i/test_dummy")
+    add_subdirectory ("src/tests/test_bblib/" "${CMAKE_BINARY_DIR}/i/test_bblib")
+    add_subdirectory ("src/tests/test_blackbox/" "${CMAKE_BINARY_DIR}/i/test_blackbox")
 else()
     message("-- not using tests")
 endif()
@@ -218,8 +218,8 @@ install (FILES ${ARTIFACTS_OUTPUT_DIR}/bbstylemaker.txt DESTINATION docs)
 
 # plugin developement headers
 install (FILES 
-    blackbox/BBApi.h
-    bblib/bblib.h
+    src/blackbox/BBApi.h
+    src/bblib/bblib.h
     DESTINATION include
     )
 

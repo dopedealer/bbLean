@@ -26,6 +26,11 @@
   TAPISRV.EXE:WAN_Class
   RNAAPP.EXE:RNAENGCLASS
 
+  TextInputHost.exe
+  SystemSettings.exe
+  SearchApp.exe
+  WinStore.App.exe
+
   QUARTZ.DLL:FilterGraphWindow
   WMPUI.DLL:TimerWindowClass
   WMPLAYER.EXE:atlcommon_timer*
@@ -43,6 +48,8 @@
   Resolve.exe
   steam.exe
   vmware.exe
+  Telegram.exe
+  Code.exe
 
 # programs with trouble
 

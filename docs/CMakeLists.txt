@@ -86,9 +86,9 @@ set (RESOURCE_FILES_BBOX
     bblean.txt
     bblean_logo.png
     bblean_style.css
-    ${CMAKE_CURRENT_LIST_DIR}/../blackbox/nls-c.txt
-    ${CMAKE_CURRENT_LIST_DIR}/../blackbox/Menu/menu-bullets.bmp
-    ${CMAKE_CURRENT_LIST_DIR}/../tools/fuzzydoc/figure1.jpg
+    ${CMAKE_CURRENT_LIST_DIR}/../src/blackbox/nls-c.txt
+    ${CMAKE_CURRENT_LIST_DIR}/../src/blackbox/Menu/menu-bullets.bmp
+    ${CMAKE_CURRENT_LIST_DIR}/../src/tools/fuzzydoc/figure1.jpg
 )
 set (GENERATED_FILES_BBOX
     bblean.htm
@@ -104,7 +104,7 @@ add_fuzzydocs_target(GenerateDocsBbox "${RESOURCE_FILES_BBOX}" "${GENERATED_FILE
 
 # bsetroot docs
 set (RESOURCE_FILES_BSETROOT
-    ${CMAKE_CURRENT_LIST_DIR}/../tools/bsetroot/bsetroot.txt
+    ${CMAKE_CURRENT_LIST_DIR}/../src/tools/bsetroot/bsetroot.txt
 )
 set (GENERATED_FILES_BSETROOT
     bsetroot.htm
@@ -116,7 +116,7 @@ add_fuzzydocs_target(GenerateDocsBsetroot "${RESOURCE_FILES_BSETROOT}"
 
 # bbnote docs
 set (RESOURCE_FILES_BBNOTE
-    ${CMAKE_CURRENT_LIST_DIR}/../tools/bbnote/app/bbnote.txt
+    ${CMAKE_CURRENT_LIST_DIR}/../src/tools/bbnote/app/bbnote.txt
 )
 set (GENERATED_FILES_BBNOTE
     bbnote.htm
@@ -127,7 +127,7 @@ add_fuzzydocs_target(GenerateDocsBBnote "${RESOURCE_FILES_BBNOTE}"
 
 # fuzzydoc docs
 set (RESOURCE_FILES_BBNOTE
-    ${CMAKE_CURRENT_LIST_DIR}/../tools/fuzzydoc/fuzzydoc.txt
+    ${CMAKE_CURRENT_LIST_DIR}/../src/tools/fuzzydoc/fuzzydoc.txt
 )
 set (GENERATED_FILES_BBNOTE
     fuzzydoc.htm
