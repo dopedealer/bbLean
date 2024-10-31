@@ -20,7 +20,6 @@
 /* path functions */
 
 #include "bblib.h"
-#include "win0x500.h"
 
 char* unquote(char *src)
 {

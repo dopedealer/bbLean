@@ -1074,7 +1074,7 @@ HWND create_tray_child(HWND hwndParent, const char *class_name)
 void Tray_SetEncoding(void)
 {
     systemTrayNode *p;
-    bool utf8 = 0 != Settings_UTF8Encoding;
+    bool utf8 = 0 != IsUsingUtf8Encoding();
     if (utf8 != tray_utf8)
         dolist (p, trayIconList) {
             WCHAR wstr[256];

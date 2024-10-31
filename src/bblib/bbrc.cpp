@@ -33,16 +33,12 @@
    if none...
 */
 
-#include "BBApi.h"
-#include "win0x500.h"
 #include "bbrc.h"
+#include "bbstyle.h"
 
 #define MAX_KEYWORD_LENGTH 200
 #define RCFILE_HTS 40 // hash table size
 // #define DEBUG_READER
-
-#define true 1
-#define false 0
 
 static struct rcreader_init *g_rc;
 
@@ -160,7 +156,7 @@ void make_style070(struct fil_list *fl)
         if (f) {
             for (ol = tl;;) {
                 sl = make_line(fl, buffer, tl->str+tl->k);
-                //dbg_printf("%s -> %s", tl->str, sl->str);
+                //debug_printf("%s -> %s", tl->str, sl->str);
                 sl->next = tl->next;
                 tl->next = sl;
                 tl = sl;
@@ -265,7 +261,7 @@ struct lin_list *search_line_065(struct fil_list *fl, const char *key)
         else
             strcpy(d, ".backgroundColor");
     }
-    // dbg_printf("%s -> %s", key, buff);
+    // debug_printf("%s -> %s", key, buff);
     return search_line(fl, buff, true, NULL);
 }
 
@@ -308,7 +304,7 @@ int is_stylefile(const char *path)
 FILE *create_rcfile(const char *path)
 {
     FILE *fp;
-    //dbg_printf("writing to %s", path);
+    //debug_printf("writing to %s", path);
     if (NULL == (fp = fopen(path, g_rc->dos_eol ? "wt" : "wb"))) {
         if (g_rc->write_error)
             g_rc->write_error(path);
@@ -324,7 +320,7 @@ void write_rcfile(struct fil_list *fl)
     struct lin_list *tl;
 
 #ifdef DEBUG_READER
-    dbg_printf("writing file %s", fl->path);
+    debug_printf("writing file %s", fl->path);
 #endif
     if (NULL == (fp = create_rcfile(fl->path)))
         return;
@@ -378,7 +374,7 @@ void reset_rcreader(void)
     while (g_rc->rc_files)
         delete_fil_list(g_rc->rc_files);
 #ifdef DEBUG_READER
-    dbg_printf("RESET READER");
+    debug_printf("RESET READER");
 #endif
 }
 
@@ -395,7 +391,7 @@ VOID CALLBACK reset_reader_proc(HWND hwnd, UINT uMsg, UINT_PTR idEvent, DWORD dw
         reset_rcreader();
         g_rc->timer_set = 0;
     }
-    // dbg_printf("reset_reader %x %x %x %d", hwnd, uMsg, idEvent, dwTime);
+    // debug_printf("reset_reader %x %x %x %d", hwnd, uMsg, idEvent, dwTime);
     KillTimer(hwnd, idEvent);
 }
 
@@ -404,7 +400,7 @@ void set_reader_timer(void)
 {
     if (g_rc->timer_set)
         return;
-    // dbg_printf("set_reader_timer");
+    // debug_printf("set_reader_timer");
     SetTimer(NULL, 0, 10, reset_reader_proc);
     g_rc->timer_set = 1;
 }
@@ -480,7 +476,7 @@ int scan_component(const char **p)
             break;
         }
     }
-    //dbg_printf("scan_component: %d %.*s", n, n, *p);
+    //debug_printf("scan_component: %d %.*s", n, n, *p);
     *p = s;
     return n;
 }
@@ -609,7 +605,7 @@ struct lin_list * search_line(struct fil_list *fl, const char *key, int fwild, L
 
         for (wl = fl->wild; wl; wl = wl->wnext) {
             n = xrm_match(buff, wl->str);
-            //dbg_printf("match:%d <%s> <%s>", n, buff, sl->str);
+            //debug_printf("match:%d <%s> <%s>", n, buff, sl->str);
             if (n > best_match)
                 tl = wl, best_match = n;
         }
@@ -648,7 +644,7 @@ struct fil_list *read_file(const char *filename)
     cons_node(&g_rc->rc_files, fl);
 
 #ifdef DEBUG_READER
-    dbg_printf("reading file %s", fl->path);
+    debug_printf("reading file %s", fl->path);
 #endif
     set_reader_timer();
 
@@ -715,7 +711,7 @@ const char* read_value(const char* path, const char* szKey, long *ptr)
     g_rc->found_last_value = tl ? (tl->is_wild ? 2 : 1) : 0;
 
 #ifdef DEBUG_READER
-    { static int rcc; dbg_printf("read_value %d %s:%s <%s>", ++rcc, path, szKey, r); }
+    { static int rcc; debug_printf("read_value %d %s:%s <%s>", ++rcc, path, szKey, r); }
 #endif
     return r;
 }
@@ -747,7 +743,7 @@ int simkey(const char *a0, const char *b0)
         }
     }
     f = 2*m + e * (m && na == nb);
-    //dbg_printf("sim %d <%s> <%s>", f, a0, b0);
+    //debug_printf("sim %d <%s> <%s>", f, a0, b0);
     return f;
 }
 
@@ -785,7 +781,7 @@ void write_value(const char* path, const char* szKey, const char* value)
     struct lin_list *tl, **tlp, *sl, **slp;
 
 #ifdef DEBUG_READER
-    dbg_printf("write_value <%s> <%s> <%s>", path, szKey, value);
+    debug_printf("write_value <%s> <%s> <%s>", path, szKey, value);
 #endif
 
     fl = read_file(path);
@@ -866,7 +862,7 @@ int rename_setting(const char* path, const char* szKey, const char* new_keyword)
 int delete_setting(LPCSTR path, LPCSTR szKey)
 {
 #ifdef DEBUG_READER
-    dbg_printf("delete_setting <%s> <%s>", path, szKey);
+    debug_printf("delete_setting <%s> <%s>", path, szKey);
 #endif
     return rename_setting(path, szKey, NULL);
 }

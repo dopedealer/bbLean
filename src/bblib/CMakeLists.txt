@@ -5,7 +5,6 @@ project (${PROJECT})
 
 set (INCLUDE_DIRS
     .
-    ../blackbox/
     ) 
 
 set (LINK_DIRS
@@ -16,20 +15,21 @@ set (HEADERS
     bbrc.h
     bbroot.h
     bbshell.h
+    bbstyle.h
 ) 
 set (SOURCES
-    bbrc.c
-    bbroot.c
-    bools.c
-    colors.c
-    m_alloc.c
-    numbers.c
-    paths.c
-    pidl.c
-    strings.c
-    tinylist.c
-    tokenize.c
-    winutils.c
+    bbrc.cpp
+    bbroot.cpp
+    bools.cpp
+    colors.cpp
+    m_alloc.cpp
+    numbers.cpp
+    paths.cpp
+    pidl.cpp
+    strings.cpp
+    tinylist.cpp
+    tokenize.cpp
+    winutils.cpp
 ) 
 
 set (LIBS
@@ -71,7 +71,7 @@ elseif ( MINGW )
     # common options
     target_compile_options(${PROJECT} PRIVATE -Os -Wall -fno-strict-aliasing)
     # add latest c++ standard support
-    #target_compile_options(${PROJECT} PRIVATE -std=c++2b)
+    target_compile_options(${PROJECT} PRIVATE -std=c++2b)
     target_link_options(${PROJECT} PRIVATE $<$<CONFIG:RELEASE>:-s>)
 endif ()
 

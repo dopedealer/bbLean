@@ -39,8 +39,10 @@
 
  * ------------------------------------------------------------------ */
 
-#include "BBApi.h"
-#include <stdlib.h>
+#include <cstdlib>
+
+#include <bbstyle.h>
+#include <BBApi.h>
 
 /* ---------------------------------- */
 /* plugin info */

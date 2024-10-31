@@ -161,15 +161,12 @@ char *replace_arg1(const char *fmt, const char *arg)
 
 //===========================================================================
 
-void dbg_printf (const char *fmt, ...)
+void dbg_printf(const char *fmt, ...)
 {
-    char buffer[4000];
-    va_list arg;
-    int x;
-    va_start(arg, fmt);
-    x = vsprintf (buffer, fmt, arg);
-    strcpy(buffer+x, "\n");
-    OutputDebugString(buffer);
+    va_list args;
+    va_start(args, fmt);
+    debug_vprintf(fmt, args);
+    va_end(args);
 }
 
 void get_window_text(HWND hwnd, char *buffer, int size)
@@ -339,10 +336,14 @@ void bbDrawText(HDC hDC, const char *text, RECT *p_rect, unsigned format, COLORR
     if (0 == (format & DT_CALCRECT))
         SetTextColor(hDC, c);
 
-    if (Settings_UTF8Encoding)
+    if (IsUsingUtf8Encoding())
+    {
         DrawTextUTF8(hDC, text, -1, p_rect, format);
+    }
     else
+    {
         DrawText(hDC, text, -1, p_rect, format);
+    }
 }
 
 //===========================================================================
@@ -353,7 +354,7 @@ int bbMB2WC(const char *src, WCHAR *wstr, int len)
     int x, n;
     for (x = -1;;) {
         n = MultiByteToWideChar(
-                Settings_UTF8Encoding ? CP_UTF8 : CP_ACP,
+                IsUsingUtf8Encoding() ? CP_UTF8 : CP_ACP,
                 0, src, x, wstr, len
                 );
         if (n)
@@ -372,21 +373,7 @@ int bbMB2WC(const char *src, WCHAR *wstr, int len)
 
 int bbWC2MB(const WCHAR *src, char *str, int len)
 {
-    int x, n;
-    for (x = -1;;) {
-        n = WideCharToMultiByte(
-                Settings_UTF8Encoding ? CP_UTF8 : CP_ACP,
-                0, src, x, str, len, NULL, NULL
-                );
-        if (n)
-            return n;
-        if (x < 0)
-            x = len;
-        if (--x == 0)
-            break;
-    }
-    str[0] = 0;
-    return 0;
+    return wchar_to_mbyte(src, str, len, IsUsingUtf8Encoding());
 }
 
 //===========================================================================

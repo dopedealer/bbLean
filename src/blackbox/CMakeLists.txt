@@ -17,6 +17,7 @@ project (${PROJECT})
 set (INCLUDE_DIRS
     .
     ${BBLIB_INCLUDE_DIR}
+    ${BBCORE_INCLUDE_DIR}
     ) 
 
 set (LINK_DIRS
@@ -25,6 +26,7 @@ set (LINK_DIRS
 set (HEADERS
     BB.h
     BBApi.h
+    Blackbox.h
     BBSendData.h
     BBVWM.h
     BImage.h
@@ -41,6 +43,7 @@ set (HEADERS
     Menu/MenuMaker.h
 ) 
 set (SOURCES
+    main.cpp
     BBApi.cpp
     BBRoot.cpp
     BBVWM.cpp
@@ -71,6 +74,7 @@ set (SOURCES
 
 set (LIBS
     ${BBLIB_LIBRARY}
+    ${BBCORE_LIBRARY}
 )
 
 if (WIN32)
@@ -95,18 +99,18 @@ endif()
 
 # export include variables 
 set(BLACKBOX_INCLUDE_DIR ${CMAKE_CURRENT_LIST_DIR}/. CACHE INTERNAL "") 
-set(BLACKBOX_INCLUDES ${BLACKBOX_INCLUDE_DIR} ${BBLIB_INCLUDE_DIR} CACHE INTERNAL "") 
+set(BLACKBOX_INCLUDES ${BBLIB_INCLUDE_DIR} ${BBCORE_INCLUDE_DIR} ${BLACKBOX_INCLUDE_DIR} CACHE INTERNAL "") 
 
 # export libs variables
 set(BLACKBOX_LIBRARY ${PROJECT} CACHE INTERNAL "") 
-set(BLACKBOX_LIBRARIES ${BBLIB_LIBRARY} ${BLACKBOX_LIBRARY} CACHE INTERNAL "") 
+set(BLACKBOX_LIBRARIES ${BBLIB_LIBRARY} ${BBCORE_LIBRARY} ${BLACKBOX_LIBRARY} CACHE INTERNAL "") 
 
 # main executable
 add_executable (${PROJECT} ${GUI_TYPE} ${HEADERS} ${SOURCES}) 
 target_link_directories(${PROJECT} PRIVATE ${LINK_DIRS})
 target_include_directories (${PROJECT} PRIVATE ${INCLUDE_DIRS} )
 target_link_libraries (${PROJECT} PRIVATE ${LIBS})
-target_compile_definitions(${PROJECT} PRIVATE __BBCORE__ BBCORE_STATIC)
+target_compile_definitions(${PROJECT} PRIVATE __BBCORE__)
 
 ## It is a dirty hack but existing compiled plugins do import functions
 ## directly from blackbox.exe. So we just cannot to remove it without breaking

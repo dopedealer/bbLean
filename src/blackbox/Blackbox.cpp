@@ -22,6 +22,7 @@
 
 #include <stdexcept> 
 
+#include "Blackbox.h"
 #include "BB.h"
 #include "Settings.h"
 #include "MessageManager.h"
@@ -390,19 +391,22 @@ bool check_options (const char* lpCmdLine)
 
 //===========================================================================
 
-int WINAPI WinMain(
-    HINSTANCE hInstance,
-    HINSTANCE hPrevInstance,
-    LPSTR lpCmdLine,
-    int nShowCmd)
-{
-    MSG msg;
-    MINIMIZEDMETRICS mm;
-    int ret;
 
-    hMainInstance = hInstance;
+Blackbox::Blackbox(HINSTANCE hinst, LPSTR lpCmdLine)
+{
+    data.hInstance = hinst;
+    data.lpCmdLine = lpCmdLine;
+}
+
+int Blackbox::run(void)
+{ 
+    MSG msg{};
+    MINIMIZEDMETRICS mm{};
+    int ret{};
+
+    hMainInstance = data.hInstance;
     BBThreadId = GetCurrentThreadId();
-    stack_top = (DWORD_PTR)&hInstance;
+    stack_top = (DWORD_PTR)&data.hInstance;
     set_os_info();
     bb_rcreader_init();
 
@@ -412,7 +416,7 @@ int WINAPI WinMain(
         if (NULL == BBhwnd)
             BBhwnd = FindWindow("xoblite", NULL);
 
-        if (check_options(lpCmdLine))
+        if (check_options(data.lpCmdLine))
             return 0;
 
         /* Check if Blackbox is already running... */
@@ -532,10 +536,11 @@ int WINAPI WinMain(
 #endif
 
     m_alloc_check_leaks("bbCore");
-    return msg.wParam;
+    return msg.wParam; 
 }
 
-//=====================================================
+//=========================================================================== 
+
 void start_plugins(void)
 {
     beginToolbar(hMainInstance);
@@ -1994,7 +1999,7 @@ char* WINAPI GetBlackboxPath(char* pszPath, int nMaxLen)
 
 void GetBlackboxEditor(char* editor)
 {
-    replace_shellfolders(editor, Settings_preferredEditor, true);
+    replace_shellfolders(editor, Settings_preferredEditor, true, defaultrcPath(), IsUsingUtf8Encoding());
 }
 
 //===========================================================================

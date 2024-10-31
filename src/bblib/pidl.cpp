@@ -19,16 +19,7 @@
 /* ------------------------------------------------------------------------- */
 
 #include "bbshell.h"
-#include "win0x500.h"
 
-#define false 0
-#define true 1
-
-const char *defaultrcPath(void);
-int bbMB2WC(const char *src, WCHAR *wstr, int len);
-int bbWC2MB(const WCHAR *src, char *str, int len);
-
-/* ----------------------------------------------------------------------- */
 int GetIDListSize(LPCITEMIDLIST pidl)
 {
     int cb, c;
@@ -93,7 +84,7 @@ int isEqualPIDL(LPCITEMIDLIST p1, LPCITEMIDLIST p2)
 #define NAMELESS_MEMBER(m) m
 #endif
 
-BOOL sh_getnameof(LPSHELLFOLDER piFolder, LPCITEMIDLIST pidl, DWORD dwFlags, LPTSTR pszName)
+BOOL sh_getnameof(LPSHELLFOLDER piFolder, LPCITEMIDLIST pidl, DWORD dwFlags, LPTSTR pszName, BOOL isUtf8)
 {
     STRRET str;
     BOOL fDesktop = FALSE;
@@ -117,19 +108,19 @@ BOOL sh_getnameof(LPSHELLFOLDER piFolder, LPCITEMIDLIST pidl, DWORD dwFlags, LPT
         switch (str.uType)
         {
             case STRRET_WSTR:
-                bbWC2MB(str.NAMELESS_MEMBER(pOleStr), pszName, MAX_PATH);
+                wchar_to_mbyte(str.NAMELESS_MEMBER(pOleStr), pszName, MAX_PATH, isUtf8);
                 SHMalloc_Free(str.NAMELESS_MEMBER(pOleStr));
-                /*dbg_printf("WSTR: %s", pszName); */
+                /*debug_printf("WSTR: %s", pszName); */
                 break;
 
             case STRRET_OFFSET:
                 strcpy(pszName, (LPSTR)pidl + str.NAMELESS_MEMBER(uOffset));
-                /*dbg_printf("OFFS: %s", pszName); */
+                /*debug_printf("OFFS: %s", pszName); */
                 break;
 
             case STRRET_CSTR:
                 strcpy(pszName, str.NAMELESS_MEMBER(cStr));
-                /*dbg_printf("CSTR: %s", pszName); */
+                /*debug_printf("CSTR: %s", pszName); */
                 break;
 
             default:
@@ -293,53 +284,77 @@ int sh_getfolderpath(char* szPath, UINT csidl)
 /* Purpose: */
 /* ----------------------------------------------------------------------- */
 
-int sh_get_icon_and_name(LPCITEMIDLIST pID, HICON *pIcon, int iconsize, char *pName, int NameSize)
+int sh_get_icon_and_name(LPCITEMIDLIST pID, HICON *pIcon, int iconsize, char *pName, int NameSize, BOOL isUtf8)
 {
     static DWORD_PTR (WINAPI* pSHGetFileInfoW)(LPCWSTR,DWORD,SHFILEINFOW*,UINT,UINT);
     HIMAGELIST sysimgl;
     UINT cbfileinfo = SHGFI_PIDL;
 
-    if (NULL == pSHGetFileInfoW) {
+    if (NULL == pSHGetFileInfoW)
+    {
         if (GetVersion() & 0x80000000)
+        {
             *(DWORD_PTR*)&pSHGetFileInfoW = 1;
+        }
         else
+        {
             load_imp(&pSHGetFileInfoW, "shell32.dll", "SHGetFileInfoW");
+        }
     }
 
-    if (pIcon) {
+    if (pIcon)
+    {
         cbfileinfo |= SHGFI_SYSICONINDEX | SHGFI_SHELLICONSIZE;
         if (iconsize < 20)
+        {
             cbfileinfo |= SHGFI_SMALLICON;
+        }
         if (iconsize >= 36)
+        {
             cbfileinfo |= SHGFI_LARGEICON;
+        }
         *pIcon = NULL;
     }
 
-    if (pName) {
+    if (pName)
+    {
         cbfileinfo |= SHGFI_DISPLAYNAME;
         *pName = 0;
     }
 
-    if (have_imp(pSHGetFileInfoW)) {
+    if (have_imp(pSHGetFileInfoW))
+    {
         SHFILEINFOW shinfo;
         shinfo.szDisplayName[0] = 0;
         sysimgl = (HIMAGELIST)pSHGetFileInfoW((LPWSTR)pID, 0, &shinfo, sizeof shinfo, cbfileinfo);
-        if (sysimgl) {
+        if (sysimgl)
+        {
             if (pName)
-                bbWC2MB(shinfo.szDisplayName, pName, NameSize);
+            {
+                wchar_to_mbyte(shinfo.szDisplayName, pName, NameSize, isUtf8);
+            }
             if (pIcon)
+            {
                 *pIcon = ImageList_GetIcon(sysimgl, shinfo.iIcon, ILD_NORMAL);
+            }
             return 1;
         }
-    } else {
+    }
+    else
+    {
         SHFILEINFO shinfo;
         shinfo.szDisplayName[0] = 0;
         sysimgl = (HIMAGELIST)SHGetFileInfoA((LPCSTR)pID, 0, &shinfo, sizeof shinfo, cbfileinfo);
-        if (sysimgl) {
+        if (sysimgl)
+        {
             if (pName)
+            {
                 strcpy_max(pName, shinfo.szDisplayName, NameSize);
+            }
             if (pIcon)
+            {
                 *pIcon = ImageList_GetIcon(sysimgl, shinfo.iIcon, ILD_NORMAL);
+            }
             return 1;
         }
     }
@@ -351,9 +366,9 @@ int sh_get_icon_and_name(LPCITEMIDLIST pID, HICON *pIcon, int iconsize, char *pN
 /* Purpose: */
 /* ----------------------------------------------------------------------- */
 
-char *sh_getdisplayname(LPCITEMIDLIST pID, char *buffer)
+char *sh_getdisplayname(LPCITEMIDLIST pID, char *buffer, BOOL isUtf8)
 {
-    sh_get_icon_and_name(pID, NULL, 0, buffer, MAX_PATH);
+    sh_get_icon_and_name(pID, NULL, 0, buffer, MAX_PATH, isUtf8);
     return buffer;
 }
 
@@ -365,7 +380,7 @@ char *sh_getdisplayname(LPCITEMIDLIST pID, char *buffer)
 HICON sh_geticon(LPCITEMIDLIST pID, int iconsize)
 {
     HICON hIcon;
-    sh_get_icon_and_name(pID, &hIcon, iconsize, NULL, 0);
+    sh_get_icon_and_name(pID, &hIcon, iconsize, NULL, 0, TRUE);
     return hIcon;
 }
 
@@ -491,7 +506,7 @@ int get_csidl(const char **pPath)
 /*           folders */
 /* ----------------------------------------------------------------------- */
 
-LPITEMIDLIST get_folder_pidl (const char *path)
+LPITEMIDLIST get_folder_pidl(const char *path, const char * defaultRcPath)
 {
     char temp[MAX_PATH], basedir[MAX_PATH], buffer[MAX_PATH];
     const char *tail_p, *rcdir;
@@ -516,7 +531,7 @@ LPITEMIDLIST get_folder_pidl (const char *path)
 
     if (NO_CSIDL == id || CSIDL_BLACKBOX == id || CSIDL_CURTHEME == id)
     {
-        if (CSIDL_CURTHEME == id && !!(rcdir = defaultrcPath()))
+        if (CSIDL_CURTHEME == id && !!(rcdir = defaultRcPath))
             strcpy(basedir, rcdir);
         else
             get_exe_path(NULL, basedir, sizeof basedir);
@@ -556,13 +571,13 @@ LPITEMIDLIST get_folder_pidl (const char *path)
 /* Purpose:  get a list of pidls, specified by string, separated by '|' */
 /* ----------------------------------------------------------------------- */
 
-struct pidl_node *get_folder_pidl_list (const char *paths)
+struct pidl_node *get_folder_pidl_list(const char *paths, const char * defaultRcPath)
 {
     struct pidl_node *new_pidl_list = NULL;
     char buffer[MAX_PATH];
 
     while (*NextToken(buffer, &paths, "|")) {
-        LPITEMIDLIST pID = get_folder_pidl(buffer);
+        LPITEMIDLIST pID = get_folder_pidl(buffer, defaultRcPath);
         if (pID) {
             append_node(&new_pidl_list, make_pidl_node(pID));
             freeIDList(pID);
@@ -629,8 +644,8 @@ int equal_pidl_list(struct pidl_node *p1, struct pidl_node *p2)
 /*              string */
 /* ----------------------------------------------------------------------- */
 
-char *replace_shellfolders_from_base(
-    char *buffer, const char *path, int search_path, const char *basepath)
+char * replace_shellfolders_from_base( char *buffer, const char *path, 
+        int search_path, const char *basepath, const char * defaultRcPath, BOOL isUtf8)
 {
     char temp[MAX_PATH];
     char basedir[MAX_PATH];
@@ -642,7 +657,9 @@ char *replace_shellfolders_from_base(
     fix_path(unquote(strcpy_max(temp, path, sizeof temp)));
 
     if (0 == temp[0] || is_absolute_path(temp))
+    {
         return strcpy(buffer, temp);
+    }
 
     tail_p = temp;
     id = get_csidl(&tail_p);
@@ -652,11 +669,16 @@ char *replace_shellfolders_from_base(
 
     if (NO_CSIDL == id || CSIDL_BLACKBOX == id || CSIDL_CURTHEME == id)
     {
-        if (NULL == basepath || NO_CSIDL != id) {
-            if (CSIDL_CURTHEME == id && !!(rcdir = defaultrcPath()))
+        if (NULL == basepath || NO_CSIDL != id)
+        {
+            if (CSIDL_CURTHEME == id && !!(rcdir = defaultRcPath))
+            {
                 basepath = rcdir;
+            }
             else
+            {
                 basepath = get_exe_path(NULL, basedir, sizeof basedir);
+            }
         }
         return join_path(buffer, basepath, tail_p);
     }
@@ -666,7 +688,7 @@ char *replace_shellfolders_from_base(
     if (NOERROR == hr) {
         /* returns also things like "::{20D04FE0-3AEA-1069-A2D8-08002B30309D}" */
         /* (unlike SHGetPathFromIDList) */
-        BOOL result = sh_getnameof(NULL, pID, SHGDN_FORPARSING, basedir);
+        BOOL result = sh_getnameof(NULL, pID, SHGDN_FORPARSING, basedir, isUtf8);
         SHMalloc_Free(pID);
         if (result)
             return join_path(buffer, basedir, tail_p);
@@ -675,9 +697,9 @@ char *replace_shellfolders_from_base(
     return strcpy(buffer, temp);
 }
 
-char *replace_shellfolders(char *buffer, const char *path, int search_path)
+char *replace_shellfolders(char *buffer, const char *path, int search_path, const char * defaultRcPath, BOOL isUtf8)
 {
-    return replace_shellfolders_from_base(buffer, path, search_path, NULL);
+    return replace_shellfolders_from_base(buffer, path, search_path, NULL, defaultRcPath, isUtf8);
 }
 
 /* ------------------------------------------------------------------------- */
@@ -695,16 +717,16 @@ struct enum_files
     LPITEMIDLIST pID;
 };
 
-int ef_getname(struct enum_files *ef, char *out)
+int ef_getname(struct enum_files *ef, char *out, BOOL isUtf8)
 {
     out[0] = 0;
-    return sh_getnameof(ef->pThisFolder, ef->pID, SHGDN_NORMAL, out);
+    return sh_getnameof(ef->pThisFolder, ef->pID, SHGDN_NORMAL, out, isUtf8);
 }
 
-int ef_getpath(struct enum_files *ef, char *out)
+int ef_getpath(struct enum_files *ef, char *out, BOOL isUtf8)
 {
     out[0] = 0;
-    return sh_getnameof(ef->pThisFolder, ef->pID, SHGDN_FORPARSING, out);
+    return sh_getnameof(ef->pThisFolder, ef->pID, SHGDN_FORPARSING, out, isUtf8);
 }
 
 ULONG ef_getattr(struct enum_files *ef, int *pAttr)

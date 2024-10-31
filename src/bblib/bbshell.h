@@ -46,25 +46,25 @@ BBLIB_EXPORT int isEqualPIDL(LPCITEMIDLIST p1, LPCITEMIDLIST p2);
 /* free list, using m_free */
 BBLIB_EXPORT void freeIDList(LPITEMIDLIST p);
 /* wrapper to IShellFolder->GetDisplayNameOf */
-BBLIB_EXPORT BOOL sh_getnameof(struct IShellFolder *piFolder, LPCITEMIDLIST pidl, DWORD dwFlags, LPTSTR pszName);
+BBLIB_EXPORT BOOL sh_getnameof(struct IShellFolder *piFolder, LPCITEMIDLIST pidl, DWORD dwFlags, LPTSTR pszName, BOOL isUtf8);
 /* Get the Com Interface from pidl */
 BBLIB_EXPORT struct IShellFolder* sh_get_folder_interface(LPCITEMIDLIST pIDFolder);
 /* Get pidl from path, parsing SPECIAL folders, defaults to blackbox directory */
-BBLIB_EXPORT LPITEMIDLIST get_folder_pidl(const char *path);
+BBLIB_EXPORT LPITEMIDLIST get_folder_pidl(const char *path, const char * defaultRcPath);
 /* Get pidl from path, no parsing */
 BBLIB_EXPORT LPITEMIDLIST sh_getpidl(struct IShellFolder *pSF, const char *path);
 /* Get path from csidl, replacement for SHGetFolderPath */
 BBLIB_EXPORT int sh_getfolderpath(char* szPath, UINT csidl);
 /* parsing SPECIAL folders and convert to string again, defaults to basepath */
-BBLIB_EXPORT char *replace_shellfolders_from_base(char *buffer, const char *path, int search_path, const char *basepath);
+BBLIB_EXPORT char* replace_shellfolders_from_base(char *buffer, const char *path, int search_path, const char *basepath, const char * defaultRcPath, BOOL isUtf8);
 /* parsing SPECIAL folders and convert to string again, defaults to blackbox directory */
-BBLIB_EXPORT char *replace_shellfolders(char *buffer, const char *path, int search_path);
+BBLIB_EXPORT char* replace_shellfolders(char *buffer, const char *path, int search_path, const char * defaultRcPath, BOOL isUtf8);
 /* retrieve the shell icon */
-BBLIB_EXPORT HICON sh_geticon (LPCITEMIDLIST pID, int iconsize);
+BBLIB_EXPORT HICON sh_geticon(LPCITEMIDLIST pID, int iconsize);
 /* retrieve the default display name */
-BBLIB_EXPORT char* sh_getdisplayname (LPCITEMIDLIST pID, char *buffer);
+BBLIB_EXPORT char* sh_getdisplayname(LPCITEMIDLIST pID, char *buffer, BOOL isUtf8);
 /* retrieve icon and display name */
-BBLIB_EXPORT int sh_get_icon_and_name(LPCITEMIDLIST pID, HICON *pIcon, int iconsize, char *szTip, int NameSize);
+BBLIB_EXPORT int sh_get_icon_and_name(LPCITEMIDLIST pID, HICON *pIcon, int iconsize, char *szTip, int NameSize, BOOL isUtf8);
 
 /* support for ContextMenu, DragSource, DropTarget */
 BBLIB_EXPORT int sh_get_uiobject(
@@ -92,7 +92,7 @@ BBLIB_EXPORT struct pidl_node *make_pidl_node2(LPCITEMIDLIST pidlA, LPCITEMIDLIS
 /* delete_that */
 BBLIB_EXPORT void delete_pidl_list (struct pidl_node **ppList);
 /* parse for concatenated multiple folders, like "STARTMENU|COMMON_STARTMENU" */
-BBLIB_EXPORT struct pidl_node *get_folder_pidl_list(const char *paths);
+BBLIB_EXPORT struct pidl_node *get_folder_pidl_list(const char *paths, const char * defaultRcPath);
 /* make a copy */
 BBLIB_EXPORT struct pidl_node *copy_pidl_list(const struct pidl_node *old_pidl_list);
 /* are both equal ? */
@@ -108,8 +108,8 @@ enum ef_modes
 
 struct enum_files;
 
-BBLIB_EXPORT int ef_getname(struct enum_files *ef, char *out);
-BBLIB_EXPORT int ef_getpath(struct enum_files *ef, char *out);
+BBLIB_EXPORT int ef_getname(struct enum_files *ef, char *out, BOOL isUtf8);
+BBLIB_EXPORT int ef_getpath(struct enum_files *ef, char *out, BOOL isUtf8);
 BBLIB_EXPORT ULONG ef_getattr(struct enum_files *ef, int *pAttr);
 BBLIB_EXPORT int ef_getpidl(struct enum_files *ef, struct pidl_node **pp);
 BBLIB_EXPORT int ef_next(struct enum_files *ef);

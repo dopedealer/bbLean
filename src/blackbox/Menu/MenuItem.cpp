@@ -420,33 +420,40 @@ void MenuItem::DrawIcon(HDC hDC)
     if (m_ItemID & MENUITEM_ID_FOLDER)
         return;
 */
-    if (NULL == m_hIcon) {
-
+    if (NULL == m_hIcon)
+    { 
         // if no icon yet, try to load it, either from explicit string
-        // or from pidl_list
-
-        if (m_pszIcon) {
+        // or from pidl_list 
+        if (m_pszIcon)
+        {
             char path[MAX_PATH];
             const char *p;
             int index;
 
             p = Tokenize(m_pszIcon, path, ",");
             index = 0;
-            if (p) {
+            if (p)
+            {
                 index = atoi(p);
                 if (index)
+                {
                     --index;
+                }
             }
             unquote(path);
             ExtractIconEx(path, index, NULL, &m_hIcon, 1);
 
-        } else if (m_pidl_list) {
+        }
+        else if (m_pidl_list)
+        {
             m_hIcon = sh_geticon(first_pidl(m_pidl_list), 16);
 
         }
 
         if (NULL == m_hIcon)
+        {
             return;
+        }
     }
 
     size = MenuInfo.nIconSize;

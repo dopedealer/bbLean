@@ -44,13 +44,13 @@ SpecialFolderItem::SpecialFolderItem(
     ) : FolderItem(NULL, pszTitle)
 {
     m_ItemID = MENUITEM_ID_SF;
-    m_pidl_list = path ? get_folder_pidl_list(path) : pidl_list;
+    m_pidl_list = path ? get_folder_pidl_list(path, defaultrcPath()) : pidl_list;
     // command to apply to files, optional
     m_pszExtra = new_str(pszExtra);
     if (0 == pszTitle[0]) {
         char disp_name[MAX_PATH];
         replace_str(&m_pszTitle, m_pidl_list
-            ? sh_getdisplayname(first_pidl(m_pidl_list), disp_name)
+            ? sh_getdisplayname(first_pidl(m_pidl_list), disp_name, IsUsingUtf8Encoding())
             : NLS0("Invalid Path"));
     }
 }
@@ -145,7 +145,7 @@ SFInsert::SFInsert(const char *path, const char  *pszExtra)
     : MenuItem("")
 {
     m_ItemID = MENUITEM_ID_INSSF;
-    m_pidl_list = get_folder_pidl_list(path);
+    m_pidl_list = get_folder_pidl_list(path, defaultrcPath());
     m_pszExtra = new_str(pszExtra);
     m_pLast = NULL;
     m_bNOP = true;
@@ -246,19 +246,28 @@ Menu *MakeFolderMenu(const char *title, const char* path, const char *cmd)
     struct pidl_node* pidl_list;
     Menu *m = NULL;
 
-    pidl_list = get_folder_pidl_list(path);
+    pidl_list = get_folder_pidl_list(path, defaultrcPath());
     if (pidl_list)
+    {
         m = Menu::find_special_folder(pidl_list);
+    }
 
-    if (m) {
+    if (m)
+    {
         m->incref();
         m->SaveState();
-    } else {
-        if (NULL == title) {
-            if (pidl_list) {
-                sh_getdisplayname(first_pidl(pidl_list), disp_name);
+    }
+    else
+    {
+        if (NULL == title)
+        {
+            if (pidl_list)
+            {
+                sh_getdisplayname(first_pidl(pidl_list), disp_name, IsUsingUtf8Encoding());
                 title = disp_name;
-            } else {
+            }
+            else
+            {
                 title = file_basename(unquote(strcpy_max(disp_name, path, sizeof disp_name)));
             }
         }
@@ -429,7 +438,7 @@ int LoadFolder(
         if ((attr & ef_hidden) && false == Settings_menu.showHiddenFiles)
             continue;
 
-        ef_getname(ef, szDispName);
+        ef_getname(ef, szDispName, IsUsingUtf8Encoding());
         ef_getpidl(ef, &pidl_list);
 
         if (pszExtra) {
@@ -470,7 +479,7 @@ int LoadFolder(
                 false
                 );
 
-            ef_getpath(ef, szFullPath);
+            ef_getpath(ef, szFullPath, IsUsingUtf8Encoding());
             pItem->m_pszCommand = replace_arg1(pszExtra, szFullPath);
             pItem->m_ItemID |= MENUITEM_UPDCHECK;
             pItem->m_nSortPriority = M_SORT_NAME;
@@ -503,14 +512,17 @@ int LoadFolder(
 static void exec_folder_click(LPCITEMIDLIST pidl)
 {
     char path[MAX_PATH], *tmp;
-    const char *cmd = ReadString(extensionsrcPath(NULL),
-        "blackbox.options.openFolderCommand", NULL);
-    if (cmd) {
-        if (sh_getnameof(NULL, pidl, SHGDN_FORPARSING, path)) {
+    const char *cmd = ReadString(extensionsrcPath(NULL), "blackbox.options.openFolderCommand", NULL);
+    if (cmd)
+    {
+        if (sh_getnameof(NULL, pidl, SHGDN_FORPARSING, path, IsUsingUtf8Encoding()))
+        {
             post_command(tmp = replace_arg1(cmd, path));
             m_free(tmp);
         }
-    } else {
+    }
+    else
+    {
         BBExecute_pidl("explore", pidl);
     }
 }

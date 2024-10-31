@@ -20,9 +20,11 @@
  ============================================================================
 */ // bbSlit.cpp
 
-#include "BBApi.h"
-#include "bblib.h"
-#include "bbversion.h"
+#include <BBApi.h>
+#include <bblib.h>
+#include <bbstyle.h>
+#include <bbversion.h>
+
 #include "BBSendData.h"
 #include "bbPlugin.h"
 

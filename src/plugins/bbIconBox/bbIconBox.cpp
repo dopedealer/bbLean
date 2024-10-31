@@ -20,6 +20,8 @@
  ============================================================================
 */
 
+#include <bbstyle.h>
+
 #include "bbIconBox.h"
 #include "bbversion.h"
 
@@ -1380,13 +1382,13 @@ void icon_box::common_broam(const char *temp)
             strlwr(strcpy(name, path));
 
         } else {
-            struct pidl_node *pidl_list = get_folder_pidl_list(path);
+            struct pidl_node *pidl_list = get_folder_pidl_list(path, defaultrcPath());
             if (NULL == pidl_list) {
                 sprintf(buffer, "Invalid Path: %s", path);
                 BBP_messagebox(this, MB_OK, buffer, szAppName, MB_OK|MB_TOPMOST|MB_SETFOREGROUND);
                 return;
             }
-            sh_getdisplayname(first_pidl(pidl_list), name);
+            sh_getdisplayname(first_pidl(pidl_list), name, IsUsingUtf8Encoding());
             delete_pidl_list (&pidl_list);
         }
 

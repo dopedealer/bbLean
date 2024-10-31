@@ -20,10 +20,11 @@
  ============================================================================
 */
 
-#include "BBApi.h"
-#include "win0x500.h"
-#include "bblib.h"
-#include "bbshell.h"
+#include <BBApi.h>
+#include <win0x500.h>
+#include <bblib.h>
+#include <bbshell.h>
+
 #include "bbPlugin.h"
 #include "tooltips.h"
 #include "drawico.h"

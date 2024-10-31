@@ -24,6 +24,8 @@
 #ifndef _WIN0X500_H_
 #define _WIN0X500_H_
 
+#include "windows.h"
+
 /* Layered Windows */
 #ifndef WS_EX_LAYERED
 #define WS_EX_LAYERED 0x00080000

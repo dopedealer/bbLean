@@ -23,9 +23,11 @@
  ============================================================================
 */
 
-#include "BBApi.h"
-#include "win0x500.h"
-#include "BImage.h"
+#include <BBApi.h>
+#include <win0x500.h>
+#include <bbstyle.h> 
+#include <BImage.h>
+
 #include "engine/hookinfo.h"
 #include "engine/subclass.h"
 #include "drawico.h"

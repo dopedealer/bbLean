@@ -23,9 +23,11 @@
  ============================================================================
 */
 
-#include "BBApi.h"
+#include <BBApi.h>
+#include <bbstyle.h>
+
 #include "engine/hookinfo.h"
-#include "bblib.h"
+#include <bblib.h>
 #include "bbversion.h"
 
 // info

@@ -118,17 +118,16 @@ void ShellContext::Invoke(int nCmd)
         char oldName[100];
         char newName[100];
         WCHAR newNameW[100];
-        sh_getnameof(psfFolder, pidlItem, SHGDN_NORMAL, oldName);
+        sh_getnameof(psfFolder, pidlItem, SHGDN_NORMAL, oldName, IsUsingUtf8Encoding());
         if (IDOK == EditBox(BBAPPNAME, "Enter new name:", oldName, newName))
         {
             MultiByteToWideChar (CP_ACP, 0, newName, -1, newNameW, array_count(newNameW));
             hr = psfFolder->SetNameOf(NULL, (LPCITEMIDLIST)pidlItem, newNameW, SHGDN_NORMAL, NULL);
         }
     }
-    else
-    if (nCmd >= MIN_SHELL_ID)
+    else if (nCmd >= MIN_SHELL_ID)
     {
-        CMINVOKECOMMANDINFO ici;
+        CMINVOKECOMMANDINFO ici{};
         ici.cbSize          = sizeof(ici);
         ici.fMask           = 0;//CMIC_MASK_FLAG_NO_UI;
         ici.hwnd            = NULL;
@@ -141,7 +140,7 @@ void ShellContext::Invoke(int nCmd)
         hr = pContextMenu->InvokeCommand(&ici);
     }
 
-    if (0==SUCCEEDED(hr))
+    if (0 == SUCCEEDED(hr))
     {
         ;//MessageBeep(MB_OK);
     }
@@ -492,20 +491,26 @@ Menu *MakeContextMenu(const char *path, const void *pidl)
     LPITEMIDLIST path_pidl = NULL;
 
     if (NULL == pidl && path)
-        pidl = path_pidl = get_folder_pidl(path);
+    {
+        pidl = path_pidl = get_folder_pidl(path, defaultrcPath());
+    }
 
     wc = new ShellContext(&r, (LPCITEMIDLIST)pidl);
-    if (FALSE == r) {
-       delete wc;
-
-    } else if (Settings_shellContextMenu) {
+    if (FALSE == r)
+    {
+        delete wc; 
+    }
+    else if (Settings_shellContextMenu)
+    {
         int nCmd = wc->ShellMenu();
         if (nCmd)
             wc->Invoke(nCmd);
         delete wc;
 
-    } else {
-        sh_getdisplayname((LPCITEMIDLIST)pidl, buffer);
+    }
+    else
+    {
+        sh_getdisplayname((LPCITEMIDLIST)pidl, buffer, IsUsingUtf8Encoding());
         m = new ContextMenu(buffer, wc, wc->hMenu, 1);
     }
 

@@ -43,6 +43,7 @@ set_output_subdir(CMAKE_LIBRARY_OUTPUT_DIRECTORY "lib")
 
 add_subdirectory ("src/tools/install" "${CMAKE_BINARY_DIR}/i/inst")
 add_subdirectory ("src/bblib/" "${CMAKE_BINARY_DIR}/i/bblib")
+add_subdirectory ("src/bbcore/" "${CMAKE_BINARY_DIR}/i/bbcore")
 add_subdirectory ("src/blackbox/" "${CMAKE_BINARY_DIR}/i/blackbox")
 
 set_output_subdir(CMAKE_RUNTIME_OUTPUT_DIRECTORY "tools/fuzzydoc")
@@ -139,6 +140,7 @@ if (BUILD_TESTS)
 
     add_subdirectory ("src/tests/test_dummy/" "${CMAKE_BINARY_DIR}/i/test_dummy")
     add_subdirectory ("src/tests/test_bblib/" "${CMAKE_BINARY_DIR}/i/test_bblib")
+    add_subdirectory ("src/tests/test_bbcore/" "${CMAKE_BINARY_DIR}/i/test_bbcore")
     add_subdirectory ("src/tests/test_blackbox/" "${CMAKE_BINARY_DIR}/i/test_blackbox")
 else()
     message("-- not using tests")

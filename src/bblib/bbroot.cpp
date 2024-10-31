@@ -19,9 +19,9 @@
 /* ------------------------------------------------------------------------- */
 /* parse bsetroot commandline */
 
-#include "BBApi.h"
 #include "bbroot.h"
 #include "bbrc.h"
+#include "bbstyle.h"
 
 void init_root(struct rootinfo *r)
 {
@@ -56,7 +56,7 @@ int next_token(struct rootinfo *r)
             r->flag = 0, p+= 3;
         s = get_string_index(p, switches) + E_other + 1;
     }
-    //dbg_printf("token %d: %s", s, r->token);
+    //debug_printf("token %d: %s", s, r->token);
     return s;
 }
 

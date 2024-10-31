@@ -25,10 +25,12 @@
 #define NO_TIPS
 #endif
 
-#include "BBApi.h"
-#include "win0x500.h"
-#include "bblib.h"
-#include "bbversion.h"
+#include <BBApi.h>
+#include <win0x500.h>
+#include <bblib.h>
+#include <bbstyle.h>
+#include <bbversion.h>
+
 #include "bbPlugin.h"
 #include "drawico.h"
 #ifndef NO_TIPS

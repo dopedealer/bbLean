@@ -36,7 +36,7 @@
   #define WINVER 0x601                                          
   #define _WIN32_WINNT 0x601
   #define _WIN32_IE 0x601
-#endif
+#endif //!WINVER
 
 #define WIN32_LEAN_AND_MEAN
 #include <stdlib.h>
@@ -79,36 +79,6 @@
 
 #define MAX_LINE_LENGTH 1024
 
-/*------------------------------------------ */
-/* BImage definitions */
-
-/* Gradient types */
-#define B_HORIZONTAL 0
-#define B_VERTICAL 1
-#define B_DIAGONAL 2
-#define B_CROSSDIAGONAL 3
-#define B_PIPECROSS 4
-#define B_ELLIPTIC 5
-#define B_RECTANGLE 6
-#define B_PYRAMID 7
-#define B_SOLID 8
-
-/* Bevelstyle */
-#define BEVEL_FLAT 0
-#define BEVEL_RAISED 1
-#define BEVEL_SUNKEN 2
-
-/* Bevelposition */
-#define BEVEL1 1
-#define BEVEL2 2
-
-/* bullet styles for menus */
-#define BS_EMPTY 0
-#define BS_TRIANGLE 1
-#define BS_SQUARE 2
-#define BS_DIAMOND 3
-#define BS_CIRCLE 4
-#define BS_CHECK 5
 
 /*=========================================================================== */
 /* Blackbox messages */
@@ -345,42 +315,8 @@
 #define BBLS_SETSTICKY          2
 #define BBLS_GETSHADEHEIGHT     3
 
-/* =========================================================================== */
-/* StyleItem */
+struct StyleItem;
 
-typedef struct StyleItem
-{
-    /* 0.0.80 */
-    int bevelstyle;
-    int bevelposition;
-    int type;
-    bool parentRelative;
-    bool interlaced;
-
-    /* 0.0.90 */
-    COLORREF Color;
-    COLORREF ColorTo;
-    COLORREF TextColor;
-    int FontHeight;
-    int FontWeight;
-    int Justify;
-    int validated;
-
-    char Font[128];
-
-    /* bbLean 1.16 */
-    int nVersion;
-    int marginWidth;
-    int borderWidth;
-    COLORREF borderColor;
-    COLORREF foregroundColor;
-    COLORREF disabledColor;
-    bool bordered;
-    bool FontShadow; /* xoblite */
-
-    char reserved[102]; /* keep sizeof(StyleItem) = 300 */
-
-} StyleItem;
 
 #define picColor TextColor
 #define VALID_TEXTCOLOR 8
@@ -456,6 +392,7 @@ extern "C" {
 
     /* ------------------------------------ */
     /* Resource File API */
+    API_EXPORT bool IsUsingUtf8Encoding(void);  // deprecated
 
     /* Read Settings */
     API_EXPORT bool ReadBool(const char* fileName, const char* szKey, bool defaultBool);
@@ -520,6 +457,7 @@ extern "C" {
     API_EXPORT const char* plugrcPath(const char* pluginrcFileName ISNULL);
     API_EXPORT const char* stylePath(const char* styleFileName ISNULL);
     API_EXPORT const char *defaultrcPath(void);
+    EXTERN_C API_EXPORT const char* ConfigFileExists(const char* filename, const char* pluginDir);
 
     /* As configured in exensions.rc: */
     API_EXPORT void GetBlackboxEditor(/*OUT*/ char* editor);
@@ -859,17 +797,6 @@ extern "C" {
 
     /* Get current Desktop information: */
     API_EXPORT void GetDesktopInfo(DesktopInfo *deskInfo);
-
-    /* ------------------------------------ */
-    /* often used structure */
-
-    typedef struct string_node
-    {
-        struct string_node *next;
-        char str[1];
-    } string_node;
-
-    #define STRING_NODE_DEFINED
 
     /* ------------------------------------ */
     /* windows on workspace placement interface */

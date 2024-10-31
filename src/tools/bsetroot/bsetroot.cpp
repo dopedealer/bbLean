@@ -19,7 +19,8 @@
 
   ========================================================================== */
 
-#include "BBApi.h"
+#include <bbstyle.h>
+#include <BBApi.h>
 #include "BImage.h"
 #include "bbroot.h"
 #include "bbrc.h"

@@ -14,7 +14,7 @@ set (LINK_DIRS
     ) 
 
 set (HEADERS
-    #bbstyle.h
+    #bbstyle_bbnote.h
     #eddef.h
     #edstruct.h
     #vk.h

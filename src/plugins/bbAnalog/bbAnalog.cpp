@@ -42,8 +42,10 @@
     ----------------------------------------------------------
 */
 
-#include "BBApi.h"
-#include "bblib.h"
+#include <BBApi.h>
+#include <bblib.h>
+#include <bbstyle.h>
+
 #include "bbPlugin.h"
 #include "bbversion.h"
 #include <time.h>

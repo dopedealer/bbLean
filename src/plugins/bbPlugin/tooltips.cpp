@@ -20,10 +20,14 @@
  ============================================================================
 */
 
-#include "BBApi.h"
+#include <windows.h>
 #include <commctrl.h>
+
+#include <BBApi.h>
 #include "win0x500.h"
-#include "bblib.h"
+#include <bblib.h>
+#include <bbstyle.h>
+
 #include "bbPlugin.h"
 
 static HWND hToolTips;

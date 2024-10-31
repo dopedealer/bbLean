@@ -17,7 +17,7 @@
  *---------------------------------------------------------------------------*/
 // BBNOTE.C - main entry point, bb-stylized menu, config dialog
 
-#include "bbstyle.h"
+#include "bbstyle_bbnote.h"
 #include <commctrl.h>
 #include <string.h>
 #include <stdio.h>

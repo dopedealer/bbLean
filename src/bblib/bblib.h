@@ -22,26 +22,23 @@
 #define _BBLIB_H_
 
 #ifdef BBLIB_COMPILING
-# ifndef WINVER
-#  define WINVER 0x0500
-#  define _WIN32_WINNT 0x0500
-#  define _WIN32_IE 0x0501
-# endif
-# define WIN32_LEAN_AND_MEAN
-# include <windows.h>
-# include <stdlib.h>
-# include <stdio.h>
-# ifndef BBLIB_STATIC
-#  define BBLIB_EXPORT __declspec(dllexport)
-# endif
-#endif
+#   ifndef WINVER
+#       define WINVER 0x601                                          
+#       define _WIN32_WINNT 0x601
+#       define _WIN32_IE 0x601
+#   endif //!WINVER
+#   define WIN32_LEAN_AND_MEAN
+#   ifndef BBLIB_STATIC
+#       define BBLIB_EXPORT __declspec(dllexport)
+#   endif //!BBLIB_STATIC
+#endif //!BBLIB_COMPILING
+
+#include <stdlib.h>
+#include <stdio.h>
+#include <windows.h>
 
 #ifndef BBLIB_EXPORT
 # define BBLIB_EXPORT
-#endif
-
-#ifndef __BBCORE__
-# define dbg_printf _dbg_printf
 #endif
 
 // #define BBOPT_MEMCHECK
@@ -161,6 +158,12 @@ BBLIB_EXPORT int utf8_to_wchar(const char *src, wchar_t * wstr, int numSumbols);
 /// \return Number of symbols needed for converstion including terminating zero
 BBLIB_EXPORT int utf8_to_wchar_length(const char *src);
 
+/// \brief Converts input wchar_t string to output multibyte string
+///        The type of string is determined with isMbyteUtf8 flag. If
+///        isMbyteUtf8 is set then mbyte assumed ass utf-8. Otherwise as
+///        system default Windows ANSI code page
+BBLIB_EXPORT int wchar_to_mbyte(const WCHAR *src, char *str, int len, BOOL isMbyteUtf8);
+
 /* tokenize.c */
 
 BBLIB_EXPORT int nexttoken(const char **p_out, const char **p_in, const char *delims);
@@ -195,7 +198,8 @@ BBLIB_EXPORT int diff_filetime(const char *fn, FILETIME *ft0);
 BBLIB_EXPORT unsigned long getfileversion(const char *path);
 BBLIB_EXPORT const char *replace_environment_strings_alloc(char **out, const char *src);
 BBLIB_EXPORT char* replace_environment_strings(char* src, int max_size);
-BBLIB_EXPORT void dbg_printf (const char *fmt, ...);
+BBLIB_EXPORT void debug_printf(const char *fmt, ...);
+BBLIB_EXPORT void debug_vprintf(const char* format, va_list vlist);
 BBLIB_EXPORT void dbg_window(HWND hwnd, const char *fmt, ...);
 BBLIB_EXPORT char* win_error(char *msg, int msgsize);
 BBLIB_EXPORT void ForceForegroundWindow(HWND theWin);
@@ -227,9 +231,15 @@ BBLIB_EXPORT int run_process(const char *cmd, const char *dir, int flags);
 #ifndef LIST_NODE_DEFINED
 typedef struct list_node { struct list_node *next; void *v; } list_node;
 #endif
-#ifndef STRING_NODE_DEFINED
-typedef struct string_node { struct string_node *next; char str[1]; } string_node;
-#endif
+
+/* ------------------------------------ */
+/* often used structure */
+
+typedef struct string_node
+{
+    struct string_node *next;
+    char str[1];
+} string_node; 
 
 #define dolist(_e,_l) for (_e=(_l);_e;_e=_e->next)
 

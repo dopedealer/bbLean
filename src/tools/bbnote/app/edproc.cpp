@@ -17,7 +17,7 @@
  *---------------------------------------------------------------------------*/
 // EDPROC.C - window procedure and misc utils for the editor
 
-#include "bbstyle.h"
+#include "bbstyle_bbnote.h"
 #include "edstruct.h"
 #include "vk.h"
 #include <shellapi.h>

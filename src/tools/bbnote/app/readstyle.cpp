@@ -17,7 +17,7 @@
  *---------------------------------------------------------------------------*/
 // readstyle.cpp - read blackbox style
 
-#include "bbstyle.h"
+#include "bbstyle_bbnote.h"
 #define BBSETTINGS_INTERNAL
 #include "Settings.h"
 

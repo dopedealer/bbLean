@@ -22,6 +22,8 @@
 #ifndef _STYLESTRUCT_H_
 #define _STYLESTRUCT_H_
 
+#include <bbstyle.h>
+
 /* Note: Do not change this structure. New items may be appended
    at the end, though. */
 

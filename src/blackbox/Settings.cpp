@@ -1135,4 +1135,13 @@ void* GetSettingPtr(int sn_index)
 }
 
 //===========================================================================
+// API: IsUsingUtf8Encoding - whether using utf-8 encoding on char string
+// conversions
+//===========================================================================
+bool IsUsingUtf8Encoding(void)
+{
+    return bool(Settings_UTF8Encoding);
+}
+
+//===========================================================================
 #endif //ndef BBSETTING_STYLEREADER_ONLY

@@ -20,21 +20,26 @@
 /* windows functions */
 
 #include "bblib.h"
-#include "win0x500.h"
 
-void dbg_printf (const char *fmt, ...)
+void debug_printf(const char *fmt, ...)
+{
+    va_list args;
+    va_start(args, fmt);
+    debug_vprintf(fmt, args);
+    va_end(args);
+}
+
+void debug_vprintf(const char* format, va_list vlist)
 {
     char buffer[4000];
-    va_list arg;
-    int x;
-    va_start(arg, fmt);
-    x = vsnprintf (buffer, sizeof buffer, fmt, arg);
+    int x = vsnprintf (buffer, sizeof buffer, format, vlist);
     if (x >= 0L)
     {
         strncpy_s(buffer+x, sizeof buffer - x, "\n", 2);
     }
     OutputDebugString(buffer);
-}
+} 
+
 
 void dbg_window(HWND hwnd, const char *fmt, ...)
 {
@@ -50,6 +55,7 @@ void dbg_window(HWND hwnd, const char *fmt, ...)
     vsprintf (buffer+x, fmt, arg);
     strcat(buffer, "\n");
     OutputDebugString(buffer);
+    va_end(arg);
 }
 
 int _load_imp(void *pp, const char *dll, const char *proc)
@@ -145,7 +151,7 @@ unsigned long getfileversion(const char *path)
             }}
         m_free(buffer);
     }
-    /* dbg_printf("version number of %s %08x", path, result); */
+    /* debug_printf("version number of %s %08x", path, result); */
     return result;
 }
 

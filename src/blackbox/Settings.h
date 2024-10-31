@@ -26,6 +26,7 @@
 #define BBSETTING extern
 #endif
 
+#include <bbstyle.h>
 #include "Stylestruct.h"
 
 //===========================================================================

@@ -15,7 +15,7 @@
   for more details.
 
  *---------------------------------------------------------------------------*/
-// BBSTYLE.H
+// bbstyle_bbnote.h
 
 #define VERSION_STRING "BBNote 1.08"
 

@@ -333,7 +333,7 @@ void ReplaceEnvVars(char* string)
 
 char* ReplaceShellFolders(char* string)
 {
-    return replace_shellfolders(string, string, false);
+    return replace_shellfolders(string, string, false, defaultrcPath(), IsUsingUtf8Encoding());
 }
 
 //===========================================================================
@@ -347,12 +347,16 @@ bool find_resource_file(char* pszOut, const char* filename, const char* basedir)
     if (defaultrc_path[0]) {
         join_path(pszOut,  defaultrc_path, file_basename(filename));
         if (FileExists(pszOut))
+        {
             return true;
+        }
     }
 #ifndef BBTINY
     sprintf(temp, "APPDATA\\blackbox\\%s", file_basename(filename));
-    if (FileExists(replace_shellfolders(pszOut, temp, false)))
+    if (FileExists(replace_shellfolders(pszOut, temp, false, defaultrcPath(), IsUsingUtf8Encoding())))
+    {
         return true;
+    }
 #endif
     if (is_absolute_path(filename))
         return FileExists(strcpy(pszOut, filename));
@@ -364,7 +368,7 @@ bool find_resource_file(char* pszOut, const char* filename, const char* basedir)
         if (FileExists(pszOut))
             return true;
     }
-    replace_shellfolders(pszOut, filename, false);
+    replace_shellfolders(pszOut, filename, false, defaultrcPath(), IsUsingUtf8Encoding());
     if (FileExists(pszOut))
         return true;
     if (basedir)
@@ -423,7 +427,7 @@ bool FindRCFile(char* pszOut, const char* filename, HINSTANCE module)
 // API: ConfigFileExists
 //===========================================================================
 
-EXTERN_C API_EXPORT
+EXTERN_C 
 const char* ConfigFileExists(const char* filename, const char* pluginDir)
 {
     static char tempBuf[MAX_PATH];
@@ -570,7 +574,7 @@ BOOL BBExecute_string(const char *line, int flags)
             // -in <path> ; specify working directory
             if (0 == strcmp(file+1, "in")) {
                 NextToken(file, &args, NULL);
-                replace_shellfolders(workdir, file, true);
+                replace_shellfolders(workdir, file, true, defaultrcPath(), IsUsingUtf8Encoding());
                 continue;
             }
 
@@ -589,7 +593,7 @@ BOOL BBExecute_string(const char *line, int flags)
     if (0 == (flags & RUN_NOSUBST)) {
         n = '\"' == file[0];
         cmd_temp = (char*)m_alloc((args ? strlen(args) : 0) + MAX_PATH + 10);
-        strcpy(cmd_temp, replace_shellfolders(file, file, true));
+        strcpy(cmd_temp, replace_shellfolders(file, file, true, defaultrcPath(), IsUsingUtf8Encoding()));
         if (n)
             quote_path(cmd_temp);
         if (args)

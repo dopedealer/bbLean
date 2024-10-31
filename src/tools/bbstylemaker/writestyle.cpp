@@ -104,7 +104,7 @@ void check_style(const char *style)
     struct lin_list *tl;
     dolist (tl, fl->lines)
         if (tl->str[0] && !check_key(tl->str))
-            dbg_printf("check failed: %s", tl->str);
+            debug_printf("check failed: %s", tl->str);
 }
 
 int readstyle(const char *fname, StyleStruct* s, int root)
@@ -333,7 +333,7 @@ int check_item(const char *dd, const struct ck *ck)
 
     cc = dd;
     c = scan_component(&dd);
-    //dbg_printf("scan: <%.*s>", c, cc);
+    //debug_printf("scan: <%.*s>", c, cc);
 
     if (c == 1 && cc[0] == '*') {
         if (0 == *dd) // no wildcard at the end allowed
@@ -528,7 +528,7 @@ struct lin_list* make_wildcard(
         if (sl->str[0]
          && false == sl->is_wild
          && 0 != (m = xrm_match(sl->str, wbuf))) {
-            //dbg_printf("match: %s %s", wc, sl->str);
+            //debug_printf("match: %s %s", wc, sl->str);
             dolist (w, wl)
                 if (0 == strcmp(sl->str + sl->k, w->str))
                     break;
@@ -558,7 +558,7 @@ struct lin_list* make_wildcard(
     // then see which value was most often used from them
     m = 0, w2 = NULL;
     dolist (w, wl) {
-        //dbg_printf("%d:%s %s", w->n, wc, w->str);
+        //debug_printf("%d:%s %s", w->n, wc, w->str);
         if (w->n > m) {
             int d, o = 0;
 
@@ -592,7 +592,7 @@ struct lin_list* make_wildcard(
                 *slp = sl->next;
                 sl->next = *dl;
                 *dl = sl;
-                //dbg_printf("delete: %s %s | %s %s", wc, s2, sl->str, sl->str + sl->k);
+                //debug_printf("delete: %s %s | %s %s", wc, s2, sl->str, sl->str + sl->k);
                 continue;
             }
             slp = &sl->next;
@@ -993,10 +993,10 @@ int is_style_old(const char *style)
     struct fil_list *fl;
 
     is_070 = get_070(style);
-    //dbg_printf("070: %d (%s)", is_070, style);
+    //debug_printf("070: %d (%s)", is_070, style);
 
     if (write_070 != is_070) {
-        //dbg_printf("writing in %d (%s)", write_070, style);
+        //debug_printf("writing in %d (%s)", write_070, style);
         return true;
     }
 

@@ -151,7 +151,7 @@ _restart:
 _quit:
             if (ptr) {
                 *ptr = 0;
-                /*dbg_printf("%s (%d): <%s>", fmt, strlen(out), out); */
+                /*debug_printf("%s (%d): <%s>", fmt, strlen(out), out); */
                 return out;
             }
             out = (char*)m_alloc(len + 1);
@@ -274,6 +274,26 @@ BBLIB_EXPORT int utf8_to_wchar_length(const char *src)
 {
     return MultiByteToWideChar(CP_UTF8, 0x0, src, -1, NULL, 0);
 } 
+
+// moved as is from blackbox
+BBLIB_EXPORT int wchar_to_mbyte(const WCHAR *src, char *str, int len, BOOL isMbyteUtf8)
+{
+    int x, n;
+    for (x = -1;;) {
+        n = WideCharToMultiByte(
+                isMbyteUtf8 ? CP_UTF8 : CP_ACP,
+                0, src, x, str, len, NULL, NULL
+                );
+        if (n)
+            return n;
+        if (x < 0)
+            x = len;
+        if (--x == 0)
+            break;
+    }
+    str[0] = 0;
+    return 0;
+}
 
 /* ------------------------------------------------------------------------- */
 

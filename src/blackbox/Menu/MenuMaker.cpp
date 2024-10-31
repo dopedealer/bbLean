@@ -242,9 +242,9 @@ skip:
         {
             char dir[MAX_PATH];
             file_directory(dir, src->path[src->level-1]);
-            replace_shellfolders_from_base(buffer, p_data, false, dir);
+            replace_shellfolders_from_base(buffer, p_data, false, dir, defaultrcPath(), IsUsingUtf8Encoding());
             if (false == add_inc_level(src, buffer)) {
-                replace_shellfolders(buffer, p_data, false);
+                replace_shellfolders(buffer, p_data, false, defaultrcPath(), IsUsingUtf8Encoding());
                 if (false == add_inc_level(src, buffer))
                     MakeMenuNOP(pMenu, NLS0("[include] failed"));
             }

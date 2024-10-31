@@ -18,10 +18,12 @@
 
 */
 
-#include "BBApi.h"
-#include "bblib.h"
+#include <cstdlib>
+
+#include <BBApi.h>
+#include <bblib.h>
+#include <bbstyle.h>
 #include "bbversion.h"
-#include <stdlib.h>
 
 #define VALID_TEXTURE       1 // gradient definition
 #define VALID_COLORFROM     2 // Color
