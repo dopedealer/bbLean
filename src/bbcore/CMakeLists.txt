@@ -13,9 +13,52 @@ set (LINK_DIRS
 
 set (HEADERS
     bbcore.h
+    BB.h
+    BBApi.h
+    Blackbox.h
+    BBSendData.h
+    BBVWM.h
+    BImage.h
+    Desk.h
+    MessageManager.h
+    PluginManager.h
+    Settings.h
+    Stylestruct.h
+    Toolbar.h
+    Tray.h
+    win0x500.h
+    Workspaces.h
+    Menu/Menu.h
+    Menu/MenuMaker.h
 ) 
+
 set (SOURCES
     bbcore.cpp
+    BBApi.cpp
+    BBRoot.cpp
+    BBVWM.cpp
+    BImage.cpp
+    Blackbox.cpp
+    ConfigMenu.cpp
+    Desk.cpp
+    DesktopMenu.cpp
+    MessageManager.cpp
+    PluginManager.cpp
+    Settings.cpp
+    Toolbar.cpp
+    Tray.cpp
+    Utils.cpp
+    Workspaces.cpp
+    Menu/CommandItem.cpp
+    Menu/Contextmenu.cpp
+    Menu/Dragsource.cpp
+    Menu/Droptarget.cpp
+    Menu/FolderItem.cpp
+    Menu/Menu.cpp
+    Menu/MenuItem.cpp
+    Menu/MenuMaker.cpp
+    Menu/SpecialFolder.cpp
+    Menu/TitleItem.cpp
 ) 
 
 set (LIBS
@@ -35,7 +78,7 @@ endif()
 
 # export variables
 set(BBCORE_INCLUDE_DIR ${CMAKE_CURRENT_LIST_DIR}/. CACHE INTERNAL "") 
-set(BBCORE_LIBRARY ${PROJECT} CACHE INTERNAL "") 
+set(BBCORE_LIBRARY ${PROJECT} CACHE INTERNAL "") # only for internal usage and tests
 
 # library 
 add_library (${PROJECT} STATIC ${HEADERS} ${SOURCES})

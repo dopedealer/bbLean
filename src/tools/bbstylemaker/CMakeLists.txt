@@ -20,8 +20,8 @@ set (SOURCES
     main.cpp
     writestyle.cpp
     resource.rc
-    ${BLACKBOX_INCLUDE_DIR}/Settings.cpp # hack!! remove!!
-    ${BLACKBOX_INCLUDE_DIR}/BImage.cpp   # hack!! remove!!
+    ${BBCORE_INCLUDE_DIR}/Settings.cpp # hack!! remove!!
+    ${BBCORE_INCLUDE_DIR}/BImage.cpp   # hack!! remove!!
 ) 
 
 set (LIBS

@@ -23,7 +23,7 @@ set (HEADERS
 set (SOURCES
     hookctl.cpp
     subclass.cpp
-    ${BLACKBOX_INCLUDE_DIR}/BImage.cpp # hack! remove!!!
+    ${BBCORE_INCLUDE_DIR}/BImage.cpp # hack! remove!!!
 ) 
 
 set (LIBS

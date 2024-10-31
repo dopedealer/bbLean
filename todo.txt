@@ -12,37 +12,12 @@
                 * make a class Blackbox
                 * make call of Blackbox class to run
                 * move winmain to main.cpp
-            - move content of blackbox to bbcore lib
+            * move content of blackbox to bbcore lib
                 * make a list of exported bbapi
                 x create 'storage' file for bbapi replacement in bbcore (bbcoreapi)
                 * make compilation of bblib fully separate from blackbox
-                - move all files and put all content to namespaces (except: main.cpp, bbapi xx)
-                    * resolve bblib includes dir and headers from blackbox dir (bbapi.h)
-                        * move bblib from c to cpp
-                            * fix bblib: pidl.c uses defaultrcPath() from blackbox proj
-                            * remove include of blackbox headers to bblib
-                        x replace BOOL returns with bool
-                - make wrapper calls for every exported blackbox api
-                    - make callable functions with moved original content from exported api in bbcore lib
-            - make separate static only lib bbcore with namespace bbcore inside, no exports
-                ? __BBCORE__ prevents from splitting
-                    ? uses __BBCORE__ strange files:
-                        ? bb.h contains extern globals under this macro . But separate functions for blackbox case compilation
-                        ? bbapi.cpp (no one uses except blackbox)
-                        ? fix bbapi.cpp (no one uses except blackbox)
-                        ? settings.cpp (used by bbnote, bbstylemaker) ; changes func behaviour
-                            ? resolve __BBCORE__ in settings.cpp
-                            ? BBSETTING_NOWINDOW - settings.cpp
-                            ? BBSETTING_STYLEREADER_ONLY
-                                ? BBSETTING tricky extern define
-                                    ? the variables defined directly in settings.h in one case
-                            ? __BBSM__
-                        - utils.cpp (used by bbiconbox, bbstylemaker)
-                        - bbapi.h (defines exported special name functions for plugins)
-                        - bbsenddata.h (if macro and x64 changes func behaviour)
-                        - utils.cpp (adds print log fn)
-            - move blackbox to use bbcore lib
-            - move all blackbox functionality to bbcore lib
+            * make blackbox use bbcore lib
+            - try remove in-compiles
             - replace direct in-compile of cpp from ex blackbox in bsetroot to usage of static lib bbcore
             - try remove direct in-compile of image_cx.cpp
             ? needs functions bimage_init bimage_create bimage_destroy bimage_getpixels

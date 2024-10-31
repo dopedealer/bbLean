@@ -30,8 +30,8 @@ set (SOURCES
     edproc.cpp
     match3.cpp
     readstyle.cpp
-    ${BLACKBOX_INCLUDE_DIR}/Settings.cpp     # hack!! remove
-    ${BLACKBOX_INCLUDE_DIR}/BImage.cpp       # hack!! remove
+    ${BBCORE_INCLUDE_DIR}/Settings.cpp     # hack!! remove
+    ${BBCORE_INCLUDE_DIR}/BImage.cpp       # hack!! remove
     resource.rc
 ) 
 
