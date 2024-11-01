@@ -220,7 +220,7 @@ install (FILES ${ARTIFACTS_OUTPUT_DIR}/bbstylemaker.txt DESTINATION docs)
 
 # plugin developement headers
 install (FILES 
-    src/bbcore/BBApi.h
+    src/blackbox/BBApi.h
     src/bblib/bblib.h
     DESTINATION include
     )

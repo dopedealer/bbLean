@@ -21,7 +21,7 @@ set (HEADERS
 ) 
 set (SOURCES
     bsetroot.cpp
-    ${BBCORE_INCLUDE_DIR}/BImage.cpp # hack!! remove in future !
+    ${BLACKBOX_INCLUDE_DIR}/BImage.cpp # hack!! remove in future !
     bsrt-rsc.rc
 ) 
 

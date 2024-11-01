@@ -19,7 +19,7 @@
 
   ========================================================================== */
 
-#include <BBApi.h>
+#include "../../blackbox/BBApi.h"
 
 static void perform_satnhue(BYTE *pixels, int size_x, int size_y, int saturationValue, int hueIntensity)
 {

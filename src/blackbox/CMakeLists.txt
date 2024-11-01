@@ -24,10 +24,51 @@ set (LINK_DIRS
     ) 
 
 set (HEADERS
+    BB.h
+    BBApi.h
+    Blackbox.h
+    BBSendData.h
+    BBVWM.h
+    BImage.h
+    Desk.h
+    MessageManager.h
+    PluginManager.h
+    Settings.h
+    Stylestruct.h
+    Toolbar.h
+    Tray.h
+    win0x500.h
+    Workspaces.h
+    Menu/Menu.h
+    Menu/MenuMaker.h
 ) 
-
 set (SOURCES
     main.cpp
+    BBApi.cpp
+    BBRoot.cpp
+    BBVWM.cpp
+    BImage.cpp
+    Blackbox.cpp
+    ConfigMenu.cpp
+    Desk.cpp
+    DesktopMenu.cpp
+    MessageManager.cpp
+    PluginManager.cpp
+    Settings.cpp
+    Toolbar.cpp
+    Tray.cpp
+    Utils.cpp
+    Workspaces.cpp
+    Menu/CommandItem.cpp
+    Menu/Contextmenu.cpp
+    Menu/Dragsource.cpp
+    Menu/Droptarget.cpp
+    Menu/FolderItem.cpp
+    Menu/Menu.cpp
+    Menu/MenuItem.cpp
+    Menu/MenuMaker.cpp
+    Menu/SpecialFolder.cpp
+    Menu/TitleItem.cpp
     resource.rc
 ) 
 
@@ -62,7 +103,7 @@ set(BLACKBOX_INCLUDES ${BBLIB_INCLUDE_DIR} ${BBCORE_INCLUDE_DIR} ${BLACKBOX_INCL
 
 # export libs variables
 set(BLACKBOX_LIBRARY ${PROJECT} CACHE INTERNAL "") 
-set(BLACKBOX_LIBRARIES ${BBLIB_LIBRARY}  ${BLACKBOX_LIBRARY} CACHE INTERNAL "") 
+set(BLACKBOX_LIBRARIES ${BBLIB_LIBRARY} ${BBCORE_LIBRARY} ${BLACKBOX_LIBRARY} CACHE INTERNAL "") 
 
 # main executable
 add_executable (${PROJECT} ${GUI_TYPE} ${HEADERS} ${SOURCES}) 
