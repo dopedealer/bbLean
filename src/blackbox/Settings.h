@@ -22,11 +22,8 @@
 #ifndef _BBSETTINGS_H_
 #define _BBSETTINGS_H_
 
-#ifndef BBSETTING
-#define BBSETTING extern
-#endif
-
 #include <bbstyle.h>
+
 #include "Stylestruct.h"
 
 //===========================================================================
@@ -43,11 +40,13 @@ int checkfont (const char *face);
 //=====================================================
 // Style definitions
 
-BBSETTING StyleStruct mStyle;
+extern StyleStruct mStyle;
 
 //====================
 // Toolbar Config
-BBSETTING struct toolbar_setting {
+
+struct toolbar_setting
+{
     char placement[20];
     int  widthPercent;
     char strftimeFormat[40];
@@ -57,12 +56,19 @@ BBSETTING struct toolbar_setting {
     bool enabled;
     bool alphaEnabled;
     int  alphaValue;
-} Settings_toolbar;
+};
+
+extern toolbar_setting  Settings_toolbar;
 
 //====================
 // Menu Config
-BBSETTING struct menu_setting {
-    struct { int x, y; } pos;
+struct menu_setting
+{
+    struct
+    {
+        int x;
+        int  y;
+    } pos;
     int  popupDelay;
     int  mouseWheelFactor;
     int  maxWidth;
@@ -78,73 +84,75 @@ BBSETTING struct menu_setting {
     bool dropShadows;
     bool alphaEnabled;
     int  alphaValue;
-} Settings_menu;
+};
+
+extern struct menu_setting  Settings_menu;
 
 //====================
 // workspaces
-BBSETTING bool Settings_styleXPFix;
-BBSETTING bool Settings_followActive;
-BBSETTING bool Settings_altMethod;
-BBSETTING int  Settings_workspaces;
-BBSETTING char Settings_workspaceNames[200];
+extern bool Settings_styleXPFix;
+extern bool Settings_followActive;
+extern bool Settings_altMethod;
+extern int  Settings_workspaces;
+extern char Settings_workspaceNames[200];
 
 //====================
 // Plugin Snap
-BBSETTING int Settings_snapThreshold;
-BBSETTING int Settings_snapPadding;
-BBSETTING bool Settings_snapPlugins;
+extern int Settings_snapThreshold;
+extern int Settings_snapPadding;
+extern bool Settings_snapPlugins;
 
 //====================
 // Desktop
 
 // Margins
-BBSETTING RECT Settings_desktopMargin;
-BBSETTING bool Settings_fullMaximization;
+extern RECT Settings_desktopMargin;
+extern bool Settings_fullMaximization;
 
 // Background
-BBSETTING bool Settings_enableBackground;
-BBSETTING bool Settings_smartWallpaper;
+extern bool Settings_enableBackground;
+extern bool Settings_smartWallpaper;
 
 // Options
-BBSETTING bool Settings_desktopHook;
-BBSETTING bool Settings_hideExplorer;
-BBSETTING bool Settings_hideExplorerTray;
+extern bool Settings_desktopHook;
+extern bool Settings_hideExplorer;
+extern bool Settings_hideExplorerTray;
 
 //====================
 // Other
 
 // window behaviour
-BBSETTING bool Settings_opaqueMove;
-BBSETTING char Settings_focusModel[40];
-BBSETTING int  Settings_autoRaiseDelay;
+extern bool Settings_opaqueMove;
+extern char Settings_focusModel[40];
+extern int  Settings_autoRaiseDelay;
 
 // misc
-BBSETTING char Settings_preferredEditor[MAX_PATH];
-BBSETTING bool Settings_useDefCursor;
-BBSETTING bool Settings_arrowUnix;
-BBSETTING bool Settings_globalFonts;
-BBSETTING bool Settings_imageDither;
-BBSETTING bool Settings_shellContextMenu;
-BBSETTING bool Settings_UTF8Encoding;
-BBSETTING bool Settings_OldTray;
-BBSETTING int Settings_contextMenuAdjust[2];
-BBSETTING int Settings_LogFlag;
+extern char Settings_preferredEditor[MAX_PATH];
+extern bool Settings_useDefCursor;
+extern bool Settings_arrowUnix;
+extern bool Settings_globalFonts;
+extern bool Settings_imageDither;
+extern bool Settings_shellContextMenu;
+extern bool Settings_UTF8Encoding;
+extern bool Settings_OldTray;
+extern int Settings_contextMenuAdjust[2];
+extern int Settings_LogFlag;
 
 // feature select
-BBSETTING bool Settings_disableTray;
-BBSETTING bool Settings_disableDesk;
-BBSETTING bool Settings_disableDDE;
-BBSETTING bool Settings_disableVWM;
-BBSETTING bool Settings_disableMargins;
+extern bool Settings_disableTray;
+extern bool Settings_disableDesk;
+extern bool Settings_disableDDE;
+extern bool Settings_disableVWM;
+extern bool Settings_disableMargins;
 
 //====================
 // --- unused *nix settings ---
-//BBSETTING bool Settings_focusLastWindow;
-//BBSETTING bool Settings_focusNewWindows;
-//BBSETTING char Settings_windowPlacement[40];
-//BBSETTING char Settings_colPlacementDirection[40];
-//BBSETTING char Settings_rowPlacementDirection[40];
-//BBSETTING bool Settings_desktopWheel;
+//extern bool Settings_focusLastWindow;
+//extern bool Settings_focusNewWindows;
+//extern char Settings_windowPlacement[40];
+//extern char Settings_colPlacementDirection[40];
+//extern char Settings_rowPlacementDirection[40];
+//extern bool Settings_desktopWheel;
 
 //===========================================================================
 // Settings.cpp internal definitions

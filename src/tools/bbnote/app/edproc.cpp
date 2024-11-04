@@ -418,8 +418,8 @@ void paint_back (HDC hdc_scrn, RECT* m_rect, RECT *ptext)
     HDC hdc = NULL;
     if (NULL == hdc_back)
     {
-        unsigned grey_b = grey_value (mixcolors(&mStyle.MenuFrame));
-        unsigned grey_t = grey_value (mStyle.MenuFrame.TextColor);
+        unsigned grey_b = grey_value (mixcolors(&gMStyle.MenuFrame));
+        unsigned grey_t = grey_value (gMStyle.MenuFrame.TextColor);
         //dbg_printf("%d %d - #%06x #%06x", grey_b, grey_t, c1, c3);
         darkcolors = grey_b < grey_t;
 
@@ -487,12 +487,12 @@ void paint_window(HWND hwnd) {
     }
 
     My_Colors[0] = (COLORREF)-1;
-    My_Colors[1] = mStyle.MenuFrame.TextColor;
-    My_Colors[3] = mStyle.MenuHilite.TextColor;
-    if (mStyle.MenuHilite.parentRelative)
+    My_Colors[1] = gMStyle.MenuFrame.TextColor;
+    My_Colors[3] = gMStyle.MenuHilite.TextColor;
+    if (gMStyle.MenuHilite.parentRelative)
         My_Colors[2] = grey_value (My_Colors[3]) > 128 ? 0x333333 : 0xeeeeee;
     else
-        My_Colors[2] = mixcolors(&mStyle.MenuHilite);
+        My_Colors[2] = mixcolors(&gMStyle.MenuHilite);
 
     if (edp) {
         i=ps.rcPaint.top;
@@ -511,13 +511,13 @@ void paint_window(HWND hwnd) {
         BitBlt(hdc, rw.right-FRM,  0,  FRM, rw.bottom, hdc_back, rw.right-FRM,  0, SRCCOPY);
     }
 
-    SetTextColor (hdc, mStyle.MenuTitle.TextColor );
+    SetTextColor (hdc, gMStyle.MenuTitle.TextColor );
     SetBkMode    (hdc, TRANSPARENT);
     //SelectObject (hdc, hfnt_sb);
     SelectObject (hdc, fnt2);
     format_status(bstr,1);
     DrawText(hdc, bstr, strlen(bstr), &r,
-        //mStyle.MenuTitle.justify|DT_VCENTER|DT_SINGLELINE
+        //gMStyle.MenuTitle.justify|DT_VCENTER|DT_SINGLELINE
         DT_LEFT|DT_VCENTER|DT_SINGLELINE
         );
 

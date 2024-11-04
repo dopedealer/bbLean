@@ -22,6 +22,11 @@
                             * move bblib from c to cpp
                                 * fix bblib: pidl.c uses defaultrcPath() from blackbox proj
                                 * remove include of blackbox headers to bblib
+                        * fix the .\blackbox\Settings.h variables containment
+                        ? the BBSETTING_STYLEREADER_ONLY in settins.cpp prevents from normal moving to namespace
+                            ? bbrcPath cannot find from settings.cpp when in-compile hack
+                                ? it cannot be resolved in case of in-compile of settings.cpp because needed bbrcPath() is not compiled in that case
+                            ? the __BBCORE__ macro in settings.cpp prevents clean move out api
                     - make wrapper calls for every exported blackbox api
                     - make callable functions with moved original content from exported api in bbcore lib
             - make separate static only lib bbcore with namespace bbcore inside, no exports
@@ -142,3 +147,4 @@ features request:
 - xoblite_bb5_rc4 plugins compatibility
 - custom control panel app - 'restoring' classic one
 - make app for fast replacement of old windows photo viewer (rundll32 "%ProgramFiles%\Windows Photo Viewer\PhotoViewer.dll")
+- make bbnote support utf-8 and display as utf-8 by default

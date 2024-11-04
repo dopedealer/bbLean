@@ -478,7 +478,7 @@ int vscr;
 int but1;
 
 #define VSCR_SIZE MenuInfo.nScrollerSize
-#define VSCR_TOP (MenuInfo.nTitleHeight + MenuInfo.nFrameMargin - imin(mStyle.MenuFrame.borderWidth,mStyle.MenuTitle.borderWidth) + MenuInfo.nScrollerTopOffset)
+#define VSCR_TOP (MenuInfo.nTitleHeight + MenuInfo.nFrameMargin - imin(gMStyle.MenuFrame.borderWidth,gMStyle.MenuTitle.borderWidth) + MenuInfo.nScrollerTopOffset)
 #define VSCR_SIDE MenuInfo.nScrollerSideOffset
 
 void get_vscr_rect(RECT* rw)
@@ -694,7 +694,7 @@ LRESULT CALLBACK LineProc (HWND hText, UINT msg, WPARAM wParam, LPARAM lParam)
         oldbuf = SelectObject(buf, CreateCompatibleBitmap(hdc, r.right, r.bottom));
 
         {
-            StyleItem SI = mStyle.MenuFrame;
+            StyleItem SI = gMStyle.MenuFrame;
             SI.bevelstyle = BEVEL_SUNKEN;
             SI.bevelposition = BEVEL1;
             MakeGradient_s(buf, r, &SI, 0);
@@ -1054,12 +1054,12 @@ void draw_frame(HDC hdc, RECT *prect, int title_h, RECT *ptext)
     int b, f;
 
     rw = *prect;
-    b = mStyle.MenuTitle.borderWidth;
-    f = mStyle.MenuFrame.borderWidth;
+    b = gMStyle.MenuTitle.borderWidth;
+    f = gMStyle.MenuFrame.borderWidth;
 
-    if (hdc) CreateBorder(hdc, &rw, mStyle.MenuFrame.borderColor, f);
+    if (hdc) CreateBorder(hdc, &rw, gMStyle.MenuFrame.borderColor, f);
 
-    if (mStyle.MenuTitle.parentRelative || mStyle.menuTitleLabel)
+    if (gMStyle.MenuTitle.parentRelative || gMStyle.menuTitleLabel)
         rw.top += f;
     else
         rw.top = title_h;
@@ -1068,21 +1068,21 @@ void draw_frame(HDC hdc, RECT *prect, int title_h, RECT *ptext)
     rw.right -= f;
     rw.bottom -= f;
 
-    si = mStyle.MenuFrame;
+    si = gMStyle.MenuFrame;
     si.borderWidth = 0;
     if (hdc) MakeGradient_s(hdc, rw, &si, 0);
 
     rw.bottom = title_h - b;
     rw.top = f;
 
-    if (mStyle.MenuTitle.parentRelative) {
+    if (gMStyle.MenuTitle.parentRelative) {
         rw.left += 3;
         rw.right -= 3;
-        if (hdc) draw_line(hdc, rw.left, rw.right, rw.bottom, b, mStyle.MenuTitle.borderColor);
+        if (hdc) draw_line(hdc, rw.left, rw.right, rw.bottom, b, gMStyle.MenuTitle.borderColor);
     } else {
-        si = mStyle.MenuTitle;
-        if (mStyle.menuTitleLabel) {
-            f = mStyle.MenuFrame.marginWidth;
+        si = gMStyle.MenuTitle;
+        if (gMStyle.menuTitleLabel) {
+            f = gMStyle.MenuFrame.marginWidth;
             rw.top += f;
             rw.left += f;
             rw.right -= f;
@@ -1091,7 +1091,7 @@ void draw_frame(HDC hdc, RECT *prect, int title_h, RECT *ptext)
         } else {
             si.borderWidth = 0;
             if (hdc) MakeGradient_s(hdc, rw, &si, 0);
-            if (hdc) draw_line(hdc, rw.left, rw.right, rw.bottom, b, mStyle.MenuTitle.borderColor);
+            if (hdc) draw_line(hdc, rw.left, rw.right, rw.bottom, b, gMStyle.MenuTitle.borderColor);
         }
         rw.left += 3;
         rw.right -= 3;
@@ -1144,7 +1144,7 @@ void paint_box(HWND hwnd, struct dlg *dlg)
 
     SetBkMode    (hdc,TRANSPARENT);
     hf0 = (HFONT)SelectObject (hdc, fnt2);
-    si = &mStyle.MenuTitle;
+    si = &gMStyle.MenuTitle;
     SetTextColor (hdc, si->TextColor);
     DrawText(hdc, dlg->title, strlen(dlg->title), &r,
         //si->Justify|DT_VCENTER|DT_SINGLELINE
@@ -1161,15 +1161,15 @@ void paint_box(HWND hwnd, struct dlg *dlg)
 
         get_item_rect(bp, &rw);
         x = strlen(s = bp->str);
-        c = mStyle.MenuFrame.TextColor;
+        c = gMStyle.MenuFrame.TextColor;
 
         switch (bp->typ) {
 
         case BN_BTN:
             if ((0!=(bp->f&BN_ACT))^(0!=(bp->f&BN_PRESSED)))
-                si = &mStyle.ToolbarButtonPressed;
+                si = &gMStyle.ToolbarButtonPressed;
             else
-                si = &mStyle.ToolbarButton;
+                si = &gMStyle.ToolbarButton;
 
             MakeGradient_s(hdc, rw, si, 0);
             SetTextColor (hdc, si->TextColor);
@@ -1231,10 +1231,10 @@ void paint_box(HWND hwnd, struct dlg *dlg)
             break;
 
         case BN_RECT:
-            if (mStyle.borderWidth)
-                c = mStyle.borderColor;
+            if (gMStyle.borderWidth)
+                c = gMStyle.borderColor;
             else
-                c = mStyle.MenuFrame.ColorTo;
+                c = gMStyle.MenuFrame.ColorTo;
 
             CreateBorder (hdc, &rw, c, 1);
             break;
@@ -1249,7 +1249,7 @@ void paint_box(HWND hwnd, struct dlg *dlg)
 
         case BN_EDT:
         /*
-            hp0 = SelectObject(hdc, CreatePen(PS_SOLID, 1, mStyle.MenuFrame.ColorTo));
+            hp0 = SelectObject(hdc, CreatePen(PS_SOLID, 1, gMStyle.MenuFrame.ColorTo));
             MoveToEx (hdc, rw.left-1, rw.bottom, NULL);
             LineTo   (hdc, rw.left-1, rw.top-1);
             LineTo   (hdc, rw.right,  rw.top-1);
@@ -1258,15 +1258,15 @@ void paint_box(HWND hwnd, struct dlg *dlg)
             break;
 
         case BN_ITM:
-            rw.left  += mStyle.borderWidth;
-            rw.right -= mStyle.borderWidth;
+            rw.left  += gMStyle.borderWidth;
+            rw.right -= gMStyle.borderWidth;
             //rw.top--;
             //rw.bottom++;
             if (bp->f & BN_ACT)
             {
-                if (false == mStyle.MenuHilite.parentRelative)
-                    MakeGradient_s(hdc, rw, &mStyle.MenuHilite, 0);
-                c = mStyle.MenuHilite.TextColor;
+                if (false == gMStyle.MenuHilite.parentRelative)
+                    MakeGradient_s(hdc, rw, &gMStyle.MenuHilite, 0);
+                c = gMStyle.MenuHilite.TextColor;
             }
             rw.left   += FRM*2;
             SetTextColor (hdc, c);
@@ -1289,9 +1289,9 @@ void paint_box(HWND hwnd, struct dlg *dlg)
             rw.left   += (bp->xl)/2 - 2;
             rw.right  = rw.left + 4;
 
-            //CreateBorder (hdc, rw, mStyle.MenuFrame.textcolor, 1);
+            //CreateBorder (hdc, rw, gMStyle.MenuFrame.textcolor, 1);
 
-            si = &mStyle.MenuFrame;
+            si = &gMStyle.MenuFrame;
             MakeGradient(hdc, rw,
                 si->type,
                 si->Color,
@@ -1302,10 +1302,10 @@ void paint_box(HWND hwnd, struct dlg *dlg)
                 0,0,0
                 );
 
-            //MakeGradient_s(hdc, rw, &mStyle.MenuFrame, 0);
+            //MakeGradient_s(hdc, rw, &gMStyle.MenuFrame, 0);
 
             get_slider_rect (bp, &rw);
-            MakeGradient_s(hdc, rw, &mStyle.MenuTitle,0);//mStyle.border_width);
+            MakeGradient_s(hdc, rw, &gMStyle.MenuTitle,0);//gMStyle.border_width);
             break;
 
         }}
@@ -1609,7 +1609,7 @@ LRESULT CALLBACK SearchProc (HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
         // -------------------------------------
         case WM_CTLCOLOREDIT:
             SetBkMode ((HDC)wParam, TRANSPARENT);
-            SetTextColor ((HDC)wParam, mStyle.MenuFrame.TextColor);
+            SetTextColor ((HDC)wParam, gMStyle.MenuFrame.TextColor);
             return (LRESULT)GetStockObject(NULL_BRUSH);
 
         case WM_COMMAND:
@@ -1858,7 +1858,7 @@ int bb_menu_1(HWND hwnd, int f, struct button *menu, const char *title, int mf)
 
     x += 4*FRM;
     z = MenuInfo.nItemHeight;
-    int d = MenuInfo.nFrameMargin - mStyle.MenuFrame.borderWidth;
+    int d = MenuInfo.nFrameMargin - gMStyle.MenuFrame.borderWidth;
     bp = menu;
     y = d;
     while (bp->str)
@@ -2340,7 +2340,7 @@ LRESULT CALLBACK ConfigProc (HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 
         case WM_CTLCOLOREDIT:
             SetBkMode ((HDC)wParam, TRANSPARENT);
-            SetTextColor ((HDC)wParam, mStyle.MenuFrame.TextColor);
+            SetTextColor ((HDC)wParam, gMStyle.MenuFrame.TextColor);
             return (LRESULT)GetStockObject(NULL_BRUSH);
 
         case WM_COMMAND:
@@ -2453,7 +2453,7 @@ bool bb_getstyle(HWND hwnd)
     struct getdata_info gdi;
     if (false == BBN_GetBBWnd())
         return false;
-    if (false == bbgetdata(hwnd, BB_GETSTYLESTRUCT, &mStyle, &gdi))
+    if (false == bbgetdata(hwnd, BB_GETSTYLESTRUCT, &gMStyle, &gdi))
         return false;
     return 0 != readstyle(NULL);
 }
@@ -2488,7 +2488,7 @@ void GetStyle (const char *styleFile);
 int readstyle(const char *fname)
 {
     GetStyle(fname);
-    //return 0 != (mStyle.MenuFrame.validated & VALID_TEXTURE);
+    //return 0 != (gMStyle.MenuFrame.validated & VALID_TEXTURE);
     return 1;
 }
 

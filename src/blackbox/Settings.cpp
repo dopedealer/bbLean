@@ -25,7 +25,6 @@
 #ifndef BBSETTING_STYLEREADER_ONLY
 # include "Menu/MenuMaker.h"
 # include "BImage.h"
-# define BBSETTING
 #endif
 
 #define BBSETTINGS_INTERNAL
@@ -39,6 +38,80 @@ static_assert(sizeof(StyleItem) == 300, "The size of StyleItem struct must be st
 
 /* If you get an error here that means that BBApi.h was changed
    in an incompatible way */
+
+//=====================================================
+// Style definitions
+
+StyleStruct mStyle;
+toolbar_setting  Settings_toolbar;
+struct menu_setting  Settings_menu;
+
+//====================
+// workspaces
+bool Settings_styleXPFix;
+bool Settings_followActive;
+bool Settings_altMethod;
+int  Settings_workspaces;
+char Settings_workspaceNames[200];
+
+//====================
+// Plugin Snap
+int Settings_snapThreshold;
+int Settings_snapPadding;
+bool Settings_snapPlugins;
+
+//====================
+// Desktop
+
+// Margins
+RECT Settings_desktopMargin;
+bool Settings_fullMaximization;
+
+// Background
+bool Settings_enableBackground;
+bool Settings_smartWallpaper;
+
+// Options
+bool Settings_desktopHook;
+bool Settings_hideExplorer;
+bool Settings_hideExplorerTray;
+
+//====================
+// Other
+
+// window behaviour
+bool Settings_opaqueMove;
+char Settings_focusModel[40];
+int  Settings_autoRaiseDelay;
+
+// misc
+char Settings_preferredEditor[MAX_PATH];
+bool Settings_useDefCursor;
+bool Settings_arrowUnix;
+bool Settings_globalFonts;
+bool Settings_imageDither;
+bool Settings_shellContextMenu;
+bool Settings_UTF8Encoding;
+bool Settings_OldTray;
+int Settings_contextMenuAdjust[2];
+int Settings_LogFlag;
+
+// feature select
+bool Settings_disableTray;
+bool Settings_disableDesk;
+bool Settings_disableDDE;
+bool Settings_disableVWM;
+bool Settings_disableMargins;
+
+//====================
+// --- unused *nix settings ---
+//bool Settings_focusLastWindow;
+//bool Settings_focusNewWindows;
+//char Settings_windowPlacement[40];
+//char Settings_colPlacementDirection[40];
+//char Settings_rowPlacementDirection[40];
+//bool Settings_desktopWheel;
+
 
 //#define PARSEFONT_AFTER
 //===========================================================================

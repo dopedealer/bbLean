@@ -28,7 +28,7 @@
 //#define MAX_LINE_LENGTH 256
 
 void MakeGradient_s (HDC hdc, RECT rw, StyleItem *si, int borderWidth);
-extern StyleStruct mStyle;
+extern StyleStruct gMStyle;
 
 // FolderItem bullet positions
 #define FOLDER_RIGHT    0

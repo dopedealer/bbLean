@@ -21,11 +21,11 @@
 #define BBSETTINGS_INTERNAL
 #include "Settings.h"
 
-StyleStruct mStyle;
-menu_setting Settings_menu;
+StyleStruct gMStyle{};
+menu_setting gSettingsMenu{};
 bool Settings_menusBroamMode = false;
 int Settings_menuMaxWidth = 200;
-struct MenuInfo MenuInfo;
+struct MenuInfo MenuInfo{};
 
 struct FolderItem
 {
@@ -108,13 +108,13 @@ void GetStyle (const char *styleFile)
     if (styleFile)
     {
         stylePath(styleFile);
-        ReadStyle(styleFile, &mStyle);
+        ReadStyle(styleFile, &gMStyle);
     }
 
-    bimage_init(true, mStyle.is_070);
+    bimage_init(true, gMStyle.is_070);
 
     Menu_Reconfigure();
-    mStyle.borderWidth = mStyle.MenuFrame.borderWidth;
+    gMStyle.borderWidth = gMStyle.MenuFrame.borderWidth;
 }
 
 //===========================================================================
@@ -136,9 +136,9 @@ void Menu_Reconfigure(void)
     // clear fonts
     Menu_Clear();
 
-    StyleItem *MTitle = &mStyle.MenuTitle;
-    StyleItem *MFrame = &mStyle.MenuFrame;
-    StyleItem *MHilite = &mStyle.MenuHilite;
+    StyleItem *MTitle = &gMStyle.MenuTitle;
+    StyleItem *MFrame = &gMStyle.MenuFrame;
+    StyleItem *MHilite = &gMStyle.MenuHilite;
     StyleItem *pSI;
 
     // create fonts
@@ -147,15 +147,15 @@ void Menu_Reconfigure(void)
 
     // set bullet position & style
     MenuInfo.nBulletPosition =
-        stristr(mStyle.menuBulletPosition, "left") ? FOLDER_LEFT : FOLDER_RIGHT;
+        stristr(gMStyle.menuBulletPosition, "left") ? FOLDER_LEFT : FOLDER_RIGHT;
 
     MenuInfo.nBulletStyle =
-        get_menu_bullet(mStyle.menuBullet);
+        get_menu_bullet(gMStyle.menuBullet);
 
-    if (0 == stricmp(Settings_menu.openDirection, "bullet"))
+    if (0 == stricmp(gSettingsMenu.openDirection, "bullet"))
         MenuInfo.openLeft = MenuInfo.nBulletPosition == FOLDER_LEFT;
     else
-        MenuInfo.openLeft = 0 == stricmp(Settings_menu.openDirection, "left");
+        MenuInfo.openLeft = 0 == stricmp(gSettingsMenu.openDirection, "left");
 
     // --------------------------------------------------------------
     // calulate metrics:
@@ -164,7 +164,7 @@ void Menu_Reconfigure(void)
     MenuInfo.nSubmenuOverlap = MenuInfo.nFrameMargin + MHilite->borderWidth;
     MenuInfo.nTitleMargin = 0;
 
-    if (mStyle.menuTitleLabel)
+    if (gMStyle.menuTitleLabel)
         MenuInfo.nTitleMargin = MFrame->marginWidth;
 
     // --------------------------------------
@@ -174,15 +174,15 @@ void Menu_Reconfigure(void)
     int titleHeight = 2*MTitle->marginWidth + tfh;
 
     // xxx old behaviour xxx
-    if (false == mStyle.is_070 && 0 == (MTitle->validated & V_MAR))
-        titleHeight = MTitle->FontHeight + 2*mStyle.bevelWidth;
+    if (false == gMStyle.is_070 && 0 == (MTitle->validated & V_MAR))
+        titleHeight = MTitle->FontHeight + 2*gMStyle.bevelWidth;
     //xxxxxxxxxxxxxxxxxxxxxx
 
     pSI = MTitle->parentRelative ? MFrame : MTitle;
     MenuInfo.nTitleHeight = titleHeight + MTitle->borderWidth + MFrame->borderWidth;
     MenuInfo.nTitleIndent = imax(imax(2 + pSI->bevelposition, pSI->marginWidth), (titleHeight-tfh)/2);
 
-    if (mStyle.menuTitleLabel) {
+    if (gMStyle.menuTitleLabel) {
         MenuInfo.nTitleHeight += MTitle->borderWidth + MFrame->marginWidth;
         MenuInfo.nTitleIndent += MTitle->borderWidth;
     }
@@ -194,8 +194,8 @@ void Menu_Reconfigure(void)
     int itemHeight = MHilite->marginWidth + ffh;
 
     // xxx old behaviour xxx
-    if (false == mStyle.is_070 && 0 == (MHilite->validated & V_MAR))
-        itemHeight = MFrame->FontHeight + (mStyle.bevelWidth+1)/2;
+    if (false == gMStyle.is_070 && 0 == (MHilite->validated & V_MAR))
+        itemHeight = MFrame->FontHeight + (gMStyle.bevelWidth+1)/2;
     //xxxxxxxxxxxxxxxxxxxxxx
 
 #ifdef BBOPT_MENUICONS
@@ -224,9 +224,9 @@ void Menu_Reconfigure(void)
 
     // --------------------------------------
     // from where on does it need a scroll button:
-    MenuInfo.MaxWidth = Settings_menu.showBroams
-        ? iminmax(Settings_menu.maxWidth*2, 320, 640)
-        : Settings_menu.maxWidth;
+    MenuInfo.MaxWidth = gSettingsMenu.showBroams
+        ? iminmax(gSettingsMenu.maxWidth*2, 320, 640)
+        : gSettingsMenu.maxWidth;
 
     // --------------------------------------
     // setup a StyleItem for the scroll rectangle
@@ -234,7 +234,7 @@ void Menu_Reconfigure(void)
     if (false == MTitle->parentRelative)
     {
         *pScrl = *MTitle;
-        if (false == mStyle.menuTitleLabel) {
+        if (false == gMStyle.menuTitleLabel) {
             pScrl->borderColor = MFrame->borderColor;
             pScrl->borderWidth = imin(MFrame->borderWidth, MTitle->borderWidth);
         }
@@ -259,7 +259,7 @@ void Menu_Reconfigure(void)
             titleHeight + 2*pScrl->borderWidth
             );
 
-    if (mStyle.menuTitleLabel) {
+    if (gMStyle.menuTitleLabel) {
         MenuInfo.nScrollerTopOffset = 0;
         MenuInfo.nScrollerSideOffset = MenuInfo.nFrameMargin;
     } else {
@@ -274,7 +274,7 @@ void Menu_Reconfigure(void)
 
     // Menu separator line
     MenuInfo.separatorColor = get_mixed_color(MFrame);
-    MenuInfo.separatorWidth = Settings_menu.drawSeparators ? imax(1, MFrame->borderWidth) : 0;
+    MenuInfo.separatorWidth = gSettingsMenu.drawSeparators ? imax(1, MFrame->borderWidth) : 0;
     MenuInfo.check_is_pr = MHilite->parentRelative
         || iabs(greyvalue(get_bg_color(MFrame))
                 - greyvalue(get_bg_color(MHilite))) < 24;
