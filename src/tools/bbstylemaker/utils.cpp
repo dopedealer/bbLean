@@ -20,7 +20,7 @@
  ============================================================================
 */
 
-int BBMessageBox(int flg, const char *fmt, ...)
+int BBStyleMakerMessageBox(int flg, const char *fmt, ...)
 {
     char buffer[10000], *p;
     const char *msg = buffer, *caption = APPNAME;
@@ -29,7 +29,11 @@ int BBMessageBox(int flg, const char *fmt, ...)
     vsprintf (buffer, fmt, arg);
     if ('#' == buffer[0] && NULL != (p = strchr(buffer+1, buffer[0])))
         caption = buffer+1, *p=0, msg = p+1;
-    return MessageBox (NULL, msg, caption, flg | MB_SETFOREGROUND | MB_TOPMOST);
+
+    auto rc = MessageBoxA(NULL, msg, caption, flg | MB_SETFOREGROUND | MB_TOPMOST);;
+    va_end(arg);
+
+    return rc;
 }
 
 const char *string_empty_or_null(const char *s)

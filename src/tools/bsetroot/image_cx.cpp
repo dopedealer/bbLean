@@ -6,8 +6,6 @@
 #include <malloc.h>
 #include "CXIMAGE/CxImage/ximage.h"
 
-extern "C" void dbg_printf (const char *fmt, ...);
-
 char m_error[200];
 typedef void *HIMG;
 

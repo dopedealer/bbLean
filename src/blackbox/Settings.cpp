@@ -250,7 +250,7 @@ void parse_font(StyleItem *si, const char *font)
                 break;
             }
 
-    //dbg_printf("%s -> <%s> %d %d", font, si->Font, si->FontHeight, si->FontWeight);
+    //debug_printf("%s -> <%s> %d %d", font, si->Font, si->FontHeight, si->FontWeight);
     if (dblcheck && 0 == checkfont(si->Font)) {
         LOGFONT logFont;
         SystemParametersInfo(SPI_GETICONTITLELOGFONT, 0, &logFont, 0);
@@ -416,8 +416,8 @@ static const char *check_global_font(const char *p, const char *fullkey)
         char globalkey[100];
         const char *p2;
         strcat(strcpy(globalkey, "blackbox.global."), fullkey);
-        p2 = ReadValue(extensionsrcPath(NULL), globalkey, NULL);
-        //dbg_printf("<%s> <%s>", globalkey, p2);
+        p2 = read_value(extensionsrcPath(NULL), globalkey, NULL);
+        //debug_printf("<%s> <%s>", globalkey, p2);
         if (p2 && p2[0]) return p2;
     }
 #endif
@@ -596,27 +596,32 @@ restart:
             else
                 strcpy(lastword, cp->k);
 
-            p = ReadValue(style, fullkey, NULL);
+            p = read_value(style, fullkey, NULL);
             if (NULL == p && cp->o) {
                 // try 0.65 key
                 strcpy(lastword, cp->o);
-                p = ReadValue(style, fullkey, NULL);
+                p = read_value(style, fullkey, NULL);
             }
 
             switch (cp->mode) {
             // --- textture ---
             case C_TEX:
-                if (p) {
-                    ParseItem(p, si);
+                if (p)
+                {
+                    parse_item(p, si);
                     si->bordered = NULL != stristr(p, "border");
-                    if (sn == SN_MENUTITLE) {
+                    if (sn == SN_MENUTITLE)
+                    {
                         if (false == si->parentRelative && stristr(p, "label"))
                             pStyle->menuTitleLabel = true;
                         if (stristr(p, "hidden"))
                             si->parentRelative = pStyle->menuNoTitle = true;
                     }
-                } else {
-                    if (f & I_ACT && false == is_070) {
+                }
+                else
+                {
+                    if (f & I_ACT && false == is_070)
+                    {
                         key = "menu.hilite";
                         f &= ~I_ACT;
                         goto restart;
@@ -657,7 +662,7 @@ restart:
             case C_PIC:
                 if (NULL == p && false == is_070 && (f & I_BUL)) {
                     strcpy(lastword, ".bulletColor"); // xoblite menu bullets
-                    p = ReadValue(style, fullkey, NULL);
+                    p = read_value(style, fullkey, NULL);
                 }
 
                 cr = ReadColorFromString(p);
@@ -837,7 +842,7 @@ void ReadStyle(const char *style, StyleStruct *pStyle)
         }
 
         trans = set_translate_065(false);
-        p = ReadValue(style, s->rc_string, NULL);
+        p = read_value(style, s->rc_string, NULL);
         set_translate_065(trans);
 
         if (p) switch (sn) {
@@ -1193,7 +1198,7 @@ void Settings_ReadStyleSettings(void)
 {
     //DWORD t = GetTickCount(); for (int i=0; i < 1000; ++i)
     ReadStyle(stylePath(NULL), &mStyle);
-    //dbg_printf("1000 styles read in %d ms", GetTickCount() - t);
+    //debug_printf("1000 styles read in %d ms", GetTickCount() - t);
 
     bimage_init(Settings_imageDither, mStyle.is_070);
 }

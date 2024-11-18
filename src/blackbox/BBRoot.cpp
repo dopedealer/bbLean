@@ -178,7 +178,7 @@ bbexec:
 
     set_my_path(NULL, exe_path, "bsetroot.exe");
     bsrt_vernum = getfileversion(exe_path);
-    //dbg_printf("bsrt_vernum %08x", bsrt_vernum);
+    //debug_printf("bsrt_vernum %08x", bsrt_vernum);
     if (bsrt_vernum < 0x02000000)
         goto bbexec;
 
@@ -200,7 +200,7 @@ bbexec:
 #endif
 
     r = BBExecute_string(buffer, RUN_NOSUBST|RUN_WAIT|RUN_NOERRORS);
-    //dbg_printf("command <%s>", buffer);
+    //debug_printf("command <%s>", buffer);
     if (0 == r)
         return NULL;
 

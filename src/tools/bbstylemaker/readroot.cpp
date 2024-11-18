@@ -154,7 +154,7 @@ void make_bsetroot_string(NStyleStruct *pss, char *out, int all)
             sprintf(out+x, " -hue %d", r->hue);
     }
 
-    //dbg_printf("%s", out);
+    //debug_printf("%s", out);
 }
 
 //===========================================================================

@@ -36,16 +36,14 @@ struct FolderItem
 int FolderItem::m_nBulletStyle;
 int FolderItem::m_nBulletPosition;
 
-LPCSTR stylePath(LPCSTR styleFileName)
+LPCSTR localStylePath(LPCSTR styleFileName)
 {
     static char path[MAX_PATH];
-    if (styleFileName) strcpy(path, styleFileName);
+    if (styleFileName)
+    {
+        strcpy(path, styleFileName); // TODO: fix buffer overflow possibility
+    }
     return path;
-}
-
-LPCSTR extensionsrcPath(LPCSTR extensionsrcFileName)
-{
-    return "";
 }
 
 COLORREF get_bg_color(StyleItem *pSI)
@@ -107,7 +105,7 @@ void GetStyle (const char *styleFile)
 {
     if (styleFile)
     {
-        stylePath(styleFile);
+        localStylePath(styleFile);
         ReadStyle(styleFile, &gMStyle);
     }
 

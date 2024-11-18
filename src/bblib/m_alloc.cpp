@@ -187,6 +187,7 @@ void m_alloc_printf(const char *fmt, ...)
     vsprintf (buffer, fmt, arg);
     fputs (buffer, alloc_fp);
     /*OutputDebugString(buffer); */
+    va_end(arg);
 }
 
 void m_alloc_dump_memory(void)

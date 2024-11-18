@@ -59,10 +59,12 @@ HINSTANCE hInstance;
 void dbg_printf (const char *fmt, ...)
 {
     char buffer[4096];
-    va_list arg; va_start(arg, fmt);
+    va_list arg;
+    va_start(arg, fmt);
     vsprintf (buffer, fmt, arg);
     strcat(buffer, "\n");
     OutputDebugString(buffer);
+    va_end(arg);
 }
 #endif
 

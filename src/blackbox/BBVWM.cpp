@@ -152,7 +152,7 @@ void vwm_update_winlist(void)
 
 #if 0
     // debugging stuff
-    dbg_printf("-----------------");
+    debug_printf("-----------------");
     dolist (wl, vwm_WL)
     {
         char buffer[100];
@@ -161,10 +161,10 @@ void vwm_update_winlist(void)
         LONG style = GetWindowLong(wl->hwnd, GWL_STYLE);
         LONG exstyle = GetWindowLong(wl->hwnd, GWL_EXSTYLE);
         GetAppByWindow(wl->hwnd, appName);
-        dbg_printf("hw:%x ws:%d mv:%d hi:%d ic:%d st:%d <%s> (wst:%08x wex:%08x %s)",
+        debug_printf("hw:%x ws:%d mv:%d hi:%d ic:%d st:%d <%s> (wst:%08x wex:%08x %s)",
             wl->hwnd, wl->desk, wl->moved, wl->hidden, wl->iconic, wl->sticky, buffer, style, exstyle, appName);
     }
-    dbg_printf("-----------------");
+    debug_printf("-----------------");
 #endif
 }
 
@@ -384,7 +384,7 @@ void defer_windows(int newdesk)
     #if 0
             char buffer[100];
             GetClassName(wl->hwnd, buffer, sizeof buffer);
-            dbg_printf ("defer: %x %x <%s>", dwp_new, wl->hwnd, buffer);
+            debug_printf ("defer: %x %x <%s>", dwp_new, wl->hwnd, buffer);
     #endif
             if (dwp_new) {
                 dwp = dwp_new;

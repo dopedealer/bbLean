@@ -420,7 +420,7 @@ void paint_back (HDC hdc_scrn, RECT* m_rect, RECT *ptext)
     {
         unsigned grey_b = grey_value (mixcolors(&gMStyle.MenuFrame));
         unsigned grey_t = grey_value (gMStyle.MenuFrame.TextColor);
-        //dbg_printf("%d %d - #%06x #%06x", grey_b, grey_t, c1, c3);
+        //debug_printf("%d %d - #%06x #%06x", grey_b, grey_t, c1, c3);
         darkcolors = grey_b < grey_t;
 
         hdc = hdc_back  = CreateCompatibleDC(hdc_scrn);
@@ -714,7 +714,7 @@ void init_edit(HWND hwnd) {
             {
                 if (0 == set_currentdir(buff))
                     GetCurrentDirectory(256, currentdir);
-                //dbg_printf("currentdir <%s> <%s>", currentdir, buff);
+                //debug_printf("currentdir <%s> <%s>", currentdir, buff);
             }
 
             if (LoadFile(buff))
@@ -1143,7 +1143,6 @@ drag_cancel:
 
 /*----------------------------------------------------------------------------*/
 int domove (HWND bwnd, UINT message, WPARAM wParam, LPARAM lParam);
-//void SnapWindowToEdge(WINDOWPOS* pwPos, int nDist, BOOL bUseScreenSize);
 
 extern HWND mwnd;
 extern UINT bb_broadcast_msg;
@@ -1401,12 +1400,7 @@ LRESULT CALLBACK EditProc (HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam
         ewxl = ((LPWINDOWPOS) lParam)->cx;
         ewyl = ((LPWINDOWPOS) lParam)->cy;
         cfg_f |= 1;
-        break; //process wm_move/wm_size
-
-    case WM_WINDOWPOSCHANGING:
-        SnapWindowToEdge((WINDOWPOS*)lParam, 10, 0);
-        setsize(hwnd);
-        return 0;
+        break; //process wm_move/wm_size 
 */
 
     case WM_VSCROLL:

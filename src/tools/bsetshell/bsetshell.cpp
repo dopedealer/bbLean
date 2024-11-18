@@ -58,17 +58,7 @@ static bool is_blackbox;
 # define LONG_PTR long
 #endif
 
-/* ======================================================================== */
-
-void dbg_printf (const char *fmt, ...)
-{
-    char buffer[4000];
-    va_list arg;
-    va_start(arg, fmt);
-    vsprintf (buffer, fmt, arg);
-    strcat(buffer, "\n");
-    OutputDebugString(buffer);
-}
+/* ======================================================================== */ 
 
 int message(int flg, const char *fmt, ...)
 {
@@ -76,7 +66,9 @@ int message(int flg, const char *fmt, ...)
     va_list arg;
     va_start(arg, fmt);
     vsprintf (buffer, fmt, arg);
-    return MessageBox (g_hDlg, buffer, APPNAME, flg);
+    auto result = MessageBox (g_hDlg, buffer, APPNAME, flg);
+    va_end(arg);
+    return result;
 }
 
 /* ======================================================================== */
@@ -138,7 +130,7 @@ bool rw_reg(int action, HKEY root, const char *ckey, const char *cval, const cha
     }
 
 #if 0
-    dbg_printf("(%d) %s %s %s %s %s",
+    debug_printf("(%d) %s %s %s %s %s",
         ERROR_SUCCESS == r,
         A_WR & action ? "WR" : A_DEL & action ? "DEL" : "RD",
         root == HKEY_LOCAL_MACHINE ? "LM" : "CU",

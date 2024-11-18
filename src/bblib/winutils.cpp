@@ -99,6 +99,28 @@ int is_bbwindow(HWND hwnd)
     return GetWindowThreadProcessId(hwnd, NULL) == GetCurrentThreadId();
 }
 
+const char * get_bbclassname(void)
+{
+    return "BlackboxClass";
+}
+
+const char * get_bbname(void)
+{
+    return "Blackbox";
+}
+
+/// \brief Tries to find blackbox app window by it's name
+/// \returns Non empty value in case of success. Otherwise empty value
+HWND get_bbwindow(void)
+{
+    auto hwnd = ::FindWindow(get_bbclassname(), get_bbname());
+    if (NULL == hwnd)
+    {
+        hwnd = ::FindWindow("xoblite", NULL);
+    }
+    return hwnd;
+}
+
 int get_fontheight(HFONT hFont)
 {
     TEXTMETRIC TXM;

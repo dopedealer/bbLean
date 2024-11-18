@@ -66,6 +66,7 @@ void dbg_printf (const char *fmt, ...)
     va_start(arg, fmt);
     vsprintf (buffer, fmt, arg);
     OutputDebugString(buffer);
+    va_end(arg);
 }
 
 int imax(int a, int b) {

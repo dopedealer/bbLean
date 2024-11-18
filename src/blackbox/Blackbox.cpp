@@ -44,9 +44,6 @@
 
 //====================
 
-const char szBlackboxName   [] = "Blackbox";
-const char szBlackboxClass  [] = "BlackboxClass";
-
 HINSTANCE hMainInstance;
 HWND BBhwnd;
 DWORD BBThreadId;
@@ -284,7 +281,7 @@ void set_os_info(void)
     usingNT = 0 == (version & 0x80000000);
     if (usingNT) {
         DWORD hex_version = ((version<<8) & 0xFF00) + ((version>>8) & 0x00FF);
-        // dbg_printf("hex_version %x", hex_version);
+        // debug_printf("hex_version %x", hex_version);
         usingXP = hex_version >= 0x501;
         usingVista = hex_version >= 0x600;
         usingWin7 = hex_version >= 0x601;
@@ -412,9 +409,7 @@ int Blackbox::run(void)
 
     for (;;)
     {
-        BBhwnd = FindWindow(szBlackboxClass, szBlackboxName);
-        if (NULL == BBhwnd)
-            BBhwnd = FindWindow("xoblite", NULL);
+        BBhwnd = get_bbwindow();
 
         if (check_options(data.lpCmdLine))
             return 0;
@@ -435,16 +430,19 @@ int Blackbox::run(void)
     }
 
     /* Give the user a chance to escape from a broken installation */
-    if (false == nostartup && (0x8000 & GetKeyState(VK_CONTROL))) {
+    if (false == nostartup && (0x8000 & GetKeyState(VK_CONTROL)))
+    {
         terminate_welcomescreen();
         ret = BBMessageBox(MB_YESNO, NLS2("$Query_Escape$",
                 "Control Key was held down."
                 "\nDo you want to start an explorer window instead of Blackbox?"
                 ));
-        if (IDYES == ret) {
+        if (IDYES == ret)
+        {
             BBExecute_string("explorer.exe", RUN_SHOWERRORS);
             return 0;
-        }}
+        }
+    }
 
     init_runtime_libs();
     multimon = have_imp(pGetMonitorInfoA);
@@ -486,11 +484,11 @@ int Blackbox::run(void)
     MessageManager_Init();
 
     /* create the main message window... */
-    BBRegisterClass(szBlackboxClass, MainWndProc, 0);
+    BBRegisterClass(get_bbclassname(), MainWndProc, 0);
     CreateWindowEx(
         WS_EX_TOOLWINDOW,
-        szBlackboxClass,
-        szBlackboxName,
+        get_bbclassname(),
+        get_bbname(),
         WS_POPUP|WS_DISABLED,
         // sizes are assigned for cursor behaviour with
         // AutoRaise Focus on winME, win2k
@@ -512,7 +510,7 @@ int Blackbox::run(void)
         for (;;) {
             if (GetMessage(&msg, NULL, 0, 0) <= 0)
                 break;
-            //dbg_printf("hwnd %x, msg %d wp %x lp %x", msg.hwnd, msg.message, msg.wParam, msg.lParam);
+            //debug_printf("hwnd %x, msg %d wp %x lp %x", msg.hwnd, msg.message, msg.wParam, msg.lParam);
             TranslateMessage(&msg);
             DispatchMessage(&msg);
         }
@@ -522,7 +520,7 @@ int Blackbox::run(void)
         EXCEPTION_CONTINUE_SEARCH)) {
     }
 
-    UnregisterClass(szBlackboxClass, hMainInstance);
+    UnregisterClass(get_bbclassname(), hMainInstance);
 
     DDE_exit();
     ShowExplorer();
@@ -690,7 +688,7 @@ void set_style(const char* filename)
 int handle_received_data(HWND hwnd, UINT msg, WPARAM wParam, const void *data, unsigned data_size)
 {
     if (BB_SETSTYLESTRUCT == msg) {
-        // dbg_printf("BB_SETSTYLESTRUCT %d %d %d (%d)", msg, wParam, data_size, STYLESTRUCTSIZE);
+        // debug_printf("BB_SETSTYLESTRUCT %d %d %d (%d)", msg, wParam, data_size, STYLESTRUCTSIZE);
         if (SN_STYLESTRUCT == wParam && data_size >= STYLESTRUCTSIZE) {
             // bbStyleMaker 1.3
             StyleStruct *pss = &mStyle;
@@ -713,7 +711,7 @@ LRESULT CALLBACK MainWndProc (HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam
     const char *str;
 
 #ifdef LOG_BB_MESSAGES
-    //dbg_printf("hwnd %04x msg %d wp %x lp %x", hwnd, uMsg, wParam, lParam);
+    //debug_printf("hwnd %04x msg %d wp %x lp %x", hwnd, uMsg, wParam, lParam);
     if (uMsg >= BB_MSGFIRST && uMsg < BB_MSGLAST)
         log_BBMessage(uMsg, wParam, lParam, stack_top - (DWORD_PTR)&hwnd);
 #endif
@@ -803,7 +801,7 @@ LRESULT CALLBACK MainWndProc (HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam
 
         //====================
         case BB_DESKCLICK:
-            // dbg_printf("BB_DESKCLICK %d %d", wParam, lParam);
+            // debug_printf("BB_DESKCLICK %d %d", wParam, lParam);
             if (0 == lParam) { // left down
                 bool e = Menu_Exists(false);
                 SwitchToBBWnd();
@@ -1178,6 +1176,7 @@ void post_command_fmt(const char *fmt, ...)
     va_list arg_list;
     va_start(arg_list, fmt);
     PostMessage(BBhwnd, BB_POSTSTRING, 0, (LPARAM)m_formatv(fmt, arg_list));
+    va_end(arg_list);
 }
 
 /* post a command, dont wait for execution but return immediately */
@@ -1367,7 +1366,7 @@ static const struct corebroam_table {
 
 int exec_core_broam(const char *broam)
 {
-    //dbg_printf("%s", broam);
+    //debug_printf("%s", broam);
 
     char buffer[MAX_PATH], num[MAX_PATH];
     int n;
@@ -1493,7 +1492,7 @@ int exec_core_broam(const char *broam)
 
 bool get_opt_command(char *opt_cmd, const char *cmd)
 {
-    //dbg_printf("optcmd %s", cmd);
+    //debug_printf("optcmd %s", cmd);
     if (0 == opt_cmd[0]) {
         if (0 == memicmp(cmd, "@BBCore.", 8)) {
             // internals, currently for style and rootcommand
@@ -1928,11 +1927,7 @@ HWND GetBBWnd(void)
 {
     if (BBhwnd == NULL)
     {
-        BBhwnd = FindWindow(szBlackboxClass, szBlackboxName);
-        if (NULL == BBhwnd)
-        {
-            BBhwnd = FindWindow("xoblite", NULL);
-        }
+        BBhwnd = get_bbwindow();
     }
     return BBhwnd;
 }

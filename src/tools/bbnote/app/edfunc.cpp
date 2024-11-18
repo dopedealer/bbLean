@@ -1701,8 +1701,11 @@ void ed_mark(int a, int b) {
 }
 
 /*----------------------------------------------------------------------------*/
-void ed_cmd (int cmd, ...) {
-    int a,b,c,d; void *u; va_list vl;
+void ed_cmd (int cmd, ...)
+{
+    int a,b,c,d;
+    void *u;
+    va_list vl;
 
     if (edp==NULL) return;
 
@@ -1827,6 +1830,8 @@ void ed_cmd (int cmd, ...) {
         freelist(&redo_l);
         chg=1;
     }
+
+    va_end(vl);
 }
 
 void ed_fixup(void) {

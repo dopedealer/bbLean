@@ -176,7 +176,7 @@ static Menu* ParseMenu(struct menu_src *src, const char *title, const char *IDSt
 
         cp = replace_environment_strings(line, sizeof line);
 
-        //dbg_printf("Menu %08x line:%s", pMenu, line);
+        //debug_printf("Menu %08x line:%s", pMenu, line);
 
         // get the command
         if (false == get_string_within(command, sizeof command, &cp, "[]"))
@@ -504,7 +504,7 @@ bool MenuMaker_ShowMenu(int id, const char* param)
     MenuOption(m, flags, x, y);
     ShowMenu(m);
 
-    //dbg_printf("showmenu time %d", GetTickCount() - t1);
+    //debug_printf("showmenu time %d", GetTickCount() - t1);
     return true;
 }
 

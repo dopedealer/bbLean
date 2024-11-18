@@ -114,7 +114,7 @@ static void init_dither_tables(void)
     hdc = GetDC(NULL);
     bits_per_pixel = GetDeviceCaps(hdc, BITSPIXEL);
     ReleaseDC(NULL, hdc);
-    //dbg_printf("bits_per_pixel %d", bits_per_pixel);
+    //debug_printf("bits_per_pixel %d", bits_per_pixel);
 
     if (bits_per_pixel > 16 || bits_per_pixel < 8)
     {

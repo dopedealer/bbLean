@@ -675,7 +675,7 @@ void put_bitmap(struct dlg* dlg, HDC hdc, RECT *rc, StyleItem *pSI, int borderWi
         w = iminmax(w-dx, 0, rPaint->right - rPaint->left);
         h = iminmax(h-dy, 0, rPaint->bottom - rPaint->top);
         BitBlt(hdc, rc->left+dx, rc->top+dy, w, h, buf, dx, dy, SRCCOPY);
-        //dbg_printf("p: %d %d - %d %d - %d %d", rc->left+dx, rc->top+dy, w, h, dx, dy);
+        //debug_printf("p: %d %d - %d %d - %d %d", rc->left+dx, rc->top+dy, w, h, dx, dy);
     }
     else
         BitBlt(hdc, rc->left, rc->top, w, h, buf, 0, 0, SRCCOPY);
@@ -1769,7 +1769,7 @@ void dlg_load_config(struct dlg *dlg)
 
         r = tokenize_string(buffer, pp, line, 10, ",{} ");
         if (8 != r) {
-            //dbg_printf("%d <%s> <%s> <%s> <%s>", r, pp[0], pp[1], pp[2], pp[3]);
+            //debug_printf("%d <%s> <%s> <%s> <%s>", r, pp[0], pp[1], pp[2], pp[3]);
             continue;
         }
 

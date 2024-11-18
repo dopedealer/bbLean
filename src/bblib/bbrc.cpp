@@ -716,6 +716,53 @@ const char* read_value(const char* path, const char* szKey, long *ptr)
     return r;
 }
 
+/// \brief Searches the given file for the supplied keyword as true/false
+///        string and returns whether it was true or false or bDefault in case of fail
+/// \param path  String containing the name of the file to be opened
+/// \param szKey String containing the keyword to be looked for
+/// \param defaultValue  Default value that will be returned in case of fail recognition
+/// \returns Result of recognition
+bool read_bool(const char* fileName, const char* szKey, bool defaultValue)
+{
+    const char* szValue = read_value(fileName, szKey, nullptr);
+    if (szValue)
+    {
+        if (!stricmp(szValue, "true"))
+        {
+            return true;
+        }
+        if (!stricmp(szValue, "false"))
+        {
+            return false;
+        }
+    }
+    return defaultValue;
+}
+
+/// \brief Searches the given file for the supplied keyword as int
+///        returns it if it was recoghized. In case of failure returns default value
+/// \param path  String containing the name of the file to be opened
+/// \param szKey String containing the keyword to be looked for
+/// \param defaultValue  Default value that will be returned in case of fail recognition
+/// \returns Result of recognition
+int read_int(const char* fileName, const char* szKey, int defaultValue)
+{
+    const char* szValue = read_value(fileName, szKey, nullptr);
+    return szValue ? atoi(szValue) : defaultValue;
+}
+
+/// \brief Searches the given file for the supplied keyword as string
+///        and returns it if it was recoghized. In case of failure returns default value
+/// \param path  String containing the name of the file to be opened
+/// \param szKey String containing the keyword to be looked for
+/// \param defaultValue  Default value that will be returned in case of fail recognition
+/// \returns Result of recognition
+const char* read_string(const char* fileName, const char* szKey, const char* szDefault)
+{
+    const char* szValue = read_value(fileName, szKey, nullptr);
+    return szValue ? szValue : szDefault;
+}
+
 /* ------------------------------------------------------------------------- */
 // Find out a good place where to put an item if it was not yet found in the
 // rc-file previously.
@@ -815,6 +862,29 @@ void write_value(const char* path, const char* szKey, const char* value)
         }
         mark_rc_dirty(fl);
     }
+}
+
+void write_bool(const char* fileName, const char* szKey, bool value)
+{
+    return write_value(fileName, szKey, value ? "true" : "false"); 
+}
+
+void write_int(const char* fileName, const char* szKey, int value)
+{
+    char buff[32];
+    write_value(fileName, szKey, itoa(value, buff, 10));
+}
+
+void write_string(const char* fileName, const char* szKey, const char* value)
+{
+    write_value(fileName, szKey, value);
+}
+
+void write_color(const char* fileName, const char* szKey, COLORREF value)
+{
+    char buff[32];
+    sprintf(buff, "#%06lx", (unsigned long)switch_rgb (value));
+    write_value(fileName, szKey, buff);
 }
 
 /* ------------------------------------------------------------------------- */

@@ -37,16 +37,6 @@
 
 static char stylerc_path[MAX_PATH];
 
-LPCSTR extensionsrcPath(LPCSTR extensionsrcFileName)
-{
-    return "";
-}
-
-LPCSTR stylePath(LPCSTR styleFileName)
-{
-    return stylerc_path;
-}
-
 char *rgb_string(char *buffer, COLORREF value)
 {
     sprintf(buffer, "rgb:%02x/%02x/%02x",
@@ -65,7 +55,7 @@ char *rgb_string(char *buffer, COLORREF value)
 static
 void fn_write_error(const char *filename)
 {
-    BBMessageBox(MB_OK, NLS2("$Error_WriteFile$",
+    BBStyleMakerMessageBox(MB_OK, NLS2("$Error_WriteFile$",
         "Error: Could not open \"%s\" for writing."), filename);
 }
 
@@ -117,7 +107,7 @@ int readstyle(const char *fname, StyleStruct* s, int root)
     if (root) {
         int i;
         for (i = 0; i < 5; ++i) {
-            const char *p = ReadString(fname, style_info_keys[i], "");
+            const char *p = read_string(fname, style_info_keys[i], "");
             replace_str(&style_info[i], p);
         }
     }
@@ -611,7 +601,7 @@ struct lin_list *make_wildcards(struct fil_list *fl)
     struct lin_list *tl, *sl = NULL, **slp = &sl, *dl = NULL;
 
     for (;;) {
-        const char *p = ReadValue(rcpath, "bbstylemaker.wildcards.try", &l);
+        const char *p = read_value(rcpath, "bbstylemaker.wildcards.try", &l);
         if (NULL == p)
             break;
         tl = make_wildcard(fl, p, sl, &dl);
@@ -701,15 +691,15 @@ void WriteColorEx(LPCSTR fileName, LPCSTR szKey, COLORREF value)
 {
     char buffer[40];
 #if 0
-    const char *p = ReadString(fileName, szKey, NULL);
+    const char *p = read_string(fileName, szKey, NULL);
     if (p && value == ReadColorFromString(p))
-        WriteString(fileName, szKey, p);
+        write_string(fileName, szKey, p);
     else
 #endif
     if (colorMode == 1)
-        WriteString(fileName, szKey, rgb_string(buffer, value));
+        write_string(fileName, szKey, rgb_string(buffer, value));
     else
-        WriteColor(fileName, szKey, value);
+        write_color(fileName, szKey, value);
 }
 
 //===========================================================================
@@ -885,7 +875,7 @@ void write_style_item (const char * style, StyleStruct *pStyle, StyleItem *si, c
                 if ((v & V_BOW) && 0 != si->borderWidth && pStyle->is_070)
                     addstr(&tp, "border", 1);
 
-                WriteString(style, fullkey, tex);
+                write_string(style, fullkey, tex);
                 break;
 
             // --- colors ---
@@ -926,19 +916,19 @@ void write_style_item (const char * style, StyleStruct *pStyle, StyleItem *si, c
 
             case C_BOW:
                 if (si->borderWidth)
-                    WriteInt(style, fullkey, si->borderWidth);
+                    write_int(style, fullkey, si->borderWidth);
                 break;
 
             case C_MAR:
                 if (si->validated & V_MAR)
-                    WriteInt(style, fullkey, si->marginWidth);
+                    write_int(style, fullkey, si->marginWidth);
                 break;
 
             // --- Font ---
             case C_FON:
                 if (0 == useWildcards)
                 {
-                    const char *p = ReadString(style, fullkey, "");
+                    const char *p = read_string(style, fullkey, "");
                     StyleItem SI;
                     memset(&SI, 0, sizeof SI);
                     SI.FontHeight = 12;
@@ -947,31 +937,31 @@ void write_style_item (const char * style, StyleStruct *pStyle, StyleItem *si, c
                     if (SI.FontHeight == si->FontHeight
                         && SI.FontWeight == si->FontWeight
                         && 0 == strcmp(SI.Font, si->Font)) {
-                        WriteString(style, fullkey, p);
+                        write_string(style, fullkey, p);
                         break;
                     }
                 }
 
                 t = make_fontstring(si, tex);
-                WriteString(style, fullkey, tex);
+                write_string(style, fullkey, tex);
 
                 if (1 == t) {
                     int h = si->FontHeight;
                     int w = si->FontWeight;
                     if (useWildcards || (h && h != 12)) {
                         strcpy(fullkey + l + 5, "Height");
-                        WriteInt(style, fullkey, h);
+                        write_int(style, fullkey, h);
                     }
                     if (useWildcards || (w && iabs(w - FW_NORMAL) > 100)) {
                         strcpy(fullkey + l + 5, "Weight");
-                        WriteString(style, fullkey, getweight_string(w));
+                        write_string(style, fullkey, getweight_string(w));
                     }
                 }
                 break;
 
             // --- Alignment ---
             case C_JUS:
-                WriteString(style, fullkey,
+                write_string(style, fullkey,
                     si->Justify == DT_CENTER?"center":
                     si->Justify == DT_RIGHT?"right":
                     "left");
@@ -1028,11 +1018,11 @@ int writestyle(
 
 
     // get some options
-    tabify = ReadBool(rcpath, "bbstylemaker.tabify", false);
-    g_rc.dos_eol = 0 == stricmp(ReadString(rcpath, "bbstylemaker.eolMode", ""), "dos");
-    colorMode = 0 == stricmp(ReadString(rcpath, "bbstylemaker.colorMode", ""), "rgb");
-    fontMode = ReadInt(rcpath, "bbstylemaker.fontMode", 1);
-    useWildcards = ReadBool(rcpath, "bbstylemaker.wildcards.use", false);
+    tabify = read_bool(rcpath, "bbstylemaker.tabify", false);
+    g_rc.dos_eol = 0 == stricmp(read_string(rcpath, "bbstylemaker.eolMode", ""), "dos");
+    colorMode = 0 == stricmp(read_string(rcpath, "bbstylemaker.colorMode", ""), "rgb");
+    fontMode = read_int(rcpath, "bbstylemaker.fontMode", 1);
+    useWildcards = read_bool(rcpath, "bbstylemaker.wildcards.use", false);
 
     tlp = NULL;
 
@@ -1056,10 +1046,10 @@ int writestyle(
     // put some header comments
     if (newfile)
     {
-        WriteString(style, "", header_string);
-        WriteString(style, "", auto_string);
-        WriteString(style, "", "");
-        WriteString(style, "", STYLECOMMENT("info"));
+        write_string(style, "", header_string);
+        write_string(style, "", auto_string);
+        write_string(style, "", "");
+        write_string(style, "", STYLECOMMENT("info"));
     }
     else
     if (false == has_auto)
@@ -1081,11 +1071,11 @@ int writestyle(
         if (style_info) {
             p = style_info[i];
             if (p[0] || (newfile && 0 == i))
-                WriteString(style, key, p);
+                write_string(style, key, p);
         } else {
-            const char *ref = ReadString(style, key, NULL);
+            const char *ref = read_string(style, key, NULL);
             if (ref)
-                WriteString(style, key, ref);
+                write_string(style, key, ref);
         }
     }
 
@@ -1127,8 +1117,8 @@ int writestyle(
                 t = STYLECOMMENT("window");
 
             if (t) {
-                WriteString(style, "", "");
-                WriteString(style, "", t);
+                write_string(style, "", "");
+                write_string(style, "", t);
             }
         }
 
@@ -1140,11 +1130,11 @@ int writestyle(
                 break;
 
             case C_INT:
-                WriteInt(style, s->rc_string, *(int*)v);
+                write_int(style, s->rc_string, *(int*)v);
                 break;
 
             case C_BOL:
-                WriteBool(style, s->rc_string, *(bool*)v);
+                write_bool(style, s->rc_string, *(bool*)v);
                 break;
 
             case C_COL:
@@ -1155,7 +1145,7 @@ int writestyle(
                 p = (const char*)v;
                 if (0 == *p && sn != SN_ROOTCOMMAND)
                     continue;
-                WriteString(style, s->rc_string, p);
+                write_string(style, s->rc_string, p);
                 break;
         }
     } while ((++s)->sn);
@@ -1164,8 +1154,8 @@ int writestyle(
     if (false == pStyle->is_070) {
         const char *misc_comment = STYLECOMMENT("misc.");
         if (newfile) {
-            WriteString(style, "", "");
-            WriteString(style, "", misc_comment);
+            write_string(style, "", "");
+            write_string(style, "", misc_comment);
         } else {
             tl = FindRCComment(fl, misc_comment);
             if (NULL == tl)
@@ -1178,18 +1168,18 @@ int writestyle(
         }
 
         WriteColorEx(style, "borderColor", pStyle->borderColor);
-        WriteInt(style, "borderWidth", pStyle->borderWidth);
-        WriteInt(style, "bevelWidth", pStyle->bevelWidth);
-        //WriteInt(style, "frameWidth", pStyle->frameWidth);
-        WriteInt(style, "handleWidth", pStyle->handleHeight);
+        write_int(style, "borderWidth", pStyle->borderWidth);
+        write_int(style, "bevelWidth", pStyle->bevelWidth);
+        //write_int(style, "frameWidth", pStyle->frameWidth);
+        write_int(style, "handleWidth", pStyle->handleHeight);
 
         if (false == newfile) {
-        if (NULL != (p = ReadString(style, q = "window.frame.focusColor", NULL)))
-            WriteString(style, q, p);
-        if (NULL != (p = ReadString(style, q = "window.frame.unfocusColor", NULL)))
-            WriteString(style, q, p);
-        if (NULL != (p = ReadString(style, q = "frameWidth", NULL)))
-            WriteString(style, q, p);
+        if (NULL != (p = read_string(style, q = "window.frame.focusColor", NULL)))
+            write_string(style, q, p);
+        if (NULL != (p = read_string(style, q = "window.frame.unfocusColor", NULL)))
+            write_string(style, q, p);
+        if (NULL != (p = read_string(style, q = "frameWidth", NULL)))
+            write_string(style, q, p);
         }
 
     }

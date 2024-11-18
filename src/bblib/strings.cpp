@@ -145,11 +145,14 @@ char *m_formatv(const char *fmt, va_list arg_list)
 
 _restart:
     arg = arg_list, ptr = out, len = 0;
-    for (f = fmt;;++f) {
-        switch (c = *f) {
+    for (f = fmt;;++f)
+    {
+        switch (c = *f)
+        {
         case '\0':
 _quit:
-            if (ptr) {
+            if (ptr)
+            {
                 *ptr = 0;
                 /*debug_printf("%s (%d): <%s>", fmt, strlen(out), out); */
                 return out;
@@ -165,7 +168,8 @@ _char:
             continue;
 
         case '%':
-            switch (c = *++f) {
+            switch (c = *++f)
+            {
             case '\0':
                 goto _quit;
             default:
@@ -191,9 +195,12 @@ _char:
                 cp = va_arg(arg, const char*);
                 if (NULL == cp)
                     cp = "(null)";
-                if ('q' == c) {
+                if ('q' == c)
+                {
                     n = cstr_cpy(ptr, cp);
-                } else {
+                }
+                else
+                {
             put:
                     n = strlen(cp);
                     if (ptr)
@@ -210,7 +217,9 @@ char *m_format(const char *fmt, ...)
 {
     va_list arg_list;
     va_start(arg_list, fmt);
-    return m_formatv(fmt, arg_list);
+    auto result = m_formatv(fmt, arg_list);
+    va_end(arg_list);
+    return result;
 }
 
 BBLIB_EXPORT int wchar_to_utf8(const wchar_t *src, char *str, int len)
@@ -220,7 +229,7 @@ BBLIB_EXPORT int wchar_to_utf8(const wchar_t *src, char *str, int len)
         int x, n;
         for (x = -1;;)
         {
-            n = WideCharToMultiByte(CP_UTF8 , 0, src, x, str, len, NULL, NULL);
+            n = ::WideCharToMultiByte(CP_UTF8 , 0, src, x, str, len, NULL, NULL);
             if (n)
             {
                 return n;
@@ -241,7 +250,7 @@ BBLIB_EXPORT int wchar_to_utf8(const wchar_t *src, char *str, int len)
 
 BBLIB_EXPORT int wchar_to_utf8_length(const wchar_t *src)
 {
-    return WideCharToMultiByte(CP_UTF8, 0, src, -1, NULL, 0, NULL, NULL);
+    return ::WideCharToMultiByte(CP_UTF8, 0, src, -1, NULL, 0, NULL, NULL);
 }
 
 BBLIB_EXPORT int utf8_to_wchar(const char *src, wchar_t * wstr, int numSumbols)
@@ -251,7 +260,7 @@ BBLIB_EXPORT int utf8_to_wchar(const char *src, wchar_t * wstr, int numSumbols)
         int x, n;
         for (x = -1;;)
         {
-            n = MultiByteToWideChar(CP_UTF8, 0x0, src, x, wstr, numSumbols);
+            n = ::MultiByteToWideChar(CP_UTF8, 0x0, src, x, wstr, numSumbols);
             if (n)
             {
                 return n;
@@ -272,18 +281,17 @@ BBLIB_EXPORT int utf8_to_wchar(const char *src, wchar_t * wstr, int numSumbols)
 
 BBLIB_EXPORT int utf8_to_wchar_length(const char *src)
 {
-    return MultiByteToWideChar(CP_UTF8, 0x0, src, -1, NULL, 0);
+    return ::MultiByteToWideChar(CP_UTF8, 0x0, src, -1, NULL, 0);
 } 
 
 // moved as is from blackbox
 BBLIB_EXPORT int wchar_to_mbyte(const WCHAR *src, char *str, int len, BOOL isMbyteUtf8)
 {
     int x, n;
-    for (x = -1;;) {
-        n = WideCharToMultiByte(
-                isMbyteUtf8 ? CP_UTF8 : CP_ACP,
-                0, src, x, str, len, NULL, NULL
-                );
+    for (x = -1;;)
+    {
+        n = ::WideCharToMultiByte(isMbyteUtf8 ? CP_UTF8 : CP_ACP,
+                0, src, x, str, len, NULL, NULL);
         if (n)
             return n;
         if (x < 0)

@@ -379,6 +379,7 @@ void n_showmenu(plugin_info *PI, n_menu *m, bool popup, int flags, ...)
         o2 = va_arg(vl, void*);
         o3 = va_arg(vl, void*);
         MenuOption(pMenu, flags, o1, o2, o3);
+        va_end(vl);
     }
     BBP_showmenu(PI, pMenu, popup);
 }
@@ -1629,6 +1630,7 @@ int BBP_messagebox(
     vsprintf(buffer, fmt, args);
     flags = MessageBox(NULL, buffer, PI->class_name, flags|MB_TOPMOST|MB_SETFOREGROUND);
     CloseHandle(CreateThread(NULL, 0, QuitThread, hLib, 0, &threadId));
+    va_end(args);
 
     return flags;
 }

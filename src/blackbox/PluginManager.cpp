@@ -187,7 +187,7 @@ struct plugins *append_plugin(const char *rcline)
     }
 
     append_node(&bbplugins, q);
-    //dbg_printf("%d %d <%s> <%s>", q->enabled, q->inslit, q->path, q->name);
+    //debug_printf("%d %d <%s> <%s>", q->enabled, q->inslit, q->path, q->name);
     return q;
 }
 
@@ -376,7 +376,7 @@ int load_plugin(struct plugins *q, HWND hSlit)
         {
             r = GetLastError();
             // char buff[200]; win_error(buff, sizeof buff);
-            // dbg_printf("LoadLibrary::GetLastError %d: %s", r, buff);
+            // debug_printf("LoadLibrary::GetLastError %d: %s", r, buff);
             if (ERROR_MOD_NOT_FOUND == r)
                 error = error_plugin_dll_needs_module;
             else

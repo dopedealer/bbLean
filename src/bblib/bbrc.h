@@ -85,9 +85,21 @@ BBLIB_EXPORT char *read_file_into_buffer(const char *path, int max_len);
 BBLIB_EXPORT char scan_line(char **pp, char **ss, int *ll);
 BBLIB_EXPORT int read_next_line(FILE *fp, char* szBuffer, unsigned dwLength);
 
+//Note that pointers returned from 'read_string' and 'read_value' are valid only
+//until the next Read/Write call. For later usage, you need to copy the string
+//into a place within your code. 
 BBLIB_EXPORT const char* read_value(const char* path, const char* szKey, long *ptr);
+BBLIB_EXPORT bool read_bool(const char* fileName, const char* szKey, bool defaultValue);
+BBLIB_EXPORT int read_int(const char* fileName, const char* szKey, int defaultValue);
+BBLIB_EXPORT const char* read_string(const char* fileName, const char* szKey, const char* szDefault);
+
 BBLIB_EXPORT int found_last_value(void);
 BBLIB_EXPORT void write_value(const char* path, const char* szKey, const char* value);
+BBLIB_EXPORT void write_bool(const char* fileName, const char* szKey, bool value);
+BBLIB_EXPORT void write_int(const char* fileName, const char* szKey, int value);
+BBLIB_EXPORT void write_string(const char* fileName, const char* szKey, const char* value);
+BBLIB_EXPORT void write_color(const char* fileName, const char* szKey, COLORREF value);
+
 BBLIB_EXPORT int rename_setting(const char* path, const char* szKey, const char* new_keyword);
 BBLIB_EXPORT int delete_setting(LPCSTR path, LPCSTR szKey);
 

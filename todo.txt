@@ -23,11 +23,14 @@
                                 * fix bblib: pidl.c uses defaultrcPath() from blackbox proj
                                 * remove include of blackbox headers to bblib
                         * fix the .\blackbox\Settings.h variables containment
+                        * fix the exported api's from blackbox that contain ellipsis - blocks moving to namespace
+                        * fix missing va_end paired to va_start (or leads to #UB)
+                        * resolve code duplication in blackbox of exported api's and tools (and names collisions)
                         ? the BBSETTING_STYLEREADER_ONLY in settins.cpp prevents from normal moving to namespace
                             ? bbrcPath cannot find from settings.cpp when in-compile hack
                                 ? it cannot be resolved in case of in-compile of settings.cpp because needed bbrcPath() is not compiled in that case
                             ? the __BBCORE__ macro in settings.cpp prevents clean move out api
-                    - make wrapper calls for every exported blackbox api
+                    ? make wrapper calls for every exported blackbox api
                     - make callable functions with moved original content from exported api in bbcore lib
             - make separate static only lib bbcore with namespace bbcore inside, no exports
                 ? __BBCORE__ prevents from splitting
@@ -93,6 +96,12 @@
         - add library bblib dep
         - add runtime dep gathering if needed
     - remove variable definitions from .h files
+    - replace explicit import loading based assumption that we're working on windows 10 and later
+    - try to replace usage of bbMB2WC to explicit case by existing callers to utf-8 or wchar_t
+    - replace callings of MessageBeep to something. Maybe window flashing
+      once. It is a bad practice to cause any sounds
+    * make sure every used va_start paired with closing va_end
+    ? in class Menu remove friends function. Must not access to fields from outside
 
 ? remove __BBCORE__ macro usage in blackbox.exe
 - add 'no skin' variant to use original grey skin
@@ -110,6 +119,8 @@
 - make bbnote doc more fuzzy syntax compatible - more like vanilla bbnote.htm
 - make export functions commented in doxygen style
 ? rename bbLeanSkinEng32 to correct one ('english' ? 32 bits?)
+- find how 'exactly' works read_value - 'reading' with returning pointer to
+  string is *very* suspicious. Hashmap? When cleared ?
 
 - move bblib c files to cpp with careful export conventions
 - make external utf-8 only in char* args
@@ -122,16 +133,23 @@
     - test style with wallpaper engine
 - replace explicit imports for functions that present at least from vista/xp
 
-- bbkeys refactoring
-    - change traverse of hotkeys to hashmap instead of list
-? update CXIMAGE version ?
-- remove explicit definitions WIN64 and _WIN64
-- move copy artifacts function to one common upper level cmake file and use by subprojects
-- figure out: maybe usage of read_file causes horribly memory leaks
-- make incremental adding compiled plugins to config ini
-- in bbroot.h remove statics
-? uwp gui-based windows case ?
-? add changelog file ?
+- other refactorings
+    - bbkeys refactoring
+        - change traverse of hotkeys to hashmap instead of list
+    ? update CXIMAGE version ?
+    - remove explicit definitions WIN64 and _WIN64
+    - move copy artifacts function to one common upper level cmake file and use by subprojects
+    - figure out: maybe usage of read_file causes horribly memory leaks
+    - make incremental adding compiled plugins to config ini
+    - in bbroot.h remove statics
+    ? uwp gui-based windows case ?
+    ? add changelog file ?
+    - possibly nls2b potentially overflows buffer
+    - rewrite nls usage to use c++ hash map internally
+
+- add manifest to make winapi dialogs look more pretty
+
+- rewrite paths.cpp from win-specific apis to c++ filesystem
 
 bugs to fix:
 -----------

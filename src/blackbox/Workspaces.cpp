@@ -165,7 +165,7 @@ bool Workspaces_GetScreenMetrics(void)
     VScreenX = x;
     VScreenY = y;
     nScreens = Settings_disableVWM ? 1 : Settings_workspaces;
-    //dbg_printf("Screen: %d/%d %d/%d", x, y, w, h);
+    //debug_printf("Screen: %d/%d %d/%d", x, y, w, h);
     return changed;
 }
 
@@ -589,7 +589,7 @@ int get_shade_height(HWND hwnd)
     int shade, border, caption;
 
     shade = (int)send_bbls_command(hwnd, BBLS_GETSHADEHEIGHT, 0);
-    //dbg_printf("BBLS_GETSHADEHEIGHT: %d", shade);
+    //debug_printf("BBLS_GETSHADEHEIGHT: %d", shade);
     if (shade)
         return shade;
 
@@ -603,7 +603,7 @@ int get_shade_height(HWND hwnd)
         ? SM_CYSMCAPTION
         : SM_CYCAPTION);
 
-    //dbg_printf("caption %d  border %d", caption, border);
+    //debug_printf("caption %d  border %d", caption, border);
     return 2*border + caption;
 }
 
@@ -1015,7 +1015,7 @@ void Workspaces_DeskSwitch(int i)
 {   
     HWND hwnd;
 
-    //dbg_printf("DeskSwitch %d -> %d", currentScreen, i);
+    //debug_printf("DeskSwitch %d -> %d", currentScreen, i);
 
     if (i == currentScreen || i < 0 || i >= nScreens)
         return;
@@ -1253,7 +1253,7 @@ void debug_tasks(WPARAM wParam, HWND hwnd, int is_task)
     const char *msg = n < array_count(actions) ? actions[n] : NULL;
     if (!msg) msg = "xxx";
     GetAppByWindow(hwnd, buffer);
-    dbg_printf("msg %d [%s] hwnd=%x task=%d app=%s desk=%d",
+    debug_printf("msg %d [%s] hwnd=%x task=%d app=%s desk=%d",
         wParam, msg, hwnd, is_task, buffer, vwm_get_desk(hwnd));
 }
 #else

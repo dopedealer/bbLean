@@ -438,15 +438,15 @@ LRESULT CALLBACK main_dlg_proc (struct dlg *dlg, HWND hwnd, UINT msg, WPARAM wPa
 void load_guistyle(struct dlg *dlg, const char *filename)
 {
     if (NULL == filename)
-        filename = ReadString(rcpath, "bbstylemaker.guistyle", "");
+        filename = read_string(rcpath, "bbstylemaker.guistyle", "");
 
     if (0 == filename[0])
         filename = rcpath;
 
     readstyle(filename, &gui_style, 0);
 
-    dlg->dx = ReadInt(rcpath, "bbstylemaker.widthpercent", 100);
-    dlg->dy = ReadInt(rcpath, "bbstylemaker.heightpercent", 100);
+    dlg->dx = read_int(rcpath, "bbstylemaker.widthpercent", 100);
+    dlg->dy = read_int(rcpath, "bbstylemaker.heightpercent", 100);
     if (dlg->hwnd) {
         fix_dlg(dlg);
         set_dlg_windowpos(dlg);
@@ -458,9 +458,9 @@ int bbstylemaker_create(void)
     struct dlg *dlg = make_dlg(main_buttons, 560, 320);
     int xp, yp;
 
-    xp = ReadInt(rcpath, "bbstylemaker.xpos", -1);
-    yp = ReadInt(rcpath, "bbstylemaker.ypos", -1);
-    dlg->captionbar = ReadBool(rcpath, "bbstylemaker.captionbar", false);
+    xp = read_int(rcpath, "bbstylemaker.xpos", -1);
+    yp = read_int(rcpath, "bbstylemaker.ypos", -1);
+    dlg->captionbar = read_bool(rcpath, "bbstylemaker.captionbar", false);
     dlg->typ = D_DLG;
 
     load_guistyle(dlg, NULL);
@@ -610,7 +610,7 @@ void drop_guistyle(struct dlg *dlg, void* hdrop)
 #endif
 
     load_guistyle(dlg, filename);
-    WriteString(rcpath, "bbstylemaker.guistyle", filename);
+    write_string(rcpath, "bbstylemaker.guistyle", filename);
 }
 
 /*----------------------------------------------------------------------------*/
@@ -638,15 +638,6 @@ COLORREF get_screen_pixel(void)
 /*----------------------------------------------------------------------------*/
 /* find blackbox window */
 
-HWND GetBBWnd(void)
-{
-    HWND hwnd;
-    hwnd = FindWindow("BlackBoxClass", "BlackBox");
-    if (NULL == hwnd)
-        hwnd = FindWindow("xoblite", NULL);
-    return hwnd;
-}
-
 struct getdata_info {
     int msg;
     char *dest;
@@ -663,7 +654,7 @@ void bbgetdata(HWND hwnd, unsigned msg, void *dest)
 bool link_to_BB(HWND hwnd)
 {
     char temp[MAX_PATH];
-    BBhwnd = GetBBWnd();
+    BBhwnd = get_bbwindow();
     if (NULL == BBhwnd)
         return 0;
     temp[0] = 0;
@@ -683,7 +674,7 @@ void edit_file(const char *file)
     char buffer[MAX_PATH];
     const char *e;
 
-    e = ReadString(rcpath, "bbstylemaker.editor", "");
+    e = read_string(rcpath, "bbstylemaker.editor", "");
     if (*e) {
         sprintf(buffer, "%s \"%s\"", e, file);
         if (WinExec(buffer, SW_SHOWNORMAL) > 31)
@@ -705,14 +696,14 @@ int get_xobstyle(char *temp)
     char b1[MAX_PATH];
     int lr;
 
-    r = ReadString(rcpath, "bbstylemaker.blackboxrc", "");
+    r = read_string(rcpath, "bbstylemaker.blackboxrc", "");
     if (0 == *r)
         r = set_my_path(NULL, b1, "blackbox.rc");
 
     lr = strlen(r);
     while (lr) { --lr; if (IS_SLASH(r[lr])) break; }
 
-    p = ReadString(r, "session.styleFile", "");
+    p = read_string(r, "session.styleFile", "");
     if (0 == *p)
         return 0;
 
@@ -741,9 +732,11 @@ void set_bbstyle(HWND hDlg, const char *filename)
     }
 
     // xoblite:
-    bbwnd = GetBBWnd();
-    if (NULL == bbwnd)
+    bbwnd = get_bbwindow();
+    if (nullptr == bbwnd)
+    {
         return;
+    }
 
     cds.dwData = BB_SETSTYLE;
     cds.cbData = 1 + strlen(filename);
@@ -883,7 +876,7 @@ void get_bbstyle(HWND hwnd)
     bsetroot_parse(pss, pss->rootCommand);
     read_070 = pss->is_070;
 
-    p = ReadString(rcpath, "bbstylemaker.syntax", "070");
+    p = read_string(rcpath, "bbstylemaker.syntax", "070");
     if (0 == strcmp(p, "065"))
         write_070 = 0;
     else
@@ -906,7 +899,7 @@ void get_bbstyle(HWND hwnd)
     bimage_init(true, write_070);
 
     //t2 = GetTickCount();
-    //dbg_printf("time: %d", t2 - t1);
+    //debug_printf("time: %d", t2 - t1);
 }
 
 /*----------------------------------------------------------------------------*/
@@ -1189,7 +1182,7 @@ void set_font_default(NStyleItem *pSI)
     RFONT(pSI)->FontWeight = pSI->FontWeight    ;
     parse_font((StyleItem*)pSI, RFONT(pSI)->Font);
 #if 0
-    dbg_printf("check <%s/%d/%d> <%s/%d/%d>",
+    debug_printf("check <%s/%d/%d> <%s/%d/%d>",
         pSI->Font,
         pSI->FontHeight,
         pSI->FontWeight,
@@ -1995,8 +1988,8 @@ LRESULT CALLBACK main_dlg_proc (struct dlg *dlg, HWND hwnd, UINT msg, WPARAM wPa
             PostMessage(BBhwnd, BB_RECONFIGURE, 0, 0);
             PostMessage(BBhwnd, BB_REDRAWGUI, BBRG_TOOLBAR|BBRG_MENU|BBRG_WINDOW|BBRG_SLIT|BBRG_DESK, 0);
         }
-        WriteInt(rcpath, "bbstylemaker.xpos", dlg->x);
-        WriteInt(rcpath, "bbstylemaker.ypos", dlg->y);
+        write_int(rcpath, "bbstylemaker.xpos", dlg->x);
+        write_int(rcpath, "bbstylemaker.ypos", dlg->y);
         delete_dlg(dlg);
         reset_rcreader();
         PostQuitMessage(0);
@@ -2752,7 +2745,7 @@ LRESULT CALLBACK main_dlg_proc (struct dlg *dlg, HWND hwnd, UINT msg, WPARAM wPa
             goto set_inf;
 
         case INF_AUT:
-            s = ReadString(rcpath, "bbstylemaker.style.author", "<unknown>");
+            s = read_string(rcpath, "bbstylemaker.style.author", "<unknown>");
             goto set_inf;
 
         case INF_DAT:
@@ -2760,11 +2753,11 @@ LRESULT CALLBACK main_dlg_proc (struct dlg *dlg, HWND hwnd, UINT msg, WPARAM wPa
             time_t systemTime;
             time(&systemTime); // get this for the display
 
-            setlocale(LC_TIME, ReadString(rcpath, "bbstylemaker.date.locale", "C"));
-            //dbg_printf("locale: <%s>", setlocale(LC_TIME, NULL));
+            setlocale(LC_TIME, read_string(rcpath, "bbstylemaker.date.locale", "C"));
+            //debug_printf("locale: <%s>", setlocale(LC_TIME, NULL));
 
             strftime(buffer, sizeof buffer,
-                ReadString(rcpath, "bbstylemaker.date.format", "%#x"),
+                read_string(rcpath, "bbstylemaker.date.format", "%#x"),
                 localtime(&systemTime)
                 );
             s = buffer;

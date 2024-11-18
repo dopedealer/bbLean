@@ -88,7 +88,7 @@
 extern "C" {
 #endif
 
-/* numbers.c */
+/* numbers.cpp */
 
 BBLIB_EXPORT int imin(int a, int b);
 BBLIB_EXPORT int imax(int a, int b);
@@ -98,7 +98,7 @@ BBLIB_EXPORT int is_alpha(int c);
 BBLIB_EXPORT int is_digit(int c);
 BBLIB_EXPORT int is_alnum(int c);
 
-/* colors.c */
+/* colors.cpp */
 
 BBLIB_EXPORT COLORREF rgb (unsigned r, unsigned g, unsigned b);
 BBLIB_EXPORT COLORREF switch_rgb (COLORREF c);
@@ -108,13 +108,13 @@ BBLIB_EXPORT unsigned greyvalue(COLORREF c);
 BBLIB_EXPORT COLORREF ParseLiteralColor(LPCSTR color);
 BBLIB_EXPORT COLORREF ReadColorFromString(const char* string);
 
-/* bools.c */
+/* bools.cpp */
 
 BBLIB_EXPORT int get_false_true(const char *arg);
 BBLIB_EXPORT const char *false_true_string(int f);
 BBLIB_EXPORT void set_bool(void *v, const char *arg);
 
-/* strings.c */
+/* strings.cpp */
 
 BBLIB_EXPORT int replace_string(char *out, int bufsize, int offset, int len, const char *in);
 BBLIB_EXPORT char *extract_string(char *dest, const char *src, int n);
@@ -164,7 +164,7 @@ BBLIB_EXPORT int utf8_to_wchar_length(const char *src);
 ///        system default Windows ANSI code page
 BBLIB_EXPORT int wchar_to_mbyte(const WCHAR *src, char *str, int len, BOOL isMbyteUtf8);
 
-/* tokenize.c */
+/* tokenize.cpp */
 
 BBLIB_EXPORT int nexttoken(const char **p_out, const char **p_in, const char *delims);
 BBLIB_EXPORT char* NextToken(char* buf, const char** string, const char *delims);
@@ -172,7 +172,7 @@ BBLIB_EXPORT int get_string_within (char *dest, int size, const char **p_src, co
 BBLIB_EXPORT const char *get_special_command(const char **p_path, char *buffer, int size);
 BBLIB_EXPORT int skip_spc(const char **pp);
 
-/* paths.c */
+/* paths.cpp */
 
 BBLIB_EXPORT char* unquote(char *src);
 BBLIB_EXPORT char *quote_path(char *path);
@@ -183,15 +183,19 @@ BBLIB_EXPORT char *fix_path(char *path);
 BBLIB_EXPORT int is_absolute_path(const char *path);
 BBLIB_EXPORT char *join_path(char *buffer, const char *dir, const char *filename);
 BBLIB_EXPORT char *replace_slashes(char *buffer, const char *path);
+BBLIB_EXPORT bool file_exists(const char* path); 
 
 BBLIB_EXPORT void bbshell_set_utf8(int f);
 BBLIB_EXPORT void bbshell_set_defaultrc_path(const char *s);
 
-/* winutils.c */
+/* winutils.cpp */
 
 BBLIB_EXPORT void BitBltRect(HDC hdc_to, HDC hdc_from, RECT *r);
 BBLIB_EXPORT HWND GetRootWindow(HWND hwnd);
 BBLIB_EXPORT int is_bbwindow(HWND hwnd);
+BBLIB_EXPORT HWND get_bbwindow(void);
+BBLIB_EXPORT const char * get_bbclassname(void);
+BBLIB_EXPORT const char * get_bbname(void);
 BBLIB_EXPORT int get_fontheight(HFONT hFont);
 BBLIB_EXPORT int get_filetime(const char *fn, FILETIME *ft);
 BBLIB_EXPORT int diff_filetime(const char *fn, FILETIME *ft0);
@@ -226,7 +230,7 @@ BBLIB_EXPORT int run_process(const char *cmd, const char *dir, int flags);
 #define RUN_ISPIDL     32
 #define RUN_WINDIR     64
 
-/* tinylist.c */
+/* tinylist.cpp */
 
 #ifndef LIST_NODE_DEFINED
 typedef struct list_node { struct list_node *next; void *v; } list_node;
@@ -262,7 +266,7 @@ BBLIB_EXPORT void freeall(void *p);
 BBLIB_EXPORT struct string_node *new_string_node(const char *s);
 BBLIB_EXPORT void append_string_node(struct string_node **p, const char *s);
 
-/* m_alloc.c */
+/* m_alloc.cpp */
 
 #ifdef BBOPT_MEMCHECK
 BBLIB_EXPORT void * _m_alloc(unsigned n, const char *file, int line);

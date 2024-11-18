@@ -494,19 +494,17 @@ void set_background_color (COLORREF color)
 }
 
 //===========================================================================
-bool FileExists(LPCSTR szFileName)
-{
-    DWORD a = GetFileAttributes(szFileName);
-    return (DWORD)-1 != a && 0 == (a & FILE_ATTRIBUTE_DIRECTORY);
-}
 
 char *make_full_path(char *buffer, const char *filename, const char *search_base)
 {
     char exe_path[MAX_PATH];
-    if (search_base && search_base[0]) {
+    if (search_base && search_base[0])
+    {
         join_path(buffer, search_base, filename);
-        if (FileExists(buffer))
+        if (file_exists(buffer))
+        {
             return buffer;
+        }
     }
 
     get_exe_path(NULL, exe_path, sizeof exe_path);
@@ -566,7 +564,7 @@ int load_bmp(const char *filename, HIMG *pImg, string_node *searchpaths, const c
         if (!is_absolute_path(p))
             p = make_full_path(path, strcpy(temp, p), search_base);
 try_it:
-        if (FileExists(p)) {
+        if (file_exists(p)) {
             *pImg = image_create_fromfile(p);
             return *pImg ? 0 : 2;
         }

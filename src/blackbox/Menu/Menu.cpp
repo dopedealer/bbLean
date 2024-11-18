@@ -105,7 +105,7 @@ Menu::~Menu()
 
 int Menu::decref(void)
 {
-    //dbg_printf("decref %d %s", m_refc-1, m_pMenuItems->m_pszTitle);
+    //debug_printf("decref %d %s", m_refc-1, m_pMenuItems->m_pszTitle);
     int n = m_refc - 1;
     if (n)
         return m_refc = n;
@@ -120,7 +120,7 @@ int Menu::decref(void)
 
 int Menu::incref(void)
 {
-    //dbg_printf("incref %d %s", m_refc, m_pMenuItems->m_pszTitle);
+    //debug_printf("incref %d %s", m_refc, m_pMenuItems->m_pszTitle);
     return ++m_refc;
 }
 
@@ -139,7 +139,7 @@ void Menu::g_decref()
     MenuList *ml;
     if (--g_menu_ref || NULL == g_MenuRefList)
         return;
-    // dbg_printf("MenuDelList %d", listlen(g_MenuRefList));
+    // debug_printf("MenuDelList %d", listlen(g_MenuRefList));
     dolist (ml, g_MenuRefList)
         ml->m->decref();
     freeall(&g_MenuRefList);
@@ -1611,7 +1611,7 @@ LRESULT Menu::wnd_proc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
         //====================
         case WM_SETFOCUS:
 #ifdef CHECKFOCUS
-            dbg_printf("WM_SETFOCUS %s %x <- %x", m_pMenuItems->m_pszTitle, hwnd, wParam);
+            debug_printf("WM_SETFOCUS %s %x <- %x", m_pMenuItems->m_pszTitle, hwnd, wParam);
             InvalidateRect(hwnd, NULL, FALSE);
 #endif
             on_setfocus((HWND)wParam);
@@ -1620,7 +1620,7 @@ LRESULT Menu::wnd_proc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
         //====================
         case WM_KILLFOCUS:
 #ifdef CHECKFOCUS
-            dbg_printf("WM_KILLFOCUS %s %x -> %x", m_pMenuItems->m_pszTitle, hwnd, wParam);
+            debug_printf("WM_KILLFOCUS %s %x -> %x", m_pMenuItems->m_pszTitle, hwnd, wParam);
             InvalidateRect(hwnd, NULL, FALSE);
 #endif
             on_killfocus((HWND)wParam);
@@ -1650,7 +1650,7 @@ LRESULT Menu::wnd_proc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
         //====================
         case WM_MOUSELEAVE:
-            //dbg_printf("mouseleave %x", hwnd);
+            //debug_printf("mouseleave %x", hwnd);
             if (m_bMouseOver)
             {
                 m_bMouseOver = false;
@@ -1707,7 +1707,7 @@ LRESULT Menu::wnd_proc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
                 }
                 break;
             }
-            //dbg_printf("Timer %x %d", hwnd, wParam);
+            //debug_printf("Timer %x %d", hwnd, wParam);
             MenuTimer(wParam);
             break;
 
@@ -1891,13 +1891,13 @@ void Menu::SaveState()
     // store childmenu
     m_OldChild = m_pChild;
     m_saved = true;
-    // dbg_printf("savee %s", m_pMenuItems->m_pszTitle);
+    // debug_printf("savee %s", m_pMenuItems->m_pszTitle);
 }
 
 void Menu::RestoreState(void)
 {
     MenuItem *pItem;
-    // dbg_printf("restored %s", m_pMenuItems->m_pszTitle);
+    // debug_printf("restored %s", m_pMenuItems->m_pszTitle);
     if (m_OldChild) {
         // The menu had an open submenu when it was updated, so
         // this if possible tries to link it to an FolderItem, again.
@@ -2418,7 +2418,7 @@ Menu *MakeNamedMenu(const char* HeaderText, const char* IDString, bool popup)
         pMenu->m_IDString = new_str(IDString);
     }
     pMenu->m_bPopup = popup;
-    //dbg_printf("MakeNamedMenu (%d) %x %s <%s>", popup, pMenu, HeaderText, IDString);
+    //debug_printf("MakeNamedMenu (%d) %x %s <%s>", popup, pMenu, HeaderText, IDString);
     return pMenu;
 }
 
@@ -2453,7 +2453,7 @@ void ShowMenu(Menu *PluginMenu)
 {
     if (NULL == PluginMenu)
         return;
-    // dbg_printf("ShowMenu(%d) %x %s", PluginMenu->m_bPopup, PluginMenu, PluginMenu->m_pMenuItems->m_pszTitle);
+    // debug_printf("ShowMenu(%d) %x %s", PluginMenu->m_bPopup, PluginMenu, PluginMenu->m_pMenuItems->m_pszTitle);
 
     if (PluginMenu->m_bPopup) {
         // just to signal e.g. BBSoundFX
@@ -2473,7 +2473,7 @@ void ShowMenu(Menu *PluginMenu)
 
 MenuItem* MakeSubmenu(Menu *ParentMenu, Menu *ChildMenu, const char* Title)
 {
-    //dbg_printf("MakeSubmenu %x %s - %x %s", ParentMenu, ParentMenu->m_pMenuItems->m_pszTitle, ChildMenu, Title);
+    //debug_printf("MakeSubmenu %x %s - %x %s", ParentMenu, ParentMenu->m_pMenuItems->m_pszTitle, ChildMenu, Title);
     if (Title)
         Title = NLS1(Title);
     else
@@ -2487,7 +2487,7 @@ MenuItem* MakeSubmenu(Menu *ParentMenu, Menu *ChildMenu, const char* Title)
 
 MenuItem *MakeMenuItem(Menu *PluginMenu, const char* Title, const char* Cmd, bool ShowIndicator)
 {
-    //dbg_printf("MakeMenuItem %x %s", PluginMenu, Title);
+    //debug_printf("MakeMenuItem %x %s", PluginMenu, Title);
     return PluginMenu->AddMenuItem(new CommandItem(Cmd, NLS1(Title), ShowIndicator));
 }
 
@@ -2551,18 +2551,15 @@ bool MenuExists(const char* IDString_part)
     return NULL != Menu::find_named_menu(IDString_part, true);
 }
 
-//===========================================================================
-// API: MenuItemOption - set some options for a menuitem
-//===========================================================================
-
-void MenuItemOption(MenuItem *pItem, int option, ...)
+void MenuItemOptionV(MenuItem *pItem, int option, va_list vl)
 {
-    va_list vl;
     if (NULL == pItem)
+    {
         return;
-    va_start(vl, option);
-    switch (option) {
+    }
 
+    switch (option)
+    { 
         // disabled text style
         case BBMENUITEM_DISABLED:
             pItem->m_bDisabled = true;
@@ -2631,6 +2628,64 @@ void MenuItemOption(MenuItem *pItem, int option, ...)
             pItem->m_hIcon = CopyIcon(va_arg(vl, HICON));
             break;
 #endif
+    } 
+}
+
+//===========================================================================
+// API: MenuItemOption - set some options for a menuitem
+//===========================================================================
+
+void MenuItemOption(MenuItem *pItem, int option, ...)
+{
+    if (nullptr == pItem)
+    {
+        return;
+    }
+
+    va_list vl{};
+    va_start(vl, option);
+    MenuItemOptionV(pItem, option, vl);
+    va_end(vl);
+}
+
+void MenuOptionV(Menu* pMenu, int flags, va_list vl)
+{
+    if (nullptr == pMenu)
+    {
+        return;
+    }
+
+    int pos = flags & BBMENU_POSMASK;
+    pMenu->m_flags |= (flags & ~BBMENU_POSMASK) | pos;
+
+    if (pos == BBMENU_XY)
+    {
+        pMenu->m_pos.left = va_arg(vl, int),
+        pMenu->m_pos.top = va_arg(vl, int);
+    }
+    else if (pos == BBMENU_RECT)
+    {
+        pMenu->m_pos = *va_arg(vl, RECT*);
+    }
+
+    if (flags & BBMENU_MAXWIDTH)
+    {
+        pMenu->m_maxwidth = va_arg(vl, int);
+    }
+
+    if (flags & BBMENU_HWND)
+    {
+        pMenu->m_hwndRef = va_arg(vl, HWND);
+    }
+
+    if (flags & BBMENU_ISDROPTARGET)
+    {
+        pMenu->m_bIsDropTarg = true;
+    }
+
+    if (flags & BBMENU_SORT)
+    {
+        Menu::Sort(&pMenu->m_pMenuItems->next, item_compare); 
     }
 }
 
@@ -2640,33 +2695,15 @@ void MenuItemOption(MenuItem *pItem, int option, ...)
 
 void MenuOption(Menu *pMenu, int flags, ...)
 {
-    va_list vl;
-    int pos;
     if (NULL == pMenu)
+    {
         return;
+    }
 
+    va_list vl{}; 
     va_start(vl, flags);
-
-    pos = flags & BBMENU_POSMASK;
-    pMenu->m_flags |= (flags & ~BBMENU_POSMASK) | pos;
-
-    if (pos == BBMENU_XY) {
-        pMenu->m_pos.left = va_arg(vl, int),
-        pMenu->m_pos.top = va_arg(vl, int);
-    } else if (pos == BBMENU_RECT)
-        pMenu->m_pos = *va_arg(vl, RECT*);
-
-    if (flags & BBMENU_MAXWIDTH)
-        pMenu->m_maxwidth = va_arg(vl, int);
-
-    if (flags & BBMENU_HWND)
-        pMenu->m_hwndRef = va_arg(vl, HWND);
-
-    if (flags & BBMENU_ISDROPTARGET)
-        pMenu->m_bIsDropTarg = true;
-
-    if (flags & BBMENU_SORT)
-        Menu::Sort(&pMenu->m_pMenuItems->next, item_compare);
+    MenuOptionV(pMenu, flags, vl); 
+    va_end(vl);
 }
 
 //===========================================================================

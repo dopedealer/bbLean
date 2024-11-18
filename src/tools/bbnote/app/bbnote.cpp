@@ -2394,7 +2394,9 @@ bool BBN_GetBBWnd(void)
 {
     BBhwnd = FindWindow("bbNote-Proxy", NULL);
     if (NULL == BBhwnd)
-        BBhwnd = FindWindow("BlackBoxClass", "BlackBox");
+    {
+        BBhwnd = get_bbwindow();
+    }
     return NULL != BBhwnd;
 }
 

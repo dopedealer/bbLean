@@ -26,6 +26,50 @@
 #include <shlobj.h>
 #include <shellapi.h>
 #include <malloc.h>
+#include <windows.h>
+
+int BBMessageBoxV(int flg, const char *fmt, va_list args)
+{
+    const char *caption = BBAPPNAME;
+    const char *message;
+    char *p, *q;
+    int r;
+
+    message = p = m_formatv(fmt, args);
+    if ('#' == p[0] &&  NULL != (q = strchr(p+1, p[0])))
+        // "#Title#Message" is wanted
+        *q = 0, caption = p+1, message = q+1;
+
+#ifdef BBTINY
+    r = MessageBox(NULL, message, caption, flg | MB_SYSTEMMODAL);
+#else
+
+    ::MessageBeep(0);
+    MSGBOXPARAMSW mp;
+    int lc = 1 + strlen(caption);
+    int lm = 1 + strlen(message);
+    WCHAR *wcaption = (WCHAR*)m_alloc(lc * sizeof (WCHAR));
+    WCHAR *wmessage = (WCHAR*)m_alloc(lm * sizeof (WCHAR));
+    bbMB2WC(caption, wcaption, lc);
+    bbMB2WC(message, wmessage, lm);
+
+    memset(&mp, 0, sizeof mp);
+    mp.cbSize = sizeof mp;
+    mp.hInstance = hMainInstance;
+    //mp.hwndOwner = NULL;
+    mp.lpszText = wmessage;
+    mp.lpszCaption = wcaption;
+    mp.dwStyle = flg | MB_USERICON | MB_SYSTEMMODAL;
+    mp.lpszIcon = MAKEINTRESOURCEW(IDI_BLACKBOX);
+    r = ::MessageBoxIndirectW(&mp);
+    m_free(wcaption);
+    m_free(wmessage); 
+#endif
+
+    m_free(p);
+
+    return r;
+}
 
 //===========================================================================
 // API: BBMessageBox
@@ -34,62 +78,12 @@
 
 int BBMessageBox(int flg, const char *fmt, ...)
 {
-    const char *caption = BBAPPNAME;
-    const char *message;
-    char *p, *q;
-    int r;
-    va_list args;
-    static int (WINAPI *pMessageBoxIndirectW)(CONST MSGBOXPARAMSW*);
-
+    va_list args; 
     va_start(args, fmt);
-    message = p = m_formatv(fmt, args);
-    if ('#' == p[0] &&  NULL != (q = strchr(p+1, p[0])))
-        // "#Title#Message" is wanted
-        *q = 0, caption = p+1, message = q+1;
+    auto result = BBMessageBoxV(flg, fmt, args);
+    va_end(args);
 
-#ifdef BBTINY
-    r = MessageBox (NULL, message, caption, flg | MB_SYSTEMMODAL);
-#else
-
-    MessageBeep(0);
-    if (usingNT
-     && load_imp(&pMessageBoxIndirectW, "user32.dll", "MessageBoxIndirectW")) {
-        MSGBOXPARAMSW mp;
-        int lc = 1+strlen(caption);
-        int lm = 1+strlen(message);
-        WCHAR *wcaption = (WCHAR*)m_alloc(lc * sizeof (WCHAR));
-        WCHAR *wmessage = (WCHAR*)m_alloc(lm * sizeof (WCHAR));
-        bbMB2WC(caption, wcaption, lc);
-        bbMB2WC(message, wmessage, lm);
-
-        memset(&mp, 0, sizeof mp);
-        mp.cbSize = sizeof mp;
-        mp.hInstance = hMainInstance;
-        //mp.hwndOwner = NULL;
-        mp.lpszText = wmessage;
-        mp.lpszCaption = wcaption;
-        mp.dwStyle = flg | MB_USERICON | MB_SYSTEMMODAL;
-        mp.lpszIcon = MAKEINTRESOURCEW(IDI_BLACKBOX);
-        r = pMessageBoxIndirectW(&mp);
-        m_free(wcaption);
-        m_free(wmessage);
-
-    } else {
-        MSGBOXPARAMSA mp;
-        memset(&mp, 0, sizeof mp);
-        mp.cbSize = sizeof mp;
-        mp.hInstance = hMainInstance;
-        //mp.hwndOwner = NULL;
-        mp.lpszText = message;
-        mp.lpszCaption = caption;
-        mp.dwStyle = flg | MB_USERICON | MB_SYSTEMMODAL;
-        mp.lpszIcon = MAKEINTRESOURCE(IDI_BLACKBOX);
-        r = MessageBoxIndirectA(&mp);
-    }
-#endif
-
-    m_free(p);
-    return r;
+    return result;
 }
 
 //===========================================================================
@@ -153,7 +147,7 @@ COLORREF get_mixed_color(StyleItem *pSI)
 //===========================================================================
 // replace %s and %1 in 'fmt' by 'arg' - allocate string for output
 
-char *replace_arg1(const char *fmt, const char *arg)
+char* replace_arg1(const char *fmt, const char *arg)
 {
     const char *va[] = { arg, arg, arg, arg };
     return m_formatv(fmt, (va_list)va);
@@ -240,6 +234,7 @@ void _log_printf(int flag, const char *fmt, ...)
     vfprintf(fp, fmt, arg);
     fprintf(fp, "\n");
     fclose(fp);
+    va_end(arg);
 }
 
 //===========================================================================
@@ -352,17 +347,22 @@ void bbDrawText(HDC hDC, const char *text, RECT *p_rect, unsigned format, COLORR
 int bbMB2WC(const char *src, WCHAR *wstr, int len)
 {
     int x, n;
-    for (x = -1;;) {
-        n = MultiByteToWideChar(
-                IsUsingUtf8Encoding() ? CP_UTF8 : CP_ACP,
-                0, src, x, wstr, len
-                );
+    for (x = -1;;)
+    {
+        n = MultiByteToWideChar(IsUsingUtf8Encoding() ? CP_UTF8 : CP_ACP,
+                0, src, x, wstr, len);
         if (n)
+        {
             return n;
+        }
         if (x < 0)
+        {
             x = len;
+        }
         if (--x == 0)
+        {
             break;
+        }
     }
     wstr[0] = 0;
     return 0;
@@ -510,7 +510,7 @@ pixinfo *load_pix(const char *path)
         by = (bm.bmHeight-1)/(h+1);
     }
 
-    // dbg_printf("bx:%d - by:%d - %d/%d", bx, by, w, h);
+    //debug_printf("bx:%d - by:%d - %d/%d", bx, by, w, h);
 
     hdc = CreateCompatibleDC(NULL);
     other = SelectObject(hdc, hbmp);
@@ -815,7 +815,7 @@ void register_fonts(void)
                         break;
                 if (!sn) {
                     int r = AddFontResource(path);
-                    // dbg_printf("add font (%d) %s", r, path);
+                    // debug_printf("add font (%d) %s", r, path);
                     if (r)
                         ++chg, *psn = new_string_node(path);
                 }
@@ -836,7 +836,7 @@ void unregister_fonts(void)
         do {
             //int r =
             RemoveFontResource(sn->str);
-            // dbg_printf("remove font (%d) %s", r, sn->str);
+            // debug_printf("remove font (%d) %s", r, sn->str);
         } while (0 != (sn = sn->next));
         freeall(&bbFonts);
         PostMessage(HWND_BROADCAST, WM_FONTCHANGE, 0, 0);

@@ -184,4 +184,11 @@ char *set_my_path(HINSTANCE h, char *dest, const char *fname)
     return strcat(dest, fname);
 }
 
+/// \brief Tells whether specified path exists
+bool file_exists(const char* path)
+{
+    DWORD a = GetFileAttributes(path);
+    return (DWORD)-1 != a && 0 == (a & FILE_ATTRIBUTE_DIRECTORY);
+}
+
 /* ------------------------------------------------------------------------- */

@@ -66,7 +66,7 @@ static void dbg_msg(const char *action, HWND hwnd, UINT msg)
     struct MsgMap *mm = (struct MsgMap *)assoc(msgs, (void*)msg);
     if (0 == GetClassName(hwnd, buffer, sizeof buffer))
         strcpy(buffer, "(invalid)");
-    dbg_printf("%s: %s %s (%d/%d)",
+    debug_printf("%s: %s %s (%d/%d)",
         action,
         buffer,
         bb_str(msg, -1, -1),

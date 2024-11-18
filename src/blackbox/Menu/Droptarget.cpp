@@ -62,12 +62,12 @@ CDropTarget::CDropTarget(HWND hwnd, LPCITEMIDLIST pidl)
     m_hwnd = hwnd;
     m_pidl = duplicateIDList(pidl);
     m_pDataObject = NULL;
-    //dbg_printf("CDropTarget created %d", ++objcount);
+    //debug_printf("CDropTarget created %d", ++objcount);
 }
 
 CDropTarget::~CDropTarget()
 {
-    //dbg_printf("CDropTarget deleted %d", --objcount);
+    //debug_printf("CDropTarget deleted %d", --objcount);
     freeIDList(m_pidl);
 }
 

@@ -208,7 +208,7 @@ LRESULT CALLBACK Desk_WndProc (HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPara
             break;
 
         case WM_NCPAINT:
-            // dbg_printf("ncpaint: %x %x %x %x", hwnd, uMsg, wParam, lParam);
+            // debug_printf("ncpaint: %x %x %x %x", hwnd, uMsg, wParam, lParam);
             // keep the window on bottom
             Desk_SetPosition();
             break;
@@ -414,7 +414,7 @@ bool Desk_mousebutton_event(int button)
     sprintf(strchr(rc_key, 0), "%sClick", button_strings[button-1]);
 
     broam = ReadString(extensionsrcPath(NULL), rc_key, NULL);
-    // dbg_printf("%s - %s", rc_key, broam);
+    // debug_printf("%s - %s", rc_key, broam);
 
     if (broam) {
         post_command(broam);

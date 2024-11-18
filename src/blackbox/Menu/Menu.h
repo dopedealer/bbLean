@@ -237,8 +237,10 @@ protected:
     friend MenuItem* MakeMenuNOP(Menu *PluginMenu, const char* Title);
     friend MenuItem* MakeMenuItemPath(Menu *ParentMenu, const char* Title, const char* path, const char* Cmd);
     friend Menu* MakeFolderMenu(const char *title, const char* path, const char *cmd);
-    friend void MenuOption(Menu *pMenu, int flags, ...);
+    friend void MenuOption(Menu* pMenu, int flags, ...);
+    friend void MenuOptionV(Menu* pMenu, int flags, va_list vl);
     friend void MenuItemOption(MenuItem *pItem, int option, ...);
+    friend void MenuItemOptionV(MenuItem *pItem, int option, va_list vl);
 
     friend void DelMenu(Menu *PluginMenu);
     friend MenuItem* helper_menu(Menu *PluginMenu, const char* Title, int menuID, MenuItem *pItem);

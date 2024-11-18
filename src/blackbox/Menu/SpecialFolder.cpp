@@ -450,7 +450,7 @@ int LoadFolder(
         if (options & LF_join) {
             dolist (pItem, *ppItems) {
                 if (0 == stricmp(pItem->m_pszTitle, szDispName)) {
-                    //dbg_printf("join: %s %d", szDispName, 0 != (attr & ef_folder));
+                    //debug_printf("join: %s %d", szDispName, 0 != (attr & ef_folder));
                     if (attr & ef_folder)
                         append_node(&pItem->m_pidl_list, pidl_list);
                     else

@@ -262,7 +262,7 @@ int forward_tray_message(systemTrayNode *p, UINT message, systemTrayIconPos *pos
             SetForegroundWindow(p->hWnd);
     }
 
-    // dbg_printf("message %x %d %x", p->hWnd, p->uID, message);
+    // debug_printf("message %x %d %x", p->hWnd, p->uID, message);
 
     dolist (q, trayIconList)
         if (q->popup && (q != p || message != WM_MOUSEMOVE)) {
@@ -429,14 +429,14 @@ int pass_back(DWORD pid, HANDLE shmem, void *mem, int size)
      && load_imp(&pSHUnlockShared, "shlwapi.dll", "SHUnlockShared")) {
         hMem = pSHLockShared (shmem, pid);
         if (NULL == hMem) {
-            //dbg_printf("AppBarEvent: couldn't lock memory");
+            //debug_printf("AppBarEvent: couldn't lock memory");
         } else {
             memcpy(hMem, mem, size);
             pSHUnlockShared(hMem);
             ret = 1;
         }
     } else {
-        //dbg_printf("couldn't get SH(Un)LockShared function pointers");
+        //debug_printf("couldn't get SH(Un)LockShared function pointers");
     }
     return ret;
 }
@@ -466,12 +466,12 @@ LRESULT AppBarEvent(void *data, unsigned size)
         break;
 
     default:
-        dbg_printf("AppBarEvent: unknown size: %d", size);
+        debug_printf("AppBarEvent: unknown size: %d", size);
         return 0;
     }
 
 /*
-    dbg_printf("AppBarEventV%d message:%d hwnd:%x pid:%d shmem:%x size:%d",
+    debug_printf("AppBarEventV%d message:%d hwnd:%x pid:%d shmem:%x size:%d",
         size == sizeof(APPBARMSGDATAV2) ? 2 : 1, *p_message, abd->hWnd, *p_pid, *p_shmem, size);
     dbg_window((HWND)abd->hWnd, "appevent window");
 */
@@ -765,7 +765,7 @@ LRESULT TrayInfoEvent(void *data, unsigned size)
 #if 0
     char s_guid[40];
     guid_to_string(&s->guidItem, s_guid);
-    dbg_printf("%x %d %d %d %04x %d - %04x %s",
+    debug_printf("%x %d %d %d %04x %d - %04x %s",
         s->dwMagic,
         s->dwMessage,
         s->cbSize,
@@ -811,7 +811,7 @@ LRESULT TrayTestEvent(void *data, unsigned size)
             buffer[x++] = ' ';
         x += sprintf(buffer + x, " %02x", ((unsigned char*)data)[n]);
     }
-    dbg_printf("%s\n%s\n", buffer, s_guid);
+    debug_printf("%s\n%s\n", buffer, s_guid);
 #endif
     return 0;
 }
@@ -859,7 +859,7 @@ LRESULT CALLBACK TrayWndProc( HWND hwnd, UINT message, WPARAM wParam, LPARAM lPa
         return 0;
     }
 
-    //dbg_printf("other message: %x %x %x", message, wParam, lParam);
+    //debug_printf("other message: %x %x %x", message, wParam, lParam);
     return DefWindowProc(hwnd, message, wParam, lParam);
 }
 
@@ -933,7 +933,7 @@ int sso_load(const char *name, const char *guid)
             NULL,
             NULL
             );
-        //dbg_printf("Starting ShellService %lx %d %s %s", (DWORD)hr, (pOCT->AddRef(), pOCT->Release()), name, guid);
+        //debug_printf("Starting ShellService %lx %d %s %s", (DWORD)hr, (pOCT->AddRef(), pOCT->Release()), name, guid);
         if (SUCCEEDED(hr)) {
             t = (sso_list_t*)m_alloc(sizeof(sso_list_t) + strlen(name));
             t->pOCT = pOCT;
@@ -1007,7 +1007,7 @@ DWORD WINAPI SSO_Thread(void *pv)
             NULL,
             NULL
             );
-        //dbg_printf("Stopped ShellService %lx %d %s", (DWORD)hr, (pOCT->AddRef(), pOCT->Release()), t->name);
+        //debug_printf("Stopped ShellService %lx %d %s", (DWORD)hr, (pOCT->AddRef(), pOCT->Release()), t->name);
         COMCALL0(pOCT, Release);
     }
 
@@ -1051,7 +1051,7 @@ static
 LRESULT CALLBACK TrayNotifyWndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
     //log_printf((LOG_TRAY, "Tray: TrayNotifyWnd %04x msg %04x wp %08x lp %08x", hwnd, message, wParam, lParam));
-    //dbg_printf("Tray: TrayNotifyWnd %04x msg %04x wp %08x lp %08x", hwnd, message, wParam, lParam);
+    //debug_printf("Tray: TrayNotifyWnd %04x msg %04x wp %08x lp %08x", hwnd, message, wParam, lParam);
     return DefWindowProc(hwnd, message, wParam, lParam);
 }
 

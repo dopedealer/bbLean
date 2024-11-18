@@ -53,7 +53,7 @@ int BBTokenize (
     int stored = 0;
     unsigned c;
 
-    //dbg_printf("BBTokenize [%d] <%s>", dwNumBuffers, srcString);
+    //debug_printf("BBTokenize [%d] <%s>", dwNumBuffers, srcString);
     for (c = 0; c < dwNumBuffers; ++c)
     {
         const char *a; int n; char *out;
@@ -164,14 +164,7 @@ bool DeleteSetting(LPCSTR path, LPCSTR szKey)
 
 bool ReadBool(const char* fileName, const char* szKey, bool bDefault)
 {
-    const char* szValue = read_value(fileName, szKey, NULL);
-    if (szValue) {
-        if (!stricmp(szValue, "true"))
-            return true;
-        if (!stricmp(szValue, "false"))
-            return false;
-    }
-    return bDefault;
+    return read_bool(fileName, szKey, bDefault);
 }
 
 //===========================================================================
@@ -180,8 +173,7 @@ bool ReadBool(const char* fileName, const char* szKey, bool bDefault)
 
 int ReadInt(const char* fileName, const char* szKey, int nDefault)
 {
-    const char* szValue = read_value(fileName, szKey, NULL);
-    return szValue ? atoi(szValue) : nDefault;
+    return read_int(fileName, szKey, nDefault);
 }
 
 //===========================================================================
@@ -190,8 +182,7 @@ int ReadInt(const char* fileName, const char* szKey, int nDefault)
 
 const char* ReadString(const char* fileName, const char* szKey, const char* szDefault)
 {
-    const char* szValue = read_value(fileName, szKey, NULL);
-    return szValue ? szValue : szDefault;
+    return read_string(fileName, szKey, szDefault);
 }
 
 //===========================================================================
@@ -210,7 +201,7 @@ COLORREF ReadColor(const char* fileName, const char* szKey, const char* defaultC
 
 void WriteBool(const char* fileName, const char* szKey, bool value)
 {
-    write_value(fileName, szKey, value ? "true" : "false");
+    write_bool(fileName, szKey, value);
 }
 
 //===========================================================================
@@ -219,8 +210,7 @@ void WriteBool(const char* fileName, const char* szKey, bool value)
 
 void WriteInt(const char* fileName, const char* szKey, int value)
 {
-    char buff[32];
-    write_value(fileName, szKey, itoa(value, buff, 10));
+    return write_int(fileName, szKey, value);
 }
 
 //===========================================================================
@@ -229,7 +219,7 @@ void WriteInt(const char* fileName, const char* szKey, int value)
 
 void WriteString(const char* fileName, const char* szKey, const char* value)
 {
-    write_value(fileName, szKey, value);
+    return write_string(fileName, szKey, value);
 }
 
 //===========================================================================
@@ -238,9 +228,7 @@ void WriteString(const char* fileName, const char* szKey, const char* value)
 
 void WriteColor(const char* fileName, const char* szKey, COLORREF value)
 {
-    char buff[32];
-    sprintf(buff, "#%06lx", (unsigned long)switch_rgb (value));
-    write_value(fileName, szKey, buff);
+    return write_color(fileName, szKey, value);
 }
 
 //===========================================================================
@@ -260,8 +248,7 @@ void ParseItem(const char* szItem, StyleItem *item)
 
 bool FileExists(const char* szFileName)
 {
-    DWORD a = GetFileAttributes(szFileName);
-    return (DWORD)-1 != a && 0 == (a & FILE_ATTRIBUTE_DIRECTORY);
+    return file_exists(szFileName);
 }
 
 //===========================================================================
@@ -419,7 +406,7 @@ bool FindRCFile(char* pszOut, const char* filename, HINSTANCE module)
             }
         }
     }
-    //dbg_printf("FindRCFile (%d) %s -> %s", ret, filename, pszOut);
+    //debug_printf("FindRCFile (%d) %s -> %s", ret, filename, pszOut);
     return ret;
 }
 
@@ -603,12 +590,12 @@ BOOL BBExecute_string(const char *line, int flags)
 
     ret = -1 != run_process(cmd, workdir, flags);
     if (ret) {
-        // dbg_printf("cmd (%d) <%s>", ret, cmd);
+        // debug_printf("cmd (%d) <%s>", ret, cmd);
     } else {
         ret = BBExecute(NULL, NULL, file, args, workdir,
             flags & RUN_HIDDEN ? SW_HIDE : SW_SHOWNORMAL,
             flags & RUN_NOERRORS);
-        // dbg_printf("exec (%d) <%s> <%s>", ret, file, args);
+        // debug_printf("exec (%d) <%s> <%s>", ret, file, args);
     }
 
     free_str(&cmd_temp);
@@ -783,7 +770,7 @@ void update_screen_areas(struct dt_margins *dt_margins);
 
 void SetDesktopMargin(HWND hwnd, int location, int margin)
 {
-    //dbg_printf("SDTM: %08x %d %d (%x)", hwnd, location, margin, pMonitorFromWindow(hwnd, MONITOR_DEFAULTTONEAREST));
+    //debug_printf("SDTM: %08x %d %d (%x)", hwnd, location, margin, pMonitorFromWindow(hwnd, MONITOR_DEFAULTTONEAREST));
 
     static struct dt_margins *margin_list;
     struct dt_margins *p;
@@ -888,7 +875,7 @@ BOOL CALLBACK fnEnumMonProc(HMONITOR hMon, HDC hdcOptional, RECT *prcLimit, LPAR
     else
         get_custom_margin(&s->custom_margins, screen);
 
-    // dbg_printf("EnumProc %x %d %d %d %d", hMon, s->screen_rect.left, s->screen_rect.top, s->screen_rect.right, s->screen_rect.bottom);
+    // debug_printf("EnumProc %x %d %d %d %d", hMon, s->screen_rect.left, s->screen_rect.top, s->screen_rect.right, s->screen_rect.bottom);
     return TRUE;
 }
 
@@ -906,7 +893,7 @@ void update_screen_areas(struct dt_margins *dt_margins)
     else
         fnEnumMonProc(NULL, NULL, NULL, (LPARAM)&si);
 
-    //dbg_printf("list: %d %d", listlen(si.pScr), si.index);
+    //debug_printf("list: %d %d", listlen(si.pScr), si.index);
     if (false == Settings_fullMaximization) {
         struct dt_margins *p;
         // first loop through the set margins from plugins
@@ -940,7 +927,7 @@ void update_screen_areas(struct dt_margins *dt_margins)
     dolist (pS, si.pScr) {
         RECT *n = &pS->new_rect;
         if (0 != memcmp(&pS->work_rect, n, sizeof(RECT))) {
-            // dbg_printf("WA = %d %d %d %d", n->left, n->top, n->right, n->bottom);
+            // debug_printf("WA = %d %d %d %d", n->left, n->top, n->right, n->bottom);
             SystemParametersInfo(SPI_SETWORKAREA, 0, (PVOID)n, 0);
         }
     }
@@ -979,7 +966,7 @@ struct snap_info { struct edges *h; struct edges *v;
 static void snap_to_edge(struct edges *h, struct edges *v, bool sizing, bool same_level, int pad);
 static BOOL CALLBACK SnapEnumProc(HWND hwnd, LPARAM lParam);
 
-void SnapWindowToEdge(WINDOWPOS* wp, LPARAM nDist, UINT flags, ...)
+void SnapWindowToEdgeV(WINDOWPOS* wp, LPARAM nDist, UINT flags, va_list vlist)
 {
     struct edges h;
     struct edges v;
@@ -988,10 +975,8 @@ void SnapWindowToEdge(WINDOWPOS* wp, LPARAM nDist, UINT flags, ...)
     bool snap_plugins, sizing, snap_workarea;
     HWND self, parent;
     RECT r;
-    va_list va;
     //int grid = 0;
 
-    va_start(va, flags);
     snapdist = Settings_snapThreshold;
     padding = Settings_snapPadding;
     snap_plugins = Settings_snapPlugins;
@@ -1002,7 +987,7 @@ void SnapWindowToEdge(WINDOWPOS* wp, LPARAM nDist, UINT flags, ...)
     if (flags & SNAP_TRIGGER)
         snapdist = nDist;
     if (flags & SNAP_PADDING)
-        padding = va_arg(va, int);
+        padding = va_arg(vlist, int);
     if (snapdist < 1)
         return;
 
@@ -1080,7 +1065,7 @@ void SnapWindowToEdge(WINDOWPOS* wp, LPARAM nDist, UINT flags, ...)
         // -----------------------------------------
         if (sizing) {
             if (flags & SNAP_CONTENT) { // snap to button icons
-                SIZE * psize = va_arg(va, SIZE*);
+                SIZE * psize = va_arg(vlist, SIZE*);
                 h.to2 = (h.to1 = h.from1) + psize->cx;
                 v.to2 = (v.to1 = v.from1) + psize->cy;
                 snap_to_edge(&h, &v, sizing, false, -2*padding);
@@ -1111,7 +1096,17 @@ void SnapWindowToEdge(WINDOWPOS* wp, LPARAM nDist, UINT flags, ...)
             wp->cy += v.omin;
         else
             wp->y += v.omin;
-    }
+    } 
+}
+
+// it's seems to be that ellipsis used only for interpreting '4th' arg based on
+// function logic and flags
+void SnapWindowToEdge(WINDOWPOS* wp, LPARAM nDist, UINT flags, ...)
+{
+    va_list va{}; 
+    va_start(va, flags);
+    SnapWindowToEdgeV(wp, nDist, flags, va);
+    va_end(va);
 }
 
 //*****************************************************************************
@@ -1333,7 +1328,7 @@ int GetAppByWindow(HWND hwnd, char* processName)
         }
     }
 
-    // dbg_printf("appname = %s\n", processName);
+    // debug_printf("appname = %s\n", processName);
     return strlen(processName);
 }
 

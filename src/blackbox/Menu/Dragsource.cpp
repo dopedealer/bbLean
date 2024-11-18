@@ -46,12 +46,12 @@ private:
 CImpIDropSource::CImpIDropSource()
 {
     m_dwRef = 1;
-    //dbg_printf("CImpIDropSource Created");
+    //debug_printf("CImpIDropSource Created");
 }
 
 CImpIDropSource::~CImpIDropSource()
 {
-    //dbg_printf("CImpIDropSource Deleted");
+    //debug_printf("CImpIDropSource Deleted");
 }
 
 COM_DECLSPEC_NOTHROW STDMETHODIMP CImpIDropSource::QueryInterface(REFIID iid, void ** ppv)
