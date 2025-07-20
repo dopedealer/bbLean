@@ -1,0 +1,121 @@
+
+- API_EXPORT bool ReadBool(const char* fileName, const char* szKey, bool defaultBool);
+- API_EXPORT int ReadInt(const char* fileName, const char* szKey, int defaultInt);
+- API_EXPORT COLORREF ReadColor(const char* fileName, const char* szKey, const char* defaultColor);
+- API_EXPORT const char* ReadString(const char* fileName, const char* szKey, const char* defaultString); 
+- API_EXPORT const char* ReadValue(const char* fileName, const char* szKey, long* ptr ISNULL); 
+- API_EXPORT int FoundLastValue(void); 
+- API_EXPORT void WriteBool(const char* fileName, const char* szKey, bool value);
+- API_EXPORT void WriteInt(const char* fileName, const char* szKey, int value);
+- API_EXPORT void WriteString(const char* fileName, const char* szKey, const char* value);
+- API_EXPORT void WriteColor(const char* fileName, const char* szKey, COLORREF value); 
+- API_EXPORT bool DeleteSetting(LPCSTR fileName, LPCSTR szKey);
+- API_EXPORT bool RenameSetting(const char* fileName, const char* old_keyword, const char* new_keyword); 
+- API_EXPORT void* GetSettingPtr(int sn_index);
+
+- API_EXPORT int ReadStyleItem( const char* fileName, /* style filename */
+        const char* szKey,  /* keyword until the last dot, e.g. "bbpager.frame" */
+        StyleItem* pStyleItemOut, /* pointer to receiving StyleItem struct */
+        StyleItem* pStyleItemDefault /* pointer to a default StyleItem or NULL */
+        );
+
+- API_EXPORT char* WINAPI GetBlackboxPath(char* path, int maxLength);
+- API_EXPORT bool FindRCFile(char* pszOut, const char* fileName, HINSTANCE pluginInstance); 
+- API_EXPORT const char* bbrcPath(const char* bbrcFileName ISNULL);
+- API_EXPORT const char* extensionsrcPath(const char* extensionsrcFileName ISNULL);
+- API_EXPORT const char* menuPath(const char* menurcFileName ISNULL);
+- API_EXPORT const char* plugrcPath(const char* pluginrcFileName ISNULL);
+- API_EXPORT const char* stylePath(const char* styleFileName ISNULL);
+- API_EXPORT const char *defaultrcPath(void);
+- EXTERN_C API_EXPORT const char* ConfigFileExists(const char* filename, const char* pluginDir); 
+- API_EXPORT void GetBlackboxEditor(/*OUT*/ char* editor); 
+- API_EXPORT bool FileExists(const char* pszPath); 
+- API_EXPORT FILE *FileOpen(const char* pszPath);
+- API_EXPORT bool FileClose(FILE *fp); 
+- API_EXPORT bool FileRead(FILE *fp, char* buffer); 
+- API_EXPORT bool ReadNextCommand(FILE *fp, char* buffer, unsigned maxLength); 
+- API_EXPORT void MakeSticky(HWND hwnd);
+- API_EXPORT void RemoveSticky(HWND hwnd);
+- API_EXPORT bool CheckSticky(HWND hwnd); 
+- API_EXPORT HMONITOR GetMonitorRect(void *from, RECT *r, int Flags); 
+- API_EXPORT void SnapWindowToEdge(WINDOWPOS* wp, LPARAM nTriggerDist, UINT Flags, ...); 
+- API_EXPORT bool SetTransparency(HWND hwnd, BYTE alpha); 
+- API_EXPORT int GetAppByWindow(HWND hwnd, char* pszOut); 
+- API_EXPORT bool IsAppWindow(HWND hwnd); 
+- API_EXPORT void SetDesktopMargin(HWND hwnd, int location, int marginWidth); 
+- API_EXPORT HWND GetBBWnd(void);
+- API_EXPORT const char* GetBBVersion(void);
+- API_EXPORT bool GetUnderExplorer(void);
+- API_EXPORT LPCSTR GetOSInfo(void); 
+- API_EXPORT const char* Tokenize( const char* source, char* target, const char* delimiters); 
+- API_EXPORT int BBTokenize ( const char* source, char** targets, unsigned numTokens, char* remaining); 
+- API_EXPORT void ParseItem(const char* szItem, StyleItem *item);
+- API_EXPORT bool IsInString(const char* inputString, const char* searchString);
+- API_EXPORT char* StrRemoveEncap(char* string);
+- API_EXPORT void ReplaceEnvVars(char* string);
+- API_EXPORT char* ReplaceShellFolders(char* path);
+
+- API_EXPORT BOOL BBExecute(
+        HWND Owner,         /*  normally NULL */
+        const char* szVerb,      /*  normally NULL */
+        const char* szFile,      /*  required */
+        const char* szArgs,      /*  or NULL */
+        const char* szDirectory, /*  or NULL */
+        int nShowCmd,       /*  normally SW_SHOWNORMAL */
+        int noErrorMsgs    /*  if true, suppresses errors */
+        );
+
+- API_EXPORT int BBMessageBox(int flag, const char *fmt, ...);
+- API_EXPORT void dbg_printf(const char *fmt, ...);
+- API_EXPORT void Log(const char* Title, const char* Line);
+- API_EXPORT int MBoxErrorFile(const char* szFile);
+- API_EXPORT int MBoxErrorValue(const char* szValue);
+
+- API_EXPORT void MakeGradient(
+        HDC hdc,
+        RECT rect,
+        int type,
+        COLORREF color1,
+        COLORREF color2,
+        bool interlaced,
+        int bevelstyle,
+        int bevelposition,
+        int bevelWidth,   /* not used, should be 0 */
+        COLORREF borderColour,
+        int borderWidth
+        );
+
+- API_EXPORT void MakeStyleGradient(HDC hDC, RECT* p_rect, StyleItem * m_si, bool withBorder);
+- API_EXPORT void CreateBorder(HDC hdc, RECT* p_rect, COLORREF borderColour, int borderWidth);
+- API_EXPORT void bbDrawPix(HDC hDC, RECT *p_rect, COLORREF picColor, int style);
+- API_EXPORT HFONT CreateStyleFont(StyleItem * si); 
+- API_EXPORT void bbDrawText(HDC hDC, const char *text, RECT *p_rect, unsigned just, COLORREF c);
+- API_EXPORT int bbMB2WC(const char *src, WCHAR *wchar_buffer, int wchar_len);
+- API_EXPORT int bbWC2MB(const WCHAR *src, char *char_buffer, int char_len); 
+- API_EXPORT Menu *MakeNamedMenu(const char* HeaderText, const char* Id, bool fshow); 
+- API_EXPORT MenuItem *MakeMenuItem( Menu *PluginMenu, const char* Title, const char* Cmd, bool ShowIndicator); 
+- API_EXPORT MenuItem *MakeMenuNOP(Menu *PluginMenu, const char* Title ISNULL); 
+- API_EXPORT MenuItem *MakeMenuItemInt( Menu *PluginMenu, const char* Title, const char* Cmd, int val, int minval, int maxval); 
+- API_EXPORT MenuItem *MakeMenuItemString( Menu *PluginMenu, const char* Title, const char* Cmd, const char* init_string ISNULL); 
+- API_EXPORT MenuItem *MakeSubmenu( Menu *ParentMenu, Menu *ChildMenu, const char* Title ISNULL); 
+- API_EXPORT MenuItem* MakeMenuItemPath( Menu *ParentMenu, const char* Title, const char* path, const char* Cmd ISNULL); 
+- API_EXPORT Menu *MakeContextMenu(const char *path, const void *pidl); 
+- API_EXPORT void ShowMenu(Menu *PluginMenu); 
+- API_EXPORT bool MenuExists(const char* IDString_start); 
+- API_EXPORT void MenuItemOption(MenuItem *pItem, int option, ...);
+- API_EXPORT void MenuOption(Menu *pMenu, int flags, ...);
+- API_EXPORT Menu *MakeMenu(const char* HeaderText);
+- API_EXPORT void DelMenu(Menu *PluginMenu); /* does nothing */ 
+- API_EXPORT int GetTraySize(void);
+- API_EXPORT systemTray* GetTrayIcon(int icon_index); 
+- API_EXPORT int ForwardTrayMessage(int icon_index, UINT message, systemTrayIconPos *pos); 
+- API_EXPORT int GetTaskListSize(void);
+- API_EXPORT HWND GetTask(int index);
+- API_EXPORT int GetActiveTask(void);
+- API_EXPORT int GetTaskWorkspace(HWND hwnd);
+- API_EXPORT void SetTaskWorkspace(HWND hwnd, int workspace); 
+- API_EXPORT const struct tasklist *GetTaskListPtr(void); 
+- API_EXPORT void GetDesktopInfo(DesktopInfo *deskInfo); 
+- API_EXPORT bool GetTaskLocation(HWND hwnd, struct taskinfo *pti); 
+- API_EXPORT bool SetTaskLocation(HWND hwnd, struct taskinfo *pti, UINT flags); 
+- API_EXPORT ToolbarInfo *GetToolbarInfo(void);

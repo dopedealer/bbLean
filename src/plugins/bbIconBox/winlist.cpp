@@ -53,7 +53,7 @@ void get_virtual_rect(Desk *f, RECT *d, winStruct *w, RECT *r)
     r->bottom   = d->top    + ratioYinv (f, w->info.ypos + w->info.height );
 }
 
-static BOOL TaskEnumFunc(const struct tasklist *p, LPARAM lParam)
+static BOOL TaskEnumFunc(const tasklist* p, LPARAM lParam)
 {
     HWND hwnd = p->hwnd;
     Desk *f = (Desk*)lParam;

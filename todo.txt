@@ -73,6 +73,8 @@
             - in bbLeanSkinEng remove direct in-compile hack of ../../blackbox/BImage.cpp !!!
             - remove direct cpp file include from:
                 - bbleanBar
+                - bbstylemaker
+                - find where is more such includes
             - make bblib buildable as dynamic based on option
                 - make compilation
                     - error: undefined symbol: bbWC2MB in pidl.c (located in blackbox)
@@ -82,14 +84,23 @@
                             ? the bbWC2MB depends on property Settings_UTF8Encoding in blackbox
                             - make tests for wchar_to_mbs
                     - undefined symbol: defaultrcPath in pidl.c (located in blackbox)
+            - change multiple settings object instances to single
+            - make blackbox exported api via proxying to some global object (singletone?)
+                - make setter of global api object via interface
+                - make set/unset global interface near (where?) blackbox object creation (in main?)
+                - make all exported apis work only via this interface
         - make sure needed defs defined based on option
         - set correct artifacts gaterhing to instaler build
         - remove global variable in rc functionality 
-        - remove #include "../../plugins/bbPlugin/drawico.cpp"  from MenuItem.cpp
+        * remove #include "../../plugins/bbPlugin/drawico.cpp"  from MenuItem.cpp
     - remove blackbox/bbcore in-compile include from bblib (start with remove include dir)
     - remove usage of defaultrcPath and other fn fromiz blacbox inside bblib
     - remove global variables in bblib (rc global state)
+    - remove global variables all over bblean repository code
     - try to remove include blackbox dir from bblib
+    - add nls txt to docs copying
+- split BBSendData.h to h and cpp files
+- move all functions that ends with XXX_command to corresponding source fiels (commands.cpp, commands.h)
 
 - make other refactorings
     - remove duplicate code from fuzzydoc - bblib
@@ -102,7 +113,16 @@
       once. It is a bad practice to cause any sounds
     * make sure every used va_start paired with closing va_end
     ? in class Menu remove friends function. Must not access to fields from outside
-
+    - remove cringe memset hacks in: 
+        - Menu::Menu(const char *pszTitle)
+        - MenuItem::MenuItem(const char* pszTitle) 
+        - plugin_info()
+        - all callers of BBP_clear
+            - bbanalog_plugin()
+            - icon_box()
+            - barinfo()
+            - slit_info()
+            - barinfo struct (class)
 ? remove __BBCORE__ macro usage in blackbox.exe
 - add 'no skin' variant to use original grey skin
 ? change structure - source + include dirs for plugins
@@ -121,6 +141,8 @@
 ? rename bbLeanSkinEng32 to correct one ('english' ? 32 bits?)
 - find how 'exactly' works read_value - 'reading' with returning pointer to
   string is *very* suspicious. Hashmap? When cleared ?
+- move bbPath() function and corresponding path-related to rcfile area
+- remove all 'include cpp' hacks everywhere
 
 - move bblib c files to cpp with careful export conventions
 - make external utf-8 only in char* args
@@ -146,18 +168,47 @@
     ? add changelog file ?
     - possibly nls2b potentially overflows buffer
     - rewrite nls usage to use c++ hash map internally
+    - move nls from outside of bbcore namespace - possibly in bblib to separate independent class (free of global variables, states, functions, ...)
+    ? the findRCFile usage with writing to output buffer is overflow vulnerable
+    - change bad unchecked buffer size writing in bbPath, bbcore::findRCFile
+    - move functions code from BBSendData.h to related cpp  file
+    - remove global usage of SettingsXXX classes (SettingsCommon, etc)
+    - remove warnings on msvsc compilation, mingw
+    - in MenuItem class remove dirty hack in constructor with memset of *this - replace to {} initialisation of data
+    - possibly the GenerateFonts command runs 'always' no matter whether there already any generated fonts
+    - make work with data.m_pidl_list in class Menu non-raw pointed
+    - move menumaker cpp content from menu.cpp to menumaker.cpp
+    - wipe or purge win0x500.h
+    - remove all externs - global variables
+    - remove variables in classes from public visibility in bbleanbar files
+    - remove friends everywhere.
+    - remove bbnote Menu_Reconfigure - replace somehow with bbcore functionality - remove duplication (bbcore - bbnote)
+    - fix the Core_IDString - it copies to output buffer without border check
+    - replace all sprintf cases - printint to buffer without checking size is dangerous
+    - think something about Menu class related g_incref, g_decref functions -
+      may be public? Methods instead of global functions ?
+    - remove all static variables from class Menu (at least g_MenuWindowList_, g_MenuStructList, g_MenuRefList)
+    - rewrite implicit import mechanisms (probably replace to my lib loader usage)
+
 
 - add manifest to make winapi dialogs look more pretty
+- add 'start button', then workspaces. Maybe similar to awesome wm
+- try to use bbzero plugins
 
 - rewrite paths.cpp from win-specific apis to c++ filesystem
 
 bugs to fix:
 -----------
+- fix probably missing saving marginWidth in style file (like toolbar.button.marginWidth: 1)
+- fix windows 11 'ai' applications run crash
 - correct work under windows 10
 - correct work under windows 11
 - correct work 'as shell' under windows 10
 - correct work 'as shell' under windows 11
 - oni.exe game does not run via menu under windows 10 x64
+- fix volume tray icon work
+- duplicated 'programs' in submenu (windows 10)
+- japan hieroglyphs in fs names doesn't shown properly in start menu navigation
 
 features request:
 ----------------
@@ -166,3 +217,5 @@ features request:
 - custom control panel app - 'restoring' classic one
 - make app for fast replacement of old windows photo viewer (rundll32 "%ProgramFiles%\Windows Photo Viewer\PhotoViewer.dll")
 - make bbnote support utf-8 and display as utf-8 by default
+- add 'browse' button with dialog calling in bbstylemaker for image file path setting
+? fix tips work for some bbleanbar items ? (settip fn)

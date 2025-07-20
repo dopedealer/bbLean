@@ -124,7 +124,7 @@ void EnumDesks (DESKENUMPROC lpEnumFunc, LPARAM lParam)
 
 void EnumTasks (TASKENUMPROC lpEnumFunc, LPARAM lParam)
 {
-    const struct tasklist *tl;
+    const tasklist* tl;
     dolist (tl, GetTaskListPtr())
         if (FALSE == lpEnumFunc(tl, lParam))
             break;

@@ -36,8 +36,8 @@ char upc(char);
 char lwc(char);
 void domarking(int);
 int setmark(void);
-int getmark0(struct mark_s *);
-int getmark(struct mark_s *);
+int getmark0(mark_s* );
+int getmark(mark_s* );
 void allmark(void);
 void unmark(void);
 
@@ -90,7 +90,7 @@ void ed_insert(char *);
 void ed_cmd(int, ...);
 void ed_fixup(void);
 void ed_mark(int, int);
-int  ed_search(struct sea *);
+int  ed_search(sea* );
 char *ed_make_rplc(char *, char *);
 
 /*----------------------------------------------------------------------------*/
@@ -141,7 +141,8 @@ int setmark(void) {
     return (mark1x!=mark2x);
 }
 
-int getmark0(struct mark_s *m) {
+int getmark0(mark_s* m)
+{
     int a,e,f,la,le,ne;
 
     if (!setmark()) return 0;
@@ -179,7 +180,8 @@ int getmark0(struct mark_s *m) {
     return 1;
 }
 
-int getmark(struct mark_s *m) {
+int getmark(mark_s* m)
+{
     if (!getmark0(m)) return 0;
     m->y+=cntlf(m->a, m->e);
     return 1;
@@ -210,7 +212,7 @@ void unmark(void) {
 #define UD_CHG 4
 
 typedef struct undo_s {
-    struct undo_s *next;
+    undo_s* next;
     int p;
     int l;
     char cmd;
@@ -224,7 +226,7 @@ sud *u_add(int cmd, int p, int l, int b) {
 
     if (winflg&1) return NULL;
 
-    if (NULL!=(up=(struct undo_s *)m_alloc(sizeof(sud)+b))) {
+    if (NULL!=(up=(undo_s*)m_alloc(sizeof(sud)+b))) {
         up->next = *u_pp;
         *u_pp    = up;
         up->p    = p;
@@ -784,7 +786,7 @@ hard:
 /*----------------------------------------------------------------------------*/
 char *get_block(void) {
     char *q;
-    struct mark_s m;
+    mark_s m;
 
     if (!getmark(&m)) return NULL;
     if (m.l==0) return NULL;
@@ -820,7 +822,7 @@ void ins_block(char *q, char lf, int f) {
 }
 
 void del_block(void) {
-    struct mark_s m;
+    mark_s m;
     if (!getmark(&m)) return;
     delchr(m.a, m.l);
     delspc(m.a);
@@ -831,7 +833,7 @@ void del_block(void) {
 char *get_vblock(void) {
     int x3,x4,o,i,k,l;
     char *p,*q;
-    struct mark_s m;
+    mark_s m;
 
     if (!getmark(&m)) return NULL;
 
@@ -884,7 +886,7 @@ void ins_vblock(char *p) {
 
 void del_vblock(int *a) {
     int x3,x4,i,k,l,o,z;
-    struct mark_s m;
+    mark_s m;
 
     if (!getmark(&m)) return;
 
@@ -920,7 +922,7 @@ void mark_vblock(int x0, int x,int y) {
 }
 
 int inmark(int x, int y) {  // export for mouse draging
-    struct mark_s m;
+    mark_s m;
     int o,p,i;
 
     if (!getmark0(&m)) return 0;
@@ -947,7 +949,7 @@ void ed_insblk_0(char *q, char lf, int f) {
 
 void ed_insblk(void) {
     char *q; int c;
-    struct mark_s ms;
+    mark_s ms;
 
     if (getmark(&ms)==0) return;
 
@@ -964,7 +966,7 @@ void ed_insblk(void) {
 }
 
 void ed_delblk(int *ap, int f) {
-    struct mark_s ms;
+    mark_s ms;
     int i,k,a;
     if (getmark(&ms)==0) return;
     if (vmark)
@@ -1004,7 +1006,7 @@ void ed_delblk(int *ap, int f) {
 }
 
 void ed_movblk(int *a) {
-    struct mark_s ms;
+    mark_s ms;
     void ed_fixup(void);
     char *q; int c;
     if (getmark(&ms)==0) return;
@@ -1039,7 +1041,7 @@ void ed_movblk(int *a) {
 
 /*----------------------------------------------------------------------------*/
 void ed_flipcase(void) {
-    struct mark_s ms;
+    mark_s ms;
     char *q,*p,c,d = 0;
 
     if (getmark(&ms)==0 || vmark)
@@ -1073,7 +1075,7 @@ p1:
 
 void ed_bcopy(void) {
     char *q;
-    struct mark_s m;
+    mark_s m;
 
     getmark(&m);
 
@@ -1456,8 +1458,11 @@ void ed_deleol(void) {
 /*----------------------------------------------------------------------------*/
 // un/indent
 
-int sh_lines (int f) {
-    struct mark_s ms; int n,m,l,a,e,a0,s,m0; unsigned char d;
+int sh_lines (int f)
+{
+    mark_s ms;
+    int n,m,l,a,e,a0,s,m0;
+    unsigned char d;
 
     if (getmark(&ms)==0)            return 0;
     if (ms.a!=fixline(m0=ms.a))     return 1;
@@ -1865,7 +1870,7 @@ int checkword(int a, int e) {
     return !((a && getalnum(a-1)) || (e<flen && getalnum(e)));
 }
 
-static struct rmres res[16];
+static rmres res[16];
 static char cres;
 
 int r_getchr(int o) {
@@ -1874,7 +1879,7 @@ int r_getchr(int o) {
     return c;
 }
 
-int ed_search(struct sea *sea) {
+int ed_search(sea* sea) {
     int m=sea->from; char* q=sea->str; int sf=sea->sf;
     int i,k,n,o,fl;
     char *p,e;

@@ -58,8 +58,8 @@ struct WinInfo
     WNDPROC wpOrigWindowProc;
     LONG style, exstyle;
 
-    struct SizeInfo S;
-    struct GdiInfo gdiobjs[NUMOFGDIOBJS];
+    SizeInfo S;
+    GdiInfo gdiobjs[NUMOFGDIOBJS];
     HDC buf;
 
     bool is_unicode;
@@ -85,7 +85,7 @@ struct WinInfo
     char capture_button;
     char button_down;
     char button_count;
-    struct button_set button_set[BUTTON_COUNT];
+    button_set button_set[BUTTON_COUNT];
 };
 
 enum button_types {

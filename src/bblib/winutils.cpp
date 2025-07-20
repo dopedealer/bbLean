@@ -29,6 +29,8 @@ void debug_printf(const char *fmt, ...)
     va_end(args);
 }
 
+/// \brief Pass formatted message to 'OutputDebugString (for plugin
+///        developers)'
 void debug_vprintf(const char* format, va_list vlist)
 {
     char buffer[4000];

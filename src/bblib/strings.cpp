@@ -62,12 +62,18 @@ char* stristr(const char *aa, const char *bb)
     return NULL;
 }
 
+/// \brief Searches provided string in provided string array
+/// \returns Index of found string in case of success. -1 in case of failure
 int get_string_index (const char *key, const char * const * string_array)
 {
     int i; const char *s;
-    for (i=0; NULL != (s = *string_array); i++, string_array++)
-        if (0==stricmp(key, s))
+    for (i = 0; nullptr != (s = *string_array); i++, string_array++)
+    {
+        if (0 == stricmp(key, s))
+        {
             return i;
+        }
+    }
     return -1;
 }
 

@@ -23,7 +23,7 @@
 
 int rcomp (unsigned char *in, unsigned char *out, int omax, int cf);
 struct rmres { int p; int w; };
-int rmatch(int s, int a, int e, unsigned char *m, struct rmres *m_ptr, int (*getchr)(int));
+int rmatch(int s, int a, int e, unsigned char *m, rmres* m_ptr, int (*getchr)(int));
 
 enum codes {
     e_succ     = 1  ,
@@ -359,7 +359,7 @@ int rcomp (unsigned char *in, unsigned char *out, int omax, int cf) {
 #define SPSIZ 400
 #define GPSIZ 16
 
-int rmatch(int s, int a, int e, unsigned char *m, struct rmres *m_ptr, int (*getchr)(int)) {
+int rmatch(int s, int a, int e, unsigned char *m, rmres* m_ptr, int (*getchr)(int)) {
 
     unsigned char c,*m1;
     int m_max, m_min;

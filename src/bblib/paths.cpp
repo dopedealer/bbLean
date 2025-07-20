@@ -185,6 +185,7 @@ char *set_my_path(HINSTANCE h, char *dest, const char *fname)
 }
 
 /// \brief Tells whether specified path exists
+///        Check if 'pszPath' exists as a regular file
 bool file_exists(const char* path)
 {
     DWORD a = GetFileAttributes(path);

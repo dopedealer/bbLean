@@ -6,7 +6,8 @@ project (${PROJECT})
 
 set (INCLUDE_DIRS
     ${GTEST_INCLUDE_DIRS}
-    ${BBCORE_INCLUDE_DIR}
+    ${BBLIB_INCLUDE_DIR}
+    ${BBCORE_INCLUDES}
     ) 
 
 

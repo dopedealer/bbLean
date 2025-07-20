@@ -116,7 +116,7 @@ struct exclusion_info
 {
     int size;
     int count;
-    struct exclusion_item ei[1];
+    exclusion_item ei[1];
 };
 
 #define GLYPH_MAX_SIZE 17
@@ -137,8 +137,8 @@ struct windowGradients
 
 struct SkinStruct
 {
-    struct windowGradients U;
-    struct windowGradients F;
+    windowGradients U;
+    windowGradients F;
 
     LOGFONT Font;
     int Justify; // DT_LEFT/CENTER/RIGHT
@@ -198,7 +198,7 @@ struct SkinStruct
     int _pad32_2;
 #endif
 
-    struct exclusion_info exInfo;
+    exclusion_info exInfo;
 };
 
 #define offset_exInfo ((size_t)&((SkinStruct*)NULL)->exInfo)

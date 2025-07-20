@@ -48,12 +48,15 @@
 #define BBIB_DRAG (WM_USER + 103)
 #define BBIB_DROP (WM_USER + 104)
 
+// forward declarations
+struct winStruct;
+
 // ---------------------------------------------
 // LoadFolder.cpp
 struct Item
 {
-    struct Item * next;
-    void *data;
+    Item* next;
+    void* data;
     HICON hIcon;
     int index;
     bool active;
@@ -63,13 +66,13 @@ struct Item
 
 struct Folder
 {
-    struct Folder * next;
-    struct Item * items;
+    Folder* next;
+    Item* items;
     int mode;
     int desk;
     HWND task_over;
     UINT id_notify;
-    struct pidl_node *pidl_list;
+    pidl_node*pidl_list;
     char path[MAX_PATH];
     class CDropTarget *drop_target;
 };
@@ -80,7 +83,7 @@ struct Desk
     RECT mon_rect;
     RECT v_rect;
 
-    struct winStruct *winList;
+    winStruct* winList;
     int winCount;
     int index;
 };
@@ -106,8 +109,8 @@ HICON extract_icon(IShellFolder *pFolder, LPCITEMIDLIST pidlRelative, int iconSi
 // winlist.cpp
 struct winStruct
 {
-    struct winStruct *next;
-    struct taskinfo info;
+    winStruct* next;
+    taskinfo info;
     HWND hwnd;
     int index;
     bool active;
@@ -125,15 +128,15 @@ void new_task_list(void);
 
 // ---------------------------------------------
 /* experimental: */
-typedef BOOL (*TASKENUMPROC)(const struct tasklist *, LPARAM);
+typedef BOOL (*TASKENUMPROC)(const tasklist*, LPARAM);
 void EnumTasks (TASKENUMPROC lpEnumFunc, LPARAM lParam);
 
 /* experimental: */
-typedef BOOL (*DESKENUMPROC)(const struct DesktopInfo *, LPARAM);
+typedef BOOL (*DESKENUMPROC)(const DesktopInfo*, LPARAM);
 void EnumDesks (DESKENUMPROC lpEnumFunc, LPARAM lParam);
 
 /* experimental: */
-typedef BOOL (*TRAYENUMPROC)(const struct systemTray *, LPARAM);
+typedef BOOL (*TRAYENUMPROC)(const systemTray*, LPARAM);
 void EnumTray (TRAYENUMPROC lpEnumFunc, LPARAM lParam);
 
 // ---------------------------------------------

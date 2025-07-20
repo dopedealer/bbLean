@@ -20,7 +20,7 @@
 #include "BBApi.h"
 #include "bblib.h"
 #include "bbversion.h"
-#include "BBSendData.h"
+#include <BBSendData.h>
 #include "Stylestruct.h"
 
 const char szVersion      [] = "bbNote-Proxy 1.08";
@@ -55,10 +55,10 @@ LRESULT CALLBACK BBNoteProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
     switch (uMsg)
     {
         case BB_GETSTYLE:
-            return BBSendData((HWND)lParam, BB_SENDDATA, wParam, stylePath(), -1);
+            return bbcore::BBSendData((HWND)lParam, BB_SENDDATA, wParam, stylePath(), -1);
 
         case WM_COPYDATA:
-            return BBReceiveData(hwnd, lParam, NULL);
+            return bbcore::BBReceiveData(hwnd, lParam, NULL);
 
         default:
             if (uMsg >= BB_MSGFIRST && uMsg < BB_MSGLAST) {

@@ -6,11 +6,10 @@ project (${PROJECT})
 set(BBSKIN_COMMON_INCLUDES_DIR ${CMAKE_CURRENT_LIST_DIR}/../common/) 
 
 set (INCLUDE_DIRS
-    #.
     ${BLACKBOX_INCLUDES}
-    #engine/
-    ../../bbPlugin/
     ${BBSKIN_COMMON_INCLUDES_DIR}
+    ${BBCORE_INCLUDES}
+    ${BBPLUGIN_INCLUDE_DIR}
     ) 
 
 set (LINK_DIRS
@@ -23,12 +22,11 @@ set (HEADERS
 set (SOURCES
     hookctl.cpp
     subclass.cpp
-    ${BLACKBOX_INCLUDE_DIR}/BImage.cpp # hack! remove!!!
 ) 
 
 set (LIBS
-    #${BLACKBOX_LIBRARIES}
-    bbPlugin
+    ${BBCORE_LIBRARY}
+    ${BBPLUGIN_LIBRARY}
 )
 
 if (WIN32)

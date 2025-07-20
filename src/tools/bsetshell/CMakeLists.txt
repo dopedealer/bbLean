@@ -11,7 +11,9 @@ set (LINK_DIRS
     ) 
 
 set (HEADERS
+    bsetshell.h
 ) 
+
 set (SOURCES
     bsetshell.cpp
     resource.rc

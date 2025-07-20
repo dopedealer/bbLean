@@ -33,11 +33,10 @@ function(add_fuzzydocs_target
         cmake_path(ABSOLUTE_PATH RESFILE NORMALIZE OUTPUT_VARIABLE FULLRESPATH)
         cmake_path(GET RESFILE FILENAME FNAMEWITHEXT)
 
-        set(COPYDEST_PATH ${outputDir}/${FNAMEWITHEXT})
+        set(COPYDEST_PATH ${outputDir}/${FNAMEWITHEXT}) 
 
         add_custom_command(
             OUTPUT ${COPYDEST_PATH}
-            POST_BUILD
             COMMAND
             ${CMAKE_COMMAND} -E copy
             ${FULLRESPATH}        # src

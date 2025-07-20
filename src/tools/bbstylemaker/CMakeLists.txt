@@ -14,18 +14,24 @@ set (LINK_DIRS
 set (HEADERS
     bbdialog.h
     bbstylemaker.h
-    tokens.h
+    snap.h
+    writestyle.h
+    ./helpers/utils.h
+    tokens.inl
 ) 
 set (SOURCES
+    bbdialog.cpp
     main.cpp
+    readroot.cpp
+    snap.cpp
     writestyle.cpp
+    ./helpers/utils.cpp
     resource.rc
-    ${BLACKBOX_INCLUDE_DIR}/Settings.cpp # hack!! remove!!
-    ${BLACKBOX_INCLUDE_DIR}/BImage.cpp   # hack!! remove!!
 ) 
 
 set (LIBS
     ${BBLIB_LIBRARY}
+    ${BBCORE_LIBRARY}
 )
 
 if (WIN32)
@@ -51,7 +57,7 @@ add_executable (${PROJECT} ${GUI_TYPE} ${HEADERS} ${SOURCES})
 target_link_directories(${PROJECT} PRIVATE ${LINK_DIRS})
 target_include_directories (${PROJECT} PRIVATE ${INCLUDE_DIRS} )
 target_link_libraries (${PROJECT} PRIVATE ${LIBS})
-target_compile_definitions(${PROJECT} PRIVATE __BBSM__ BBSETTING_STYLEREADER_ONLY)
+#target_compile_definitions(${PROJECT} PRIVATE )
 
 # add optional compile options
 if( MSVC ) 

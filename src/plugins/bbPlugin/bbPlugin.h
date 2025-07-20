@@ -22,12 +22,18 @@
 #ifndef _BBPLUGIN_H_
 #define _BBPLUGIN_H_
 
+#include <windows.h>
+
+#include <BBApi.h>
+
+class Menu;
+
 typedef struct plugin_info plugin_info;
 
 struct plugin_info
 {
-    struct plugin_info *next;
-    const char *class_name;
+    plugin_info* next;
+    const char* class_name;
     HINSTANCE hInstance;
     HWND hwnd;
 

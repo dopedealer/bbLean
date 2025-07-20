@@ -160,7 +160,7 @@ char *find_config_file(char *rcpath, const char *file)
 
 void send_stickyinfo_to_tasks(void)
 {
-    const struct tasklist *tl;
+    const tasklist* tl;
     for (tl = GetTaskListPtr(); tl; tl = tl->next)
         PostMessage(m_hwnd, BB_TASKSUPDATE, (WPARAM)tl->hwnd, TASKITEM_ADDED);
 }
@@ -226,7 +226,7 @@ bool make_exclusion_list(void)
 {
     struct elist
     {
-        struct elist *next;
+        elist* next;
         int flen;
         int option;
         char buff[1];
@@ -262,7 +262,7 @@ bool make_exclusion_list(void)
             *cp++ = 0;
         else
             *(cp = line + line_len++) = 0;
-        p = (struct elist *)malloc(line_len + sizeof(struct elist));
+        p = (elist *)malloc(line_len + sizeof(elist));
         memcpy(p->buff, line, ++line_len);
         p->flen = cp - line;
         p->option = option;
@@ -271,17 +271,17 @@ bool make_exclusion_list(void)
         t_count++;
     }
 
-    t_len += sizeof(struct exclusion_info) + (t_count-1) * sizeof(struct exclusion_item);
+    t_len += sizeof(exclusion_info) + (t_count-1) * sizeof(exclusion_item);
 
     // ... then create the shared mem, which is supposed to succeed,...
     if (FALSE == CreateSharedMem(offset_exInfo + t_len))
         return false;
 
     // ... and finally copy the list into it, free items by the way.
-    struct exclusion_info *pExclInfo = &lpvMem->exInfo;
+    exclusion_info* pExclInfo = &lpvMem->exInfo;
     pExclInfo->size = t_len;
     pExclInfo->count = t_count;
-    struct exclusion_item *ei = pExclInfo->ei;
+    exclusion_item* ei = pExclInfo->ei;
     while (p0)
     {
         p = p0; p0 = p0->next; char *cp = ei->buff;
@@ -290,7 +290,7 @@ bool make_exclusion_list(void)
         ei->option = (unsigned char)p->option;
         //dbg_printf("added \"%s:%s\"", p->buff, p->p_class);
         free(p);
-        ei = (struct exclusion_item *)(ei->buff + ei->flen + ei->clen);
+        ei = (exclusion_item *)(ei->buff + ei->flen + ei->clen);
     }
     return true;
 }
@@ -546,7 +546,7 @@ menu_update:
 
         if (202 == d)
         {
-            struct sysmenu_info *s = (struct sysmenu_info*)p;
+            sysmenu_info* s = (sysmenu_info*)p;
             if (sysmenu_timerset) {
                 PostMessage(s->hwnd, WM_SYSCOMMAND, SC_CLOSE, 0);
             } else {

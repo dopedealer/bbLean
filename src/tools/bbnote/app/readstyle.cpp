@@ -18,23 +18,24 @@
 // readstyle.cpp - read blackbox style
 
 #include "bbstyle_bbnote.h"
-#define BBSETTINGS_INTERNAL
 #include "Settings.h"
 
-StyleStruct gMStyle{};
-menu_setting gSettingsMenu{};
+bbcore::StyleStruct gMStyle{};
+bbcore::menu_setting gSettingsMenuBbnote{};
 bool Settings_menusBroamMode = false;
 int Settings_menuMaxWidth = 200;
-struct MenuInfo MenuInfo{};
+bbcore::MenuInfo gMenuInfo{};
 
-struct FolderItem
+extern bbcore::SettingsCommon* gSettings; // todo: remove global
+
+struct BBNoteFolderItem
 {
     static int m_nBulletStyle;
     static int m_nBulletPosition;
 };
 
-int FolderItem::m_nBulletStyle;
-int FolderItem::m_nBulletPosition;
+int BBNoteFolderItem::m_nBulletStyle;
+int BBNoteFolderItem::m_nBulletPosition;
 
 LPCSTR localStylePath(LPCSTR styleFileName)
 {
@@ -94,9 +95,9 @@ int get_menu_bullet (const char *tmp)
 
 void MenuMaker_Clear(void)
 {
-    if (MenuInfo.hTitleFont) DeleteObject(MenuInfo.hTitleFont);
-    if (MenuInfo.hFrameFont) DeleteObject(MenuInfo.hFrameFont);
-    MenuInfo.hTitleFont = MenuInfo.hFrameFont = NULL;
+    if (gMenuInfo.hTitleFont) DeleteObject(gMenuInfo.hTitleFont);
+    if (gMenuInfo.hFrameFont) DeleteObject(gMenuInfo.hFrameFont);
+    gMenuInfo.hTitleFont = gMenuInfo.hFrameFont = NULL;
 }
 
 void Menu_Reconfigure();
@@ -105,11 +106,11 @@ void GetStyle (const char *styleFile)
 {
     if (styleFile)
     {
-        localStylePath(styleFile);
-        ReadStyle(styleFile, &gMStyle);
+        localStylePath(styleFile); 
+        gSettings->readStyle(styleFile, &gMStyle);
     }
 
-    bimage_init(true, gMStyle.is_070);
+    bbcore::bimage_init(true, gMStyle.is_070);
 
     Menu_Reconfigure();
     gMStyle.borderWidth = gMStyle.MenuFrame.borderWidth;
@@ -119,12 +120,12 @@ void GetStyle (const char *styleFile)
 
 void Menu_Clear(void)
 {
-    if (MenuInfo.hTitleFont)
-        DeleteObject(MenuInfo.hTitleFont);
-    if (MenuInfo.hFrameFont)
-        DeleteObject(MenuInfo.hFrameFont);
-    MenuInfo.hTitleFont =
-    MenuInfo.hFrameFont = NULL;
+    if (gMenuInfo.hTitleFont)
+        DeleteObject(gMenuInfo.hTitleFont);
+    if (gMenuInfo.hFrameFont)
+        DeleteObject(gMenuInfo.hFrameFont);
+    gMenuInfo.hTitleFont =
+    gMenuInfo.hFrameFont = NULL;
 }
 
 //===========================================================================
@@ -140,35 +141,35 @@ void Menu_Reconfigure(void)
     StyleItem *pSI;
 
     // create fonts
-    MenuInfo.hTitleFont = CreateStyleFont(MTitle);
-    MenuInfo.hFrameFont = CreateStyleFont(MFrame);
+    gMenuInfo.hTitleFont = gSettings->createStyleFont(MTitle);
+    gMenuInfo.hFrameFont = gSettings->createStyleFont(MFrame);
 
     // set bullet position & style
-    MenuInfo.nBulletPosition =
+    gMenuInfo.nBulletPosition =
         stristr(gMStyle.menuBulletPosition, "left") ? FOLDER_LEFT : FOLDER_RIGHT;
 
-    MenuInfo.nBulletStyle =
+    gMenuInfo.nBulletStyle =
         get_menu_bullet(gMStyle.menuBullet);
 
-    if (0 == stricmp(gSettingsMenu.openDirection, "bullet"))
-        MenuInfo.openLeft = MenuInfo.nBulletPosition == FOLDER_LEFT;
+    if (0 == stricmp(gSettingsMenuBbnote.openDirection, "bullet"))
+        gMenuInfo.openLeft = gMenuInfo.nBulletPosition == FOLDER_LEFT;
     else
-        MenuInfo.openLeft = 0 == stricmp(gSettingsMenu.openDirection, "left");
+        gMenuInfo.openLeft = 0 == stricmp(gSettingsMenuBbnote.openDirection, "left");
 
     // --------------------------------------------------------------
     // calulate metrics:
 
-    MenuInfo.nFrameMargin = MFrame->marginWidth + MFrame->borderWidth;
-    MenuInfo.nSubmenuOverlap = MenuInfo.nFrameMargin + MHilite->borderWidth;
-    MenuInfo.nTitleMargin = 0;
+    gMenuInfo.nFrameMargin = MFrame->marginWidth + MFrame->borderWidth;
+    gMenuInfo.nSubmenuOverlap = gMenuInfo.nFrameMargin + MHilite->borderWidth;
+    gMenuInfo.nTitleMargin = 0;
 
     if (gMStyle.menuTitleLabel)
-        MenuInfo.nTitleMargin = MFrame->marginWidth;
+        gMenuInfo.nTitleMargin = MFrame->marginWidth;
 
     // --------------------------------------
     // title height, indent, margin
 
-    int tfh = get_fontheight(MenuInfo.hTitleFont);
+    int tfh = get_fontheight(gMenuInfo.hTitleFont);
     int titleHeight = 2*MTitle->marginWidth + tfh;
 
     // xxx old behaviour xxx
@@ -177,18 +178,18 @@ void Menu_Reconfigure(void)
     //xxxxxxxxxxxxxxxxxxxxxx
 
     pSI = MTitle->parentRelative ? MFrame : MTitle;
-    MenuInfo.nTitleHeight = titleHeight + MTitle->borderWidth + MFrame->borderWidth;
-    MenuInfo.nTitleIndent = imax(imax(2 + pSI->bevelposition, pSI->marginWidth), (titleHeight-tfh)/2);
+    gMenuInfo.nTitleHeight = titleHeight + MTitle->borderWidth + MFrame->borderWidth;
+    gMenuInfo.nTitleIndent = imax(imax(2 + pSI->bevelposition, pSI->marginWidth), (titleHeight-tfh)/2);
 
     if (gMStyle.menuTitleLabel) {
-        MenuInfo.nTitleHeight += MTitle->borderWidth + MFrame->marginWidth;
-        MenuInfo.nTitleIndent += MTitle->borderWidth;
+        gMenuInfo.nTitleHeight += MTitle->borderWidth + MFrame->marginWidth;
+        gMenuInfo.nTitleIndent += MTitle->borderWidth;
     }
 
     // --------------------------------------
     // item height, indent
 
-    int ffh = get_fontheight(MenuInfo.hFrameFont);
+    int ffh = get_fontheight(gMenuInfo.hFrameFont);
     int itemHeight = MHilite->marginWidth + ffh;
 
     // xxx old behaviour xxx
@@ -198,37 +199,37 @@ void Menu_Reconfigure(void)
 
 #ifdef BBOPT_MENUICONS
     itemHeight = imax(14, itemHeight);
-    MenuInfo.nItemHeight =
-    MenuInfo.nItemLeftIndent =
-    MenuInfo.nItemRightIndent = itemHeight;
-    MenuInfo.nIconSize = imin(itemHeight - 2, 16);
+    gMenuInfo.nItemHeight =
+    gMenuInfo.nItemLeftIndent =
+    gMenuInfo.nItemRightIndent = itemHeight;
+    gMenuInfo.nIconSize = imin(itemHeight - 2, 16);
     if (DT_LEFT == MFrame->Justify)
-        MenuInfo.nItemLeftIndent += 1;
+        gMenuInfo.nItemLeftIndent += 1;
 #else
-    MenuInfo.nItemHeight = itemHeight;
-    MenuInfo.nItemLeftIndent =
-    MenuInfo.nItemRightIndent = imax(11, itemHeight);
+    gMenuInfo.nItemHeight = itemHeight;
+    gMenuInfo.nItemLeftIndent =
+    gMenuInfo.nItemRightIndent = imax(11, itemHeight);
 #endif
 
 #ifdef BBXMENU
     if (DT_CENTER != MFrame->Justify) {
         int n = imax(3 + MHilite->borderWidth, (itemHeight-ffh)/2);
-        if (MenuInfo.nBulletPosition == FOLDER_RIGHT)
-            MenuInfo.nItemLeftIndent = n;
+        if (gMenuInfo.nBulletPosition == FOLDER_RIGHT)
+            gMenuInfo.nItemLeftIndent = n;
         else
-            MenuInfo.nItemRightIndent = n;
+            gMenuInfo.nItemRightIndent = n;
     }
 #endif
 
     // --------------------------------------
     // from where on does it need a scroll button:
-    MenuInfo.MaxWidth = gSettingsMenu.showBroams
-        ? iminmax(gSettingsMenu.maxWidth*2, 320, 640)
-        : gSettingsMenu.maxWidth;
+    gMenuInfo.MaxWidth = gSettingsMenuBbnote.showBroams
+        ? iminmax(gSettingsMenuBbnote.maxWidth*2, 320, 640)
+        : gSettingsMenuBbnote.maxWidth;
 
     // --------------------------------------
     // setup a StyleItem for the scroll rectangle
-    StyleItem *pScrl = &MenuInfo.Scroller;
+    StyleItem *pScrl = &gMenuInfo.Scroller;
     if (false == MTitle->parentRelative)
     {
         *pScrl = *MTitle;
@@ -252,28 +253,28 @@ void Menu_Reconfigure(void)
 
     pScrl->bordered = 0 != pScrl->borderWidth;
 
-    MenuInfo.nScrollerSize =
+    gMenuInfo.nScrollerSize =
         imin(itemHeight + imin(MFrame->borderWidth, pScrl->borderWidth),
             titleHeight + 2*pScrl->borderWidth
             );
 
     if (gMStyle.menuTitleLabel) {
-        MenuInfo.nScrollerTopOffset = 0;
-        MenuInfo.nScrollerSideOffset = MenuInfo.nFrameMargin;
+        gMenuInfo.nScrollerTopOffset = 0;
+        gMenuInfo.nScrollerSideOffset = gMenuInfo.nFrameMargin;
     } else {
         // merge the slider's border into the frame/title border
         if (MTitle->parentRelative)
-            MenuInfo.nScrollerTopOffset = 0;
+            gMenuInfo.nScrollerTopOffset = 0;
         else
-            MenuInfo.nScrollerTopOffset =
+            gMenuInfo.nScrollerTopOffset =
                 - (MFrame->marginWidth + imin(MTitle->borderWidth, pScrl->borderWidth));
-        MenuInfo.nScrollerSideOffset = imax(0, MFrame->borderWidth - pScrl->borderWidth);
+        gMenuInfo.nScrollerSideOffset = imax(0, MFrame->borderWidth - pScrl->borderWidth);
     }
 
     // Menu separator line
-    MenuInfo.separatorColor = get_mixed_color(MFrame);
-    MenuInfo.separatorWidth = gSettingsMenu.drawSeparators ? imax(1, MFrame->borderWidth) : 0;
-    MenuInfo.check_is_pr = MHilite->parentRelative
+    gMenuInfo.separatorColor = get_mixed_color(MFrame);
+    gMenuInfo.separatorWidth = gSettingsMenuBbnote.drawSeparators ? imax(1, MFrame->borderWidth) : 0;
+    gMenuInfo.check_is_pr = MHilite->parentRelative
         || iabs(greyvalue(get_bg_color(MFrame))
                 - greyvalue(get_bg_color(MHilite))) < 24;
 }

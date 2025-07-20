@@ -181,18 +181,18 @@ const char *bas_ext[] = { "bas","frm","cls","vbs","ctl", NULL};
 const char *style_ext[] = { "", "rc", "style", NULL };
 const char *lua_ext[] = { "lua", NULL };
 
-struct lang   c_lang = { c_ext  , c_prae, c_words,   c_cmt,   c_str   , NULL,       0};
-struct lang pas_lang = { pas_ext, NULL,   pas_words, pas_cmt, pas_str , NULL,       0};
-struct lang lsp_lang = { lsp_ext, NULL,   lsp_words, lsp_cmt, lsp_str , lsp_class,  0};
-struct lang asm_lang = { asm_ext, NULL,   asm_words, asm_cmt, asm_str , asm_class,  0};
-struct lang htm_lang = { htm_ext, NULL,   htm_words, htm_cmt, htm_str , NULL,       NOCASE };
-struct lang bas_lang = { bas_ext, NULL,   bas_words, bas_cmt, bas_str , NULL,       NOCASE };
-struct lang style_lang = { style_ext, NULL, style_words, style_cmt, style_str , NULL, NOCASE|CMT_LINESTART|HEX_NUM };
-struct lang  tcl_lang = { tcl_ext, NULL,  c_words,   tcl_cmt,  c_str  , NULL,       0};
-struct lang lua_lang = { lua_ext, NULL,   lua_words, lua_cmt,   c_str , NULL,       0};
-struct lang  no_lang = { NULL   , NULL,   no_words,  no_cmt,  no_str  , NULL,       0};
+lang c_lang = { c_ext  , c_prae, c_words,   c_cmt,   c_str   , NULL,       0};
+lang pas_lang = { pas_ext, NULL,   pas_words, pas_cmt, pas_str , NULL,       0};
+lang lsp_lang = { lsp_ext, NULL,   lsp_words, lsp_cmt, lsp_str , lsp_class,  0};
+lang asm_lang = { asm_ext, NULL,   asm_words, asm_cmt, asm_str , asm_class,  0};
+lang htm_lang = { htm_ext, NULL,   htm_words, htm_cmt, htm_str , NULL,       NOCASE };
+lang bas_lang = { bas_ext, NULL,   bas_words, bas_cmt, bas_str , NULL,       NOCASE };
+lang style_lang = { style_ext, NULL, style_words, style_cmt, style_str , NULL, NOCASE|CMT_LINESTART|HEX_NUM };
+lang tcl_lang = { tcl_ext, NULL,  c_words,   tcl_cmt,  c_str  , NULL,       0};
+lang lua_lang = { lua_ext, NULL,   lua_words, lua_cmt,   c_str , NULL,       0};
+lang no_lang = { NULL   , NULL,   no_words,  no_cmt,  no_str  , NULL,       0};
 
-struct lang *lasearch[] = {
+lang* lasearch[] = {
     &  c_lang ,
     &pas_lang ,
     &lsp_lang ,
@@ -210,9 +210,9 @@ struct lang *lasearch[] = {
 const char *no_words[] = { NULL };
 const char *no_cmt[]  = { NULL } ;
 const char  no_str[]  = "";
-struct lang  no_lang = { NULL , NULL, no_words, no_cmt, no_str, NULL, 0};
+lang  no_lang = { NULL , NULL, no_words, no_cmt, no_str, NULL, 0};
 
-struct lang *lasearch[] = {
+lang* lasearch[] = {
     & no_lang
 };
 
@@ -220,13 +220,13 @@ struct lang *lasearch[] = {
 #endif
 
 
-struct lang *lang = &no_lang;
+lang* gLang = &no_lang;
 char langcode[40];
 
 /*----------------------------------------------------------------------------*/
 #define HTS 53
 
-struct strl *hashtab[HTS];
+strl* hashtab[HTS];
 
 int hashstr(const char *s) {
     unsigned int h; char c;
@@ -238,7 +238,7 @@ int hashstr(const char *s) {
 void freehash(void) {
     int i=0;
     do freelist(&hashtab[i]); while (++i<HTS);
-    lang=NULL;
+    gLang = NULL;
 }
 
 void inshash(const char *q) {
@@ -247,7 +247,8 @@ void inshash(const char *q) {
 
 void set_lang(const char *p) {
     char buf[32]; const char *q, **cp;
-    struct lang **lp; int i;
+    lang** lp;
+    int i;
     extern char synhilite;
 
     buf[0]=0;
@@ -267,24 +268,25 @@ void set_lang(const char *p) {
 brk:
     synhilite = NULL!=(*lp)->ext;
 
-    if (lang==*lp)
+    if (gLang == *lp)
         return;
 
     freehash();
-    lang=*lp;
+    gLang = *lp;
 
-    for (cp=lang->keys;NULL!=(q=*cp);cp++) {
+    for (cp = gLang->keys; NULL!=(q=*cp); cp++) {
         inshash(q);
     }
 
-    if (NULL!=(cp=lang->prae)) {
+    if (NULL != (cp = gLang->prae))
+    {
         for (buf[0]=**cp++; NULL!=(q=*cp); cp++) {
             strcpy(buf+1,q);
             inshash(buf);
         }}
 
     langcode[0]=0;
-    if (NULL!=(q=lang->cclass)) {
+    if (NULL != (q = gLang->cclass)) {
         rcomp((unsigned char*)q, (unsigned char*)langcode, sizeof(langcode),1);
         langcode[0]=1;
     }
@@ -308,7 +310,7 @@ void checkcomment(int oo, int yn) {
     a=cn=0; s=NULL; la=NULL;
     o=prevline_v(oo, 20, &i); yn+=i;
     f=ls=0;
-    lc=lang->cmt;
+    lc = gLang->cmt;
 
     for (;yn>0 && o<flen;) {
         c=getchr(o++);
@@ -320,10 +322,12 @@ void checkcomment(int oo, int yn) {
         }
         if (f==0)
         {
-            for (s=(unsigned char*)lang->str;*s;s+=2) {
+            for (s=(unsigned char*)gLang->str; *s; s+=2)
+            {
                 if (c==*s) { f=2; goto c1; }
             }
-            if (0==(lang->flg & CMT_LINESTART) || 0==ls)
+
+            if (0==(gLang->flg & CMT_LINESTART) || 0==ls)
             for (i=0;NULL!=(la=lc[i]);i++) {
                 if (c!=*la) continue;
                 for (p=o; p<flen; ) {
@@ -386,7 +390,7 @@ int nextcmt(int o) {
 int cmpkey(int p, int n, char w, int *ip) {
     int i;
     unsigned char d,*cp; char buf[80];
-    struct strl *a;
+    strl* a;
 
     i=0; cp=(unsigned char*)buf; if (n>31) n=31;
     if (w) *cp++=w;
@@ -399,7 +403,7 @@ p2:
     if ((*ip=i)<1) return 0;
 
     *cp=0;
-    if (lang->flg & NOCASE) strlwr(buf);
+    if (gLang->flg & NOCASE) strlwr(buf);
 
     for (a=hashtab[hashstr(buf)];NULL!=a;a=a->next)
         if (!strcmp(a->str,buf)) return 1;
@@ -475,8 +479,8 @@ void textout_s(HDC hdc, int yy, int la, int n, int xl, char rf, int ra, int re) 
 
             p=la; e=g=c=x=m=0;
 
-            if (NULL!=*lang->keys && 1==langflg) g=1;
-            if (NULL!=lang->prae) e=**lang->prae;
+            if (NULL != *gLang->keys && 1==langflg) g=1;
+            if (NULL != gLang->prae) e = **gLang->prae;
 
             for (;x<xl;) {
                 if (n==0) {
@@ -512,7 +516,7 @@ void textout_s(HDC hdc, int yy, int la, int n, int xl, char rf, int ra, int re) 
 
         //style color spec
                 if (d=='#'
-                    && (lang->flg & HEX_NUM)
+                    && (gLang->flg & HEX_NUM)
                     && n>1
                     && isxdigit(b=getchr(p+1)))
                 {
@@ -530,7 +534,7 @@ void textout_s(HDC hdc, int yy, int la, int n, int xl, char rf, int ra, int re) 
                     c=Cnum; goto p1;
                 }
         //string
-                for (s=(unsigned char*)lang->str;*s;s+=2)
+                for (s = (unsigned char*)gLang->str; *s; s+=2)
                   if (d==*s) {
                     for (j=1;j<n && (b=getchr(p+j))!=*s;j++) {
                         if (b==*(s+1) && j+1<n) j++;
@@ -579,8 +583,8 @@ int printpage(HDC hdc, int x, int y1, int y2) {
     int i,yy,xx,mm, ra, re, la, le, ll;
     char rf, ef, mf;
 
-    struct mark_s ms;
-    int getmark0(struct mark_s *m);
+    mark_s ms;
+    int getmark0(mark_s* m);
 
     ef=1; mm=0; xx=x+clft; yy = zy*y1+zy0;
 

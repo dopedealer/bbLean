@@ -20,13 +20,16 @@
  ============================================================================
 */
 
+#include "bbstylemaker.h"
+#include "writestyle.h"
+
 int bsetroot_parse(NStyleStruct *pss, const char *command)
 {
     char token[MAX_PATH];
     const char *cptr = command;
 
-    struct rootinfo *r = &pss->rootInfo;
-    struct NStyleItem *pSI = &pss->rootStyle;
+    rootinfo* r = &pss->rootInfo;
+    NStyleItem* pSI = &pss->rootStyle;
     int f;
 
     memset(r, 0, sizeof *r);
@@ -60,8 +63,8 @@ void make_bsetroot_string(NStyleStruct *pss, char *out, int all)
     char b1[40], b2[40];
     extern int style_version;
 
-    struct rootinfo *r = &pss->rootInfo;
-    struct NStyleItem *pSI = &pss->rootStyle;
+    rootinfo* r = &pss->rootInfo;
+    NStyleItem* pSI = &pss->rootStyle;
 
     memset(out, 0, sizeof pss->rootCommand);
 

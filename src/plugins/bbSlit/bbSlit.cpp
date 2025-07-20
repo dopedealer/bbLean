@@ -25,7 +25,7 @@
 #include <bbstyle.h>
 #include <bbversion.h>
 
-#include "BBSendData.h"
+#include <BBSendData.h>
 #include "bbPlugin.h"
 
 const char szVersion      [] = "bbSlit " BBLEAN_VERSION;
@@ -60,7 +60,7 @@ int margin;
 int bblean_version;
 void getStyleSettings();
 
-struct plugin_info *g_PI;
+plugin_info* g_PI{};
 
 //===========================================================================
 // structures
@@ -68,7 +68,7 @@ struct plugin_info *g_PI;
 struct PluginInfo
 {
     // the next window, or NULL
-    struct PluginInfo *next;
+    PluginInfo* next;
     HWND hwnd;
     bool visible;
 
@@ -87,7 +87,7 @@ struct PluginInfo
 
 struct ModuleInfo
 {
-    struct ModuleInfo *next;
+    ModuleInfo* next;
     HMODULE hMO;
     int (*beginSlitPlugin)(HINSTANCE hMainInstance, HWND hBBSlit);
     int (*beginPluginEx)(HINSTANCE hMainInstance, HWND hBBSlit);
@@ -127,7 +127,7 @@ struct slit_info : plugin_info
     {
         unloadPlugins();
         BBP_Exit_Plugin(this);
-        struct plugin_info **pp;
+        plugin_info** pp;
         for (pp = &g_PI; *pp; pp = &(*pp)->next)
         {
             if (this == *pp) {
@@ -170,12 +170,12 @@ DLL_EXPORT int beginPlugin(HINSTANCE hPluginInstance)
 
     // dbg_printf("bblean_version %d", bblean_version);
 
-    struct plugin_info *p;
+    plugin_info* p;
     int n_inst;
 
     for (p = g_PI, n_inst = 0; p; p = p->next, ++n_inst);
 
-    struct slit_info *PI = new slit_info();
+    slit_info* PI = new slit_info();
     PI->n_inst = n_inst;
     sprintf(PI->m_szInstName, n_inst ? "%s.%d":"%s", szAppName, 1+n_inst);
 
@@ -490,7 +490,7 @@ LRESULT slit_info::wnd_proc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lPara
         case SLIT_ADD:
             //pdbg ((HWND) lParam, "add");
             for (pp = &this->m_pInfo; NULL != (p = *pp); pp = &p->next);
-            *pp = p = (PluginInfo*)m_alloc(sizeof(struct PluginInfo));
+            *pp = p = (PluginInfo*)m_alloc(sizeof(PluginInfo));
             memset(p, 0, sizeof *p);
             /* if (!IsBadStringPtr((const char*)wParam, 80))
                 ... */
@@ -532,7 +532,7 @@ LRESULT slit_info::wnd_proc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lPara
         //=============================================
         // support bbStyleMaker under bbLean 1.16
         case WM_COPYDATA:
-            return BBReceiveData(hwnd, lParam, NULL);
+            return bbcore::BBReceiveData(hwnd, lParam, NULL);
 
         case BB_SETSTYLESTRUCT:
             if (SN_SLIT == wParam)
@@ -653,7 +653,7 @@ void slit_info::loadPlugins(FILE *fp)
 
         //dbg_printf("%d loading %s", L, plug_path);
 
-        ModuleInfo *m = (ModuleInfo*)m_alloc(sizeof(struct ModuleInfo));
+        ModuleInfo *m = (ModuleInfo*)m_alloc(sizeof(ModuleInfo));
         memset(m, 0, sizeof *m);
 
         const char *name = plug_path;
@@ -820,7 +820,7 @@ struct obj {
 
 struct nobjs {
     int n;      // actual member count of p
-    struct obj p[1];
+    obj p[1];
 };
 
 //=============================================================================
@@ -828,9 +828,10 @@ struct nobjs {
 //=============================================================================
 // standard order algorithm, based on related code in BBSlit by Tres'ni
 
-void reorder_standard (struct nobjs *pv, struct options *o)
+void reorder_standard (nobjs* pv, options* o)
 {
-    int w, h, n; struct obj *p;
+    int w, h, n;
+    obj* p;
     for (p = pv->p, n = w = h = 0; n < pv->n; ++n, ++p) {
         p->x = 0;
         p->y = h;
@@ -859,11 +860,11 @@ void reorder_standard (struct nobjs *pv, struct options *o)
 //=============================================================================
 /* As Fit - algorithm */
 
-void reorder_fit (struct nobjs *pv, struct options *o);
+void reorder_fit (nobjs* pv, options* o);
 
 struct vi { int n; int i[1]; };
 
-void vi_insert(struct vi *vi, int x)
+void vi_insert(vi* vi, int x)
 {
     int m, n, *i;
     for (m = vi->n, i = vi->i, n = 0; n < m; ++n) {
@@ -877,7 +878,7 @@ void vi_insert(struct vi *vi, int x)
     i[n] = x, ++vi->n;
 }
 
-bool overlap(struct obj *l, struct obj *p, int pad)
+bool overlap(obj* l, obj* p, int pad)
 {
     int ox, oy;
     oy = imin(l->y + l->h, p->y + p->h) - imax(l->y, p->y);
@@ -889,18 +890,18 @@ bool overlap(struct obj *l, struct obj *p, int pad)
     return true;
 }
 
-bool overlap_any(struct nobjs *pv, struct obj *p, int pad)
+bool overlap_any(nobjs* pv, obj* p, int pad)
 {
-    int n, m; struct obj *l;
+    int n, m; obj* l;
     for (l = pv->p, m = pv->n, n = 0; n < m; ++n, ++l)
         if (overlap(l, p, pad))
             return true;
     return false;
 }
 
-int right_next(struct nobjs *pv, struct obj *p, int x_right, int pad)
+int right_next(nobjs* pv, obj* p, int x_right, int pad)
 {
-    int n, m, oy; struct obj *l;
+    int n, m, oy; obj* l;
     for (l = pv->p, m = pv->n, n = 0; n < m; ++n, ++l) {
         if (l == p)
             continue;
@@ -914,11 +915,11 @@ int right_next(struct nobjs *pv, struct obj *p, int x_right, int pad)
     return x_right;
 }
 
-void reorder_fit (struct nobjs *pv, struct options *o)
+void reorder_fit(nobjs* pv, options* o)
 {
-    struct obj *p;
+    obj* p;
     int n, m, b0, w0, h0;
-    struct vi *vx, *vy;
+    vi *vx, *vy;
 
     m = pv->n;
 
@@ -928,8 +929,8 @@ void reorder_fit (struct nobjs *pv, struct options *o)
         b0 = imax(b0, p->w);
 
     /* allocate scratch buffers */
-    vx = (struct vi *)m_alloc(sizeof *vx + m * sizeof vx->i);
-    vy = (struct vi *)m_alloc(sizeof *vy + m * sizeof vy->i);
+    vx = (vi *)m_alloc(sizeof *vx + m * sizeof vx->i);
+    vy = (vi *)m_alloc(sizeof *vy + m * sizeof vy->i);
     vx->n = vy->n = 1; /* start with one edge each */
     vx->i[0] = vy->i[0] = 0; /* at x,y:0,0 */
 
@@ -1017,12 +1018,12 @@ void slit_info::calculate_frame(void)
 
         //DWORD t0 = GetTickCount(); for (int tc = 0; tc < 1000; ++tc) {
 
-        struct options o;
-        struct nobjs *pv;
-        struct obj *p;
+        options o;
+        nobjs* pv;
+        obj* p;
         int vertical = this->orient_vertical;
 
-        pv = (struct nobjs*)m_alloc(sizeof *pv + (n-1) * sizeof pv->p);
+        pv = (nobjs*)m_alloc(sizeof *pv + (n-1) * sizeof pv->p);
         pv->n = n;
 
         /* Fill in the nobjs */

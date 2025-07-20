@@ -23,14 +23,14 @@
 
 #define BBLEAN_116m
 
-#include "BBApi.h"
-#include "win0x500.h"
-#include "bblib.h"
-#define BBSETTINGS_INTERNAL
-#include "Settings.h"
-#include "Stylestruct.h"
-#include "BImage.h"
-#include "BBSendData.h"
+#include <BBApi.h>
+#include <win0x500.h>
+#include <bblib.h>
+#include <Settings.h>
+#include <Stylestruct.h>
+#include <BImage.h>
+#include <BBSendData.h>
+
 #include "bbstylemaker.h"
 #include "bbdialog.h"
 
@@ -73,17 +73,14 @@ const char HELPMSG[] =
 /*----------------------------------------------------------------------------*/
 // global variables
 
-#define UPDOWN_TIMER 2
-#define UPDATE_TIMER 3
-#define SLIDER_TIMER 4
 
 HINSTANCE g_hInstance;
 
 // style for bbstylemaker
-StyleStruct gui_style;
+bbcore::StyleStruct gui_style;
 
 // dialog and buttons
-#include "bbdialog.cpp"
+#include "bbdialog.h"
 
 const char *fname(const char *path);
 void set_style_defaults(NStyleStruct *pss, int f);
@@ -93,7 +90,7 @@ void set_style_defaults(NStyleStruct *pss, int f);
 
 // blackbox window
 HWND BBhwnd;
-StyleStruct bb_style;
+bbcore::StyleStruct bb_style;
 
 // bbStyleMaker.rc
 char rcpath[MAX_PATH];
@@ -113,17 +110,17 @@ NStyleStruct work_style;
 char work_stylefile[MAX_PATH];
 
 // saved palette during screen picking
-struct NStyleItem save_palette;
+NStyleItem save_palette;
 
 // currently active StyleItem or NULL;
-struct NStyleItem *P0;
+NStyleItem* P0;
 bool P0_dis; // using disableColor
 
 // border selection
-struct NStyleItem *B0;
+NStyleItem* B0;
 
 // color palettes
-struct NStyleItem Palette[10];
+NStyleItem Palette[10];
 
 // font as shown in the gui
 static char fontname[64];
@@ -141,8 +138,11 @@ struct c_lock
     bool lock_ctrl;
 };
 
-struct c_lock L1, L2;
-struct c_lock *pL1, *pL2;
+c_lock L1, L2;
+c_lock *pL1, *pL2;
+
+// TODO: remove global
+bbcore::SettingsCommon* gSettings{};
 
 #define PREF(s) (&(s)->style_ref)
 #define PREF_SIZE sizeof P0->style_ref
@@ -192,7 +192,7 @@ void new_flags(void) {
 }
 
 /*----------------------------------------------------------------------------*/
-int WINAPI WinMain (HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR lpCmdLine, int iCmdShow)
+int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR lpCmdLine, int iCmdShow)
 {
     HWND hwnd;
 
@@ -205,9 +205,14 @@ int WINAPI WinMain (HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR lpCmdLine
         return 0;
     }
 
+    bbcore::SettingsPars settingsPars{};
+    settingsPars.bbsm = true;
+    bbcore::SettingsCommon settings(settingsPars);
+    gSettings = &settings;
+
     g_hInstance = hInstance;
     set_my_path(NULL, rcpath, APPNAME ".rc");
-    bimage_init(true, true);
+    bbcore::bimage_init(true, true);
     bb_rcreader_init();
 
     if (0 == bbstylemaker_create())
@@ -236,7 +241,7 @@ const char *fextension(const char *path)
 /*----------------------------------------------------------------------------*/
 // dialog resource
 
-const struct button main_buttons[] = {
+const button main_buttons[] = {
 #if 0
 #include "dlgitems.rc"
 #else
@@ -433,9 +438,9 @@ const struct button main_buttons[] = {
 };
 
 /*----------------------------------------------------------------------------*/
-LRESULT CALLBACK main_dlg_proc (struct dlg *dlg, HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
+LRESULT CALLBACK main_dlg_proc (dlg* dlg, HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
-void load_guistyle(struct dlg *dlg, const char *filename)
+void load_guistyle(dlg* dlg, const char *filename)
 {
     if (NULL == filename)
         filename = read_string(rcpath, "bbstylemaker.guistyle", "");
@@ -455,7 +460,7 @@ void load_guistyle(struct dlg *dlg, const char *filename)
 
 int bbstylemaker_create(void)
 {
-    struct dlg *dlg = make_dlg(main_buttons, 560, 320);
+    dlg* dlg = make_dlg(main_buttons, 560, 320);
     int xp, yp;
 
     xp = read_int(rcpath, "bbstylemaker.xpos", -1);
@@ -470,7 +475,7 @@ int bbstylemaker_create(void)
 }
 
 /*----------------------------------------------------------------------------*/
-/* conversions StyleStruct <-> bbStyleMaker's private extended NStyleStruct */
+/* conversions bbcore::StyleStruct <-> bbStyleMaker's private extended NStyleStruct */
 
 void copy_item_n(NStyleItem *to, StyleItem *from)
 {
@@ -490,7 +495,7 @@ void copy_item_o(StyleItem *to, NStyleItem *from)
 #define COPYCOLOR(to, from, I) to->I = from->I
 #define COPYCHAR(to, from, I) memcpy(to->I, from->I, sizeof to->I)
 
-void copy_to_N(NStyleStruct *to, StyleStruct *from)
+void copy_to_N(NStyleStruct *to, bbcore::StyleStruct *from)
 {
     memset(to, 0, sizeof *to);
 
@@ -540,7 +545,7 @@ void copy_to_N(NStyleStruct *to, StyleStruct *from)
     to->windowFrameUnfocus.parentRelative = true;
 }
 
-void copy_from_N(StyleStruct *to, NStyleStruct *from)
+void copy_from_N(bbcore::StyleStruct *to, NStyleStruct *from)
 {
     COPYITEM_O(to, from, Toolbar);
     COPYITEM_O(to, from, ToolbarButton);
@@ -589,7 +594,7 @@ void copy_from_N(StyleStruct *to, NStyleStruct *from)
 /*----------------------------------------------------------------------------*/
 /* file was dropped on the window */
 
-void drop_guistyle(struct dlg *dlg, void* hdrop)
+void drop_guistyle(dlg* dlg, void* hdrop)
 {
     char filename[MAX_PATH];
     int n;
@@ -645,7 +650,7 @@ struct getdata_info {
 
 void bbgetdata(HWND hwnd, unsigned msg, void *dest)
 {
-    struct getdata_info gdi;
+    getdata_info gdi;
     gdi.msg = msg;
     gdi.dest = (char*)dest;
     SendMessage(BBhwnd, msg, (WPARAM)&gdi, (LPARAM)hwnd);
@@ -681,9 +686,10 @@ void edit_file(const char *file)
             return;
     }
 
-    if (BBhwnd) {
+    if (BBhwnd)
+    {
         SetForegroundWindow(BBhwnd);
-        BBSendData(BBhwnd, BB_EDITFILE, (WPARAM)-1, file, -1);
+        bbcore::BBSendData(BBhwnd, BB_EDITFILE, (WPARAM)-1, file, -1);
     }
 }
 
@@ -726,8 +732,9 @@ void set_bbstyle(HWND hDlg, const char *filename)
     COPYDATASTRUCT cds;
     HWND bbwnd;
 
-    if (BBhwnd) {
-        BBSendData(BBhwnd, BB_SETSTYLE, 0, filename, -1);
+    if (BBhwnd)
+    {
+        bbcore::BBSendData(BBhwnd, BB_SETSTYLE, 0, filename, -1);
         return;
     }
 
@@ -767,7 +774,7 @@ int save_style(HWND hwnd, int flags)
     char temp[MAX_PATH+100];
     int answer;
     NStyleStruct nss, *pss = &work_style;
-    StyleStruct ss;
+    bbcore::StyleStruct ss;
 
     if (0 == flags) // save if changed
     {
@@ -843,8 +850,8 @@ void get_bbstyle(HWND hwnd)
     const char *p;
 
     NStyleStruct *pss = &work_style;
-    StyleStruct *b = &bb_style;
-    StyleStruct ss;
+    bbcore::StyleStruct *b = &bb_style;
+    bbcore::StyleStruct ss;
 
     // get style's filename
     temp[0] = 0;
@@ -857,7 +864,7 @@ void get_bbstyle(HWND hwnd)
     // set style's filename
     strcpy(work_stylefile, temp);
 
-    // get StyleStruct
+    // get bbcore::StyleStruct
     if (BBhwnd) {
         bbgetdata(hwnd, BB_GETSTYLESTRUCT, b);
         style_version = imax(1, b->Toolbar.nVersion);
@@ -896,7 +903,7 @@ void get_bbstyle(HWND hwnd)
 
     set_style_defaults(pss, SSD_OPT_FIRST);
     new_flags();
-    bimage_init(true, write_070);
+    bbcore::bimage_init(true, write_070);
 
     //t2 = GetTickCount();
     //debug_printf("time: %d", t2 - t1);
@@ -1180,7 +1187,8 @@ void set_font_default(NStyleItem *pSI)
     strcpy(RFONT(pSI)->Font, pSI->Font);
     RFONT(pSI)->FontHeight = pSI->FontHeight    ;
     RFONT(pSI)->FontWeight = pSI->FontWeight    ;
-    parse_font((StyleItem*)pSI, RFONT(pSI)->Font);
+
+    gSettings->parseFontNameToStyleItem((StyleItem*)pSI, RFONT(pSI)->Font);
 #if 0
     debug_printf("check <%s/%d/%d> <%s/%d/%d>",
         pSI->Font,
@@ -1232,14 +1240,14 @@ void upd_bb(void)
     int flags, mask, all;
 
     NStyleStruct *pss = &work_style;
-    StyleStruct *b = &bb_style;
+    bbcore::StyleStruct *b = &bb_style;
 
     if (NULL == BBhwnd)
         return;
 
     set_style_defaults(pss, SSD_OPT_SENDBB);
     copy_from_N(b, pss);
-    BBSendData(BBhwnd, BB_SETSTYLESTRUCT, SN_STYLESTRUCT, b, sizeof(StyleStruct));
+    bbcore::BBSendData(BBhwnd, BB_SETSTYLESTRUCT, SN_STYLESTRUCT, b, sizeof(bbcore::StyleStruct));
 
     flags = 0;
     all = v_upd_all;
@@ -1293,20 +1301,25 @@ void upd_bb(void)
     if (mask & 16) {
         flags |= BBRG_SLIT;
         // --------------------------------------
-        if (style_version < 3) {
+        if (style_version < 3)
+        {
             HWND hSlit = FindWindow("BBSlit", NULL);
             if (hSlit)
-                BBSendData(hSlit, BB_SETSTYLESTRUCT, SN_SLIT, &b->Slit, sizeof(b->Slit));
+            {
+                bbcore::BBSendData(hSlit, BB_SETSTYLESTRUCT, SN_SLIT, &b->Slit, sizeof(b->Slit));
+            }
         }
         // --------------------------------------
     }
 
-    if (mask & 32) {
+    if (mask & 32)
+    {
         // --------------------------------------
-        if (style_version < 4) {
+        if (style_version < 4)
+        {
             char buffer[MAX_PATH + 100];
             sprintf(buffer, "@BBCore.rootCommand %s", b->rootCommand);
-            BBSendData(BBhwnd, BB_BROADCAST, 0, buffer, -1);
+            bbcore::BBSendData(BBhwnd, BB_BROADCAST, 0, buffer, -1);
         } else
         // --------------------------------------
         flags |= BBRG_DESK;
@@ -1521,7 +1534,7 @@ void reset_hsl(void)
 /*----------------------------------------------------------------------------*/
 /* get the color from sliders and apply to currently selected elements */
 
-void get_slider_color(struct dlg *dlg, struct c_lock *pL1, int sld_red, int sld)
+void get_slider_color(dlg* dlg, c_lock* pL1, int sld_red, int sld)
 {
     bool ctrl_key = 0 != (0x8000 & GetAsyncKeyState(VK_CONTROL));
     bool lock_ctrl = false == pL1->lock && ctrl_key;
@@ -1559,7 +1572,7 @@ void get_slider_color(struct dlg *dlg, struct c_lock *pL1, int sld_red, int sld)
 }
 
 /*----------------------------------------------------------------------------*/
-void print_colors(struct dlg *dlg)
+void print_colors(dlg* dlg)
 {
     //char *p;
     COLORREF C1, C2;
@@ -1606,9 +1619,10 @@ void print_colors(struct dlg *dlg)
 /*----------------------------------------------------------------------------*/
 /* set the sliders to the values that are currently selected */
 
-void move_sliders(struct dlg *dlg)
+void move_sliders(dlg* dlg)
 {
-    int SLD; struct c_lock *pL;
+    int SLD;
+    c_lock* pL{};
     for (SLD = SLD_R1, pL = pL1; ; SLD = SLD_R2, pL = pL2) {
         int i = 0;
 
@@ -1620,7 +1634,7 @@ void move_sliders(struct dlg *dlg)
         }
         do {
             unsigned d = (((C>>(i<<3)) & 255)*SB_DIV+SB_DIV/2)/256;
-            struct button *bp = getbutton(dlg, SLD+i);
+            button* bp = getbutton(dlg, SLD+i);
             if (d != bp->data) {
                 bp->data = d;
                 invalidate_button(bp);
@@ -1635,7 +1649,7 @@ void move_sliders(struct dlg *dlg)
 /*----------------------------------------------------------------------------*/
 /* update blackbox */
 
-void redraw_gui(struct dlg *dlg)
+void redraw_gui(dlg* dlg)
 {
     fix_P0();
     SetTimer(dlg->hwnd, UPDATE_TIMER, 10, NULL);
@@ -1655,7 +1669,7 @@ const char *font_string(void)
 }
 
 /*----------------------------------------------------------------------------*/
-void configure_interface(struct dlg *dlg)
+void configure_interface(dlg* dlg)
 {
     int s = v_section;
     int i = v_item;
@@ -1768,7 +1782,7 @@ void configure_interface(struct dlg *dlg)
         case 5:
             check_radio(dlg, i + MIS_ROT);
             if (i == 0) {
-                struct rootinfo *ri = &work_style.rootInfo;
+                rootinfo* ri = &work_style.rootInfo;
                 check_button(dlg, ROT_MOD, ri->mod);
                 enable_button(dlg, ROT_MOD, false == is_pr);
                 f_text = false == is_pr && ri->mod;
@@ -1909,7 +1923,7 @@ void configure_interface(struct dlg *dlg)
 
 /*----------------------------------------------------------------------------*/
 
-void set_item(struct dlg * dlg, int i)
+void set_item(dlg* dlg, int i)
 {
     v_item = i;
     set_P0();
@@ -1917,7 +1931,7 @@ void set_item(struct dlg * dlg, int i)
     redraw_gui(dlg);
 }
 
-void set_section(struct dlg * dlg, int v)
+void set_section(dlg* dlg, int v)
 {
     a_items[v_section] = v_item;
 
@@ -1933,14 +1947,14 @@ void set_section(struct dlg * dlg, int v)
 
 int handle_received_data(HWND hwnd, UINT msg, WPARAM wParam, const void *data, unsigned data_size)
 {
-    struct getdata_info *gdi;
+    getdata_info* gdi{};
     if (msg != BB_SENDDATA)
         return 0;
-    gdi = (struct getdata_info*)wParam;
+    gdi = (getdata_info*)wParam;
 
     switch(gdi->msg) {
     case BB_GETSTYLESTRUCT:
-        memcpy(gdi->dest, data, imin(sizeof (StyleStruct), data_size));
+        memcpy(gdi->dest, data, imin(sizeof (bbcore::StyleStruct), data_size));
         break;
     case BB_GETSTYLE:
         strcpy(gdi->dest, (const char*)data);
@@ -1951,13 +1965,13 @@ int handle_received_data(HWND hwnd, UINT msg, WPARAM wParam, const void *data, u
 
 /*----------------------------------------------------------------------------*/
 
-LRESULT CALLBACK main_dlg_proc (struct dlg *dlg, HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
+LRESULT CALLBACK main_dlg_proc (dlg* dlg, HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
     static const UINT msgs[] = { BB_RECONFIGURE, BB_EXITTYPE, 0};
     static UINT bb_broadcast_msg;
 
     char buffer[2000];
-    struct button *bp;
+    button* bp{};
     NStyleItem *pSI;
     int f, i;
     const char *s;
@@ -1974,8 +1988,9 @@ LRESULT CALLBACK main_dlg_proc (struct dlg *dlg, HWND hwnd, UINT msg, WPARAM wPa
     case WM_CREATE:
         bb_broadcast_msg = RegisterWindowMessage("TaskbarCreated");
     link_new:
-        if (link_to_BB(hwnd)) {
-            BBSendData(BBhwnd, BB_REGISTERMESSAGE, (WPARAM)hwnd, msgs, sizeof msgs);
+        if (link_to_BB(hwnd))
+        {
+            bbcore::BBSendData(BBhwnd, BB_REGISTERMESSAGE, (WPARAM)hwnd, msgs, sizeof msgs);
         }
         PostMessage(hwnd, WM_COMMAND, CMD_GETSTYLE, 0);
         break;
@@ -1984,7 +1999,7 @@ LRESULT CALLBACK main_dlg_proc (struct dlg *dlg, HWND hwnd, UINT msg, WPARAM wPa
     case WM_DESTROY:
         if (BBhwnd)
         {
-            BBSendData(BBhwnd, BB_UNREGISTERMESSAGE, (WPARAM)hwnd, msgs, sizeof msgs);
+            bbcore::BBSendData(BBhwnd, BB_UNREGISTERMESSAGE, (WPARAM)hwnd, msgs, sizeof msgs);
             PostMessage(BBhwnd, BB_RECONFIGURE, 0, 0);
             PostMessage(BBhwnd, BB_REDRAWGUI, BBRG_TOOLBAR|BBRG_MENU|BBRG_WINDOW|BBRG_SLIT|BBRG_DESK, 0);
         }
@@ -2007,7 +2022,7 @@ LRESULT CALLBACK main_dlg_proc (struct dlg *dlg, HWND hwnd, UINT msg, WPARAM wPa
 
     // -------------------------------------
     case WM_COPYDATA:
-        return BBReceiveData(hwnd, lParam, handle_received_data);
+        return bbcore::BBReceiveData(hwnd, lParam, handle_received_data);
 
     // -------------------------------------
     case WM_QUERYENDSESSION:
@@ -2134,7 +2149,8 @@ LRESULT CALLBACK main_dlg_proc (struct dlg *dlg, HWND hwnd, UINT msg, WPARAM wPa
         {
             /* the color picker in action */
             COLORREF pixel, pixel_hsl;
-            int mx, my; bool left; struct button *bm;
+            int mx, my; bool left;
+            button* bm;
 
             mx = (short)LOWORD(lParam);
             my = (short)HIWORD(lParam);

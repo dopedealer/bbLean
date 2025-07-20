@@ -173,8 +173,8 @@ struct msg_test {
     const char *test;
 };
 
-int scan_broam(struct msg_test *msg_test, const char *test);
-void eval_broam(struct msg_test *msg_test, int mode, void *pValue);
+int scan_broam(msg_test* msg_test, const char *test);
+void eval_broam(msg_test* msg_test, int mode, void *pValue);
 enum eval_broam_modes
 {
     M_BOL = 1,
@@ -643,7 +643,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
         case BB_BROADCAST:
         {
             const char *msg = (LPCSTR)lParam;
-            struct msg_test msg_test;
+            msg_test msg_test;
 
             /* check general broams */
             if (!stricmp(msg, "@BBShowPlugins"))
@@ -932,7 +932,7 @@ void ShowMyMenu(bool popup)
 /* ------------------------------------------------------------------ */
 /* helper to handle commands from the menu */
 
-int scan_broam(struct msg_test *msg_test, const char *test)
+int scan_broam(msg_test* msg_test, const char *test)
 {
     int len;
     const char *msg;
@@ -953,7 +953,7 @@ int scan_broam(struct msg_test *msg_test, const char *test)
     return 1;
 }
 
-void eval_broam(struct msg_test *msg_test, int mode, void *pValue)
+void eval_broam(msg_test* msg_test, int mode, void *pValue)
 {
     char rc_key[80];
     const char *msg;

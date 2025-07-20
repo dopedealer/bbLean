@@ -40,13 +40,14 @@
 #define RCFILE_HTS 40 // hash table size
 // #define DEBUG_READER
 
-static struct rcreader_init *g_rc;
+static rcreader_init* g_rc;
 
-void init_rcreader(struct rcreader_init *init)
+void init_rcreader(rcreader_init* init)
 {
     g_rc = init;
 }
 
+/// \returns 0=not found, 1=found exact value, 2=found matching wildcard
 int found_last_value(void)
 {
     return g_rc->found_last_value;
@@ -60,7 +61,7 @@ int set_translate_065(int f)
 }
 
 static
-struct lin_list * search_line(struct fil_list *fl, const char *key, int fwild, LONG *p_seekpos);
+lin_list* search_line(fil_list* fl, const char *key, int fwild, LONG *p_seekpos);
 
 /* ------------------------------------------------------------------------- */
 
@@ -142,9 +143,9 @@ int translate_key070(char *key)
 }
 
 // This one converts all keys in a style from 065 to 070 style conventions
-void make_style070(struct fil_list *fl)
+void make_style070(fil_list* fl)
 {
-    struct lin_list *tl, **tlp, *sl, *ol;
+    lin_list *tl, **tlp, *sl, *ol;
     char buffer[MAX_KEYWORD_LENGTH], *p;
     int f;
     for (tlp = &fl->lines; NULL != (tl = *tlp); tlp = &tl->next)
@@ -214,9 +215,9 @@ bool translate_key065(char *key)
 }
 
 // This one converts all keys in a style from 070 to 065 style conventions
-void make_style065(struct fil_list *fl)
+void make_style065(fil_list* fl)
 {
-    struct lin_list *tl, **tlp, *ol;
+    lin_list *tl, **tlp, *ol;
     char buffer[1000]; int f;
     for (tlp = &fl->lines; NULL != (tl = *tlp); tlp = &tl->next)
     {
@@ -238,11 +239,11 @@ void make_style065(struct fil_list *fl)
 // from a style that has 0.70 syntax
 
 static
-struct lin_list *search_line_065(struct fil_list *fl, const char *key)
+lin_list* search_line_065(fil_list* fl, const char *key)
 {
     char buff[MAX_KEYWORD_LENGTH];
     int f;
-    struct lin_list *tl;
+    lin_list* tl;
     char *d;
 
     strcpy_max(buff, key, sizeof buff);
@@ -275,9 +276,9 @@ int get_070(const char* path)
     return ret;
 }
 
-void check_070(struct fil_list *fl)
+void check_070(fil_list* fl)
 {
-    struct lin_list *tl;
+    lin_list* tl;
     dolist (tl, fl->lines)
         if (tl->k > 11 && 0 == memcmp(tl->str+tl->k-11, "appearance", 10))
             break;
@@ -313,11 +314,11 @@ FILE *create_rcfile(const char *path)
 }
 
 static
-void write_rcfile(struct fil_list *fl)
+void write_rcfile(fil_list* fl)
 {
     FILE *fp;
     unsigned ml = 0;
-    struct lin_list *tl;
+    lin_list* tl;
 
 #ifdef DEBUG_READER
     debug_printf("writing file %s", fl->path);
@@ -346,14 +347,14 @@ void write_rcfile(struct fil_list *fl)
 }
 
 static
-void mark_rc_dirty(struct fil_list *fl)
+void mark_rc_dirty(fil_list* fl)
 {
     fl->dirty = true;
 }
 
 /* ------------------------------------------------------------------------- */
 static
-void delete_lin_list(struct fil_list *fl)
+void delete_lin_list(fil_list* fl)
 {
     freeall(&fl->lines);
     memset(fl->ht, 0, sizeof fl->ht);
@@ -361,7 +362,7 @@ void delete_lin_list(struct fil_list *fl)
 }
 
 static
-void delete_fil_list(struct fil_list *fl)
+void delete_fil_list(fil_list* fl)
 {
     if (fl->dirty)
         write_rcfile(fl);
@@ -508,10 +509,10 @@ int xrm_match (const char *key, const char *pat)
 }
 
 /* ------------------------------------------------------------------------- */
-struct lin_list *make_line (struct fil_list *fl, const char *key, const char *val)
+lin_list* make_line (fil_list* fl, const char *key, const char *val)
 {
     char buffer[MAX_KEYWORD_LENGTH];
-    struct lin_list *tl, **tlp;
+    lin_list *tl, **tlp;
     int k, v;
     unsigned h;
 
@@ -520,7 +521,7 @@ struct lin_list *make_line (struct fil_list *fl, const char *key, const char *va
     if (key)
         h = calc_hash(buffer, key, &k, ':');
 
-    tl=(struct lin_list*)c_alloc(sizeof (struct lin_list) + k*2 + v);
+    tl=(lin_list*)c_alloc(sizeof (lin_list) + k*2 + v);
     tl->hash = h;
     tl->k = k+1;
     tl->o = k+v+2;
@@ -559,7 +560,7 @@ void del_from_list(void *tlp, void *tl, void *n)
     }
 }
 
-void free_line(struct fil_list *fl, struct lin_list *tl)
+void free_line(fil_list* fl, lin_list* tl)
 {
     if (tl->is_wild)
         del_from_list(&fl->wild, tl, &tl->wnext);
@@ -569,12 +570,12 @@ void free_line(struct fil_list *fl, struct lin_list *tl)
 }
 
 static
-struct lin_list * search_line(struct fil_list *fl, const char *key, int fwild, LONG *p_seekpos)
+lin_list* search_line(fil_list* fl, const char *key, int fwild, LONG *p_seekpos)
 {
     int key_len, n;
     char buff[MAX_KEYWORD_LENGTH];
     unsigned h;
-    struct lin_list *tl;
+    lin_list* tl;
 
     h = calc_hash(buff, key, &key_len, ':');
     if (0 == key_len)
@@ -600,7 +601,7 @@ struct lin_list * search_line(struct fil_list *fl, const char *key, int fwild, L
 
     if (fwild) {
         // search wildcards
-        struct lin_list *wl;
+        lin_list* wl;
         int best_match = 0;
 
         for (wl = fl->wild; wl; wl = wl->wnext) {
@@ -616,10 +617,10 @@ struct lin_list * search_line(struct fil_list *fl, const char *key, int fwild, L
 /* ------------------------------------------------------------------------- */
 // searches for the filename and, if not found, builds a _new line-list
 
-struct fil_list *read_file(const char *filename)
+fil_list* read_file(const char *filename)
 {
-    struct lin_list **slp, *sl;
-    struct fil_list **flp, *fl;
+    lin_list **slp, *sl;
+    fil_list **flp, *fl;
     char *buf, *p, *d, *s, *t, c, hashname[MAX_PATH];
     unsigned h;
     int k;
@@ -636,7 +637,7 @@ struct fil_list *read_file(const char *filename)
 
     // allocate a _new file structure, the filename is
     // stored twice, as is and strlwr'd for compare.
-    fl = (struct fil_list*)c_alloc(sizeof(*fl) + k*2);
+    fl = (fil_list*)c_alloc(sizeof(*fl) + k*2);
     memcpy(fl->path, filename, k);
     memcpy(fl->path+k, hashname, k);
     fl->k = k;
@@ -686,19 +687,19 @@ comment:
     return fl;
 }
 
-/* ------------------------------------------------------------------------- */
-// Purpose: Searches the given file for the supplied keyword and returns a
-// pointer to the value - string
-// In: const char* path = String containing the name of the file to be opened
-// In: const char* szKey = String containing the keyword to be looked for
-// In: LONG ptr: optional: an index into the file to start search.
-// Out: const char* = Pointer to the value string of the keyword
 
-const char* read_value(const char* path, const char* szKey, long *ptr)
+/// \brief Searches the given file for the supplied keyword and returns a
+///        pointer to the value - string
+/// \param path String containing the name of the file to be opened
+/// \param szKey String containing the keyword to be looked for
+/// \param ptr [opt] An index into the file to start search. If present, at input indicates the line
+///                  from where the search starts, at output is set to the line that follows the match.
+/// \returns Pointer to the value string of the keyword 
+const char* read_value(const char* path, const char* szKey, long* ptr)
 {
-    struct fil_list *fl;
-    struct lin_list *tl;
-    const char *r = NULL;
+    fil_list* fl;
+    lin_list* tl;
+    const char* r{};
 
     fl = read_file(path);
     tl = search_line(fl, szKey, true, ptr);
@@ -794,9 +795,9 @@ int simkey(const char *a0, const char *b0)
     return f;
 }
 
-struct lin_list **get_simkey(struct lin_list **slp, const char *key)
+lin_list** get_simkey(lin_list** slp, const char *key)
 {
-    struct lin_list **tlp = NULL, *sl;
+    lin_list** tlp = NULL, *sl;
     int n, m, i, k;
     m = 1;
     i = k = 0;
@@ -824,8 +825,8 @@ struct lin_list **get_simkey(struct lin_list **slp, const char *key)
 
 void write_value(const char* path, const char* szKey, const char* value)
 {
-    struct fil_list *fl;
-    struct lin_list *tl, **tlp, *sl, **slp;
+    fil_list* fl;
+    lin_list *tl, **tlp, *sl, **slp;
 
 #ifdef DEBUG_READER
     debug_printf("write_value <%s> <%s> <%s>", path, szKey, value);
@@ -892,8 +893,8 @@ void write_color(const char* fileName, const char* szKey, COLORREF value)
 int rename_setting(const char* path, const char* szKey, const char* new_keyword)
 {
     char buff[MAX_KEYWORD_LENGTH];
-    struct fil_list *fl;
-    struct lin_list **slp, *sl, *tl;
+    fil_list* fl;
+    lin_list **slp, *sl, *tl;
     int k, dirty = 0;
 
     calc_hash(buff, szKey, &k, ':');
@@ -960,7 +961,7 @@ int read_next_line(FILE *fp, char* szBuffer, unsigned dwLength)
 /* ------------------------------------------------------------------------- */
 // parse a given string and assigns settings to a StyleItem class
 
-static const struct styleprop styleprop_1[] = {
+static const styleprop styleprop_1[] = {
  {"solid"        ,B_SOLID           },
  {"horizontal"   ,B_HORIZONTAL      },
  {"vertical"     ,B_VERTICAL        },
@@ -973,14 +974,14 @@ static const struct styleprop styleprop_1[] = {
  {NULL           ,-1                }
  };
 
-static const struct styleprop styleprop_2[] = {
+static const styleprop styleprop_2[] = {
  {"flat"        ,BEVEL_FLAT     },
  {"raised"      ,BEVEL_RAISED   },
  {"sunken"      ,BEVEL_SUNKEN   },
  {NULL          ,-1             }
  };
 
-static const struct styleprop styleprop_3[] = {
+static const styleprop styleprop_3[] = {
  {"bevel1"      ,BEVEL1 },
  {"bevel2"      ,BEVEL2 },
  {"bevel3"      ,BEVEL2+1 },
@@ -988,7 +989,7 @@ static const struct styleprop styleprop_3[] = {
  };
 
 
-const struct styleprop *get_styleprop(int n)
+const styleprop* get_styleprop(int n)
 {
     switch (n) {
         case 1: return styleprop_1;
@@ -1000,7 +1001,7 @@ const struct styleprop *get_styleprop(int n)
 
 int findtex(const char *p, int prop)
 {
-    const struct styleprop *s = get_styleprop(prop);
+    const styleprop* s = get_styleprop(prop);
     do
         if (strstr(p, s->key))
             break;
@@ -1008,6 +1009,8 @@ int findtex(const char *p, int prop)
     return s->val;
 }
 
+/// \brief Parse a texture specification, e.g. 'raised vertical gradient'
+/// Parses a given string and assigns settings to a StyleItem class
 void parse_item(LPCSTR szItem, StyleItem *item)
 {
     char buf[256]; int t;

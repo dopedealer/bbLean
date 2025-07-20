@@ -49,7 +49,6 @@ add_library (${PROJECT} SHARED ${HEADERS} ${SOURCES})
 target_link_directories(${PROJECT} PRIVATE ${LINK_DIRS})
 target_include_directories (${PROJECT} PRIVATE ${INCLUDE_DIRS} )
 target_link_libraries (${PROJECT} PRIVATE ${LIBS})
-#target_compile_definitions(${PROJECT} PRIVATE BBSETTING_STYLEREADER_ONLY BBSETTING_NOWINDOW)
 target_compile_definitions(${PROJECT} PRIVATE) 
 
 # add optional compile options

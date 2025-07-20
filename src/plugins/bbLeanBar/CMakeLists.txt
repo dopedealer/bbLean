@@ -13,9 +13,43 @@ set (LINK_DIRS
     ) 
 
 set (HEADERS
+    baritem.h
+    barinfo.h
+    baritemlist.h
+    barlabel.h
+    bar_button.h
+    BuffBmp.h
+    bbLeanBar.h
+    clock_displ.h
+    leanbar.h
+    spacer.h
+    taskentry.h
+    taskitemlist.h
+    TinyDropTarg.h
+    trayentry.h
+    trayitemlist.h
+    window_label.h
+    workspace_label.h
     ) 
+
 set (SOURCES
+    baritem.cpp
+    barinfo.cpp
+    barlabel.cpp
+    bar_button.cpp
+    baritemlist.cpp
     bbLeanBar.cpp
+    BuffBmp.cpp
+    clock_displ.cpp
+    leanbar.cpp
+    spacer.cpp
+    taskentry.cpp
+    taskitemlist.cpp
+    TinyDropTarg.cpp
+    trayentry.cpp
+    trayitemlist.cpp
+    window_label.cpp
+    workspace_label.cpp
     ) 
 
 set (LIBS

@@ -84,7 +84,7 @@ struct shmem
     HANDLE hMapObject;
 };
 
-void ReleaseSharedMem(struct shmem *psh)
+void ReleaseSharedMem(shmem* psh)
 {
     if (psh->hMapObject)
     {
@@ -94,7 +94,7 @@ void ReleaseSharedMem(struct shmem *psh)
     }
 }
 
-void *GetSharedMem(struct shmem *psh)
+void *GetSharedMem(shmem* psh)
 {
     psh->hMapObject = OpenFileMapping(FILE_MAP_READ, FALSE, BBLEANSKIN_SHMEMID);
     if (psh->hMapObject)
@@ -116,12 +116,12 @@ void *GetSharedMem(struct shmem *psh)
 static void copy_skin(SkinStruct *pSkin)
 {
     memcpy(&mSkin, pSkin, offset_exInfo);
-    bimage_init(mSkin.imageDither, mSkin.is_style070);
+    bbcore::bimage_init(mSkin.imageDither, mSkin.is_style070);
 }
 
 bool GetSkin(void)
 {
-    struct shmem sh;
+    shmem sh;
     SkinStruct *pSkin = (SkinStruct *)GetSharedMem(&sh);
     if (NULL == pSkin)
         return false;
@@ -272,7 +272,7 @@ int HookWindow(HWND hwnd, int early)
 
     int found = 0;
 
-    struct shmem sh;
+    shmem sh;
     SkinStruct *pSkin = (SkinStruct *)GetSharedMem(&sh);
     if (NULL == pSkin)
         return 0;
@@ -285,7 +285,7 @@ int HookWindow(HWND hwnd, int early)
     char sFileName[200]; sFileName[0] = 0;
     get_module(hwnd, sFileName, sizeof sFileName);
 
-    struct exclusion_item *ei = pSkin->exInfo.ei;
+    exclusion_item* ei = pSkin->exInfo.ei;
     for (int i = pSkin->exInfo.count; i; --i)
     {
         char *f, *c = (f = ei->buff) + ei->flen;
@@ -297,7 +297,7 @@ int HookWindow(HWND hwnd, int early)
             found = 1 == ei->option ? -1 : 1; // check 'hook-early' option
             break;
         }
-        ei = (struct exclusion_item *)(c + ei->clen);
+        ei = (exclusion_item *)(c + ei->clen);
     }
 
     ReleaseSharedMem(&sh);

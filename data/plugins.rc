@@ -28,5 +28,5 @@ plugins\bbColor3dc\bbColor3dc.dll
 # - submenu with more plugins
 [sep]
 [submenu] (other)
-! plugins\bbWorkspaceWheel\bbWorkspaceWheel.dll
+plugins\bbWorkspaceWheel\bbWorkspaceWheel.dll
 [end]

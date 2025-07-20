@@ -20,114 +20,83 @@
  ============================================================================
 */
 
-// Auto-buffered wrapper for MakeStyleGradient
+#include "BuffBmp.h"
 
-// call instead:
-// void BuffBmp::MakeStyleGradient(HDC hdc, RECT *rc, StyleItem *pSI, bool bordered);
+#include <bblib.h>
+#include <BBApi.h>
+#include <win0x500.h>
+#include <bbstyle.h>
+#include <BImage.h>
 
-// call after everything is drawn, and once at end of program to cleanup
-// void BuffBmp::ClearBitmaps(void);
+extern COLORREF styleBorderColor;
+extern int styleBorderWidth;
 
-class BuffBmp
+BuffBmp::~BuffBmp(void)
 {
-private:
-    struct Bmp
-    {
-        struct Bmp *next;
+    ClearBitmaps(true);
+} 
 
-        /* 0.0.80 */
-        int bevelstyle;
-        int bevelposition;
-        int type;
-        bool parentRelative;
-        bool interlaced;
-
-        /* 0.0.90 */
-        COLORREF Color;
-        COLORREF ColorTo;
-
-        int borderWidth;
-        COLORREF borderColor;
-
-        RECT r;
-        HBITMAP bmp;
-        bool in_use;
-    };
-
-    struct Bmp *g_Buffers;
-
-public:
-    BuffBmp()
-    {
-        g_Buffers = NULL;
-    }
-
-    ~BuffBmp()
-    {
-        ClearBitmaps(true);
-    }
-
-    void MakeStyleGradient(HDC hdc, RECT *rc, StyleItem *pSI, bool withBorder)
-    {
+void BuffBmp::MakeStyleGradient(HDC hdc, RECT *rc, StyleItem *pSI, bool withBorder)
+{
 #if 0
-        ::MakeStyleGradient(hdc, rc, pSI, withBorder);
+    ::MakeStyleGradient(hdc, rc, pSI, withBorder);
 #else
-        COLORREF    borderColor = 0;
-        int         borderWidth = 0;
+    COLORREF    borderColor = 0;
+    int         borderWidth = 0;
 
-        if (withBorder)
+    if (withBorder)
+    {
+        if (pSI->bordered)
         {
-            if (pSI->bordered)
-            {
-                borderColor = pSI->borderColor;
-                borderWidth = pSI->borderWidth;
-            }
-            else
-            {
-                borderColor = styleBorderColor;
-                borderWidth = styleBorderWidth;
-            }
+            borderColor = pSI->borderColor;
+            borderWidth = pSI->borderWidth;
         }
-
-        if (pSI->parentRelative)
+        else
         {
-            if (borderWidth)
-                CreateBorder(hdc, rc, borderColor, borderWidth);
-            return;
+            borderColor = styleBorderColor;
+            borderWidth = styleBorderWidth;
         }
+    }
 
-        int width   = rc->right - rc->left;
-        int height  = rc->bottom - rc->top;
+    if (pSI->parentRelative)
+    {
+        if (borderWidth)
+            CreateBorder(hdc, rc, borderColor, borderWidth);
+        return;
+    }
 
-        struct Bmp *B;
+    int width   = rc->right - rc->left;
+    int height  = rc->bottom - rc->top;
 
-        dolist (B, g_Buffers)
-            if (B->r.right      == width
-             && B->r.bottom     == height
-             && B->type         == pSI->type
-             && B->Color        == pSI->Color
-             && B->ColorTo      == pSI->ColorTo
-             && B->interlaced   == pSI->interlaced
-             && B->bevelstyle   == pSI->bevelstyle
-             && B->bevelposition== pSI->bevelposition
-             && B->borderColor  == borderColor
-             && B->borderWidth  == borderWidth
-             ) break;
+    Bmp* B;
 
-        HDC buf = CreateCompatibleDC(NULL);
-        HGDIOBJ other;
+    dolist (B, buffers_)
+        if (B->r.right      == width
+                && B->r.bottom     == height
+                && B->type         == pSI->type
+                && B->Color        == pSI->Color
+                && B->ColorTo      == pSI->ColorTo
+                && B->interlaced   == pSI->interlaced
+                && B->bevelstyle   == pSI->bevelstyle
+                && B->bevelposition== pSI->bevelposition
+                && B->borderColor  == borderColor
+                && B->borderWidth  == borderWidth
+           ) break;
 
-        if (NULL == B)
-        {
-            B = new struct Bmp;
+    HDC buf = CreateCompatibleDC(NULL);
+    HGDIOBJ other;
 
-            B->r.left       =
+    if (NULL == B)
+    {
+        B = new Bmp;
+
+        B->r.left       =
             B->r.top        = 0;
 
-            B->r.right      = width;
-            B->r.bottom     = height;
+        B->r.right      = width;
+        B->r.bottom     = height;
 
-            B->type         = pSI->type         ,
+        B->type         = pSI->type         ,
             B->Color        = pSI->Color        ,
             B->ColorTo      = pSI->ColorTo      ,
             B->interlaced   = pSI->interlaced   ,
@@ -136,13 +105,13 @@ public:
             B->borderColor  = borderColor       ,
             B->borderWidth  = borderWidth       ;
 
-            B->bmp = CreateCompatibleBitmap(hdc, width, height);
-            B->next = g_Buffers;
-            g_Buffers = B;
+        B->bmp = CreateCompatibleBitmap(hdc, width, height);
+        B->next = buffers_;
+        buffers_ = B;
 
-            other = SelectObject(buf, B->bmp);
+        other = SelectObject(buf, B->bmp);
 
-            MakeGradient(
+        MakeGradient(
                 buf,
                 B->r,
                 B->type,
@@ -156,40 +125,36 @@ public:
                 B->borderWidth
                 );
 
-            //dbg_printf("new bitmap %d %d", width, height);
+        //dbg_printf("new bitmap %d %d", width, height);
+    }
+    else
+    {
+        other = SelectObject(buf, B->bmp);
+    }
+
+    B->in_use = true;
+
+    BitBlt(hdc, rc->left, rc->top, width, height, buf, 0, 0, SRCCOPY);
+    SelectObject(buf, other);
+    DeleteDC(buf);
+#endif
+}
+
+void BuffBmp::ClearBitmaps(bool force)
+{
+    Bmp *B, **pB = &buffers_;
+    while (NULL != (B=*pB))
+    {
+        if (false == B->in_use || force)
+        {
+            *pB = B->next;
+            DeleteObject(B->bmp);
+            delete B;
         }
         else
         {
-            other = SelectObject(buf, B->bmp);
-        }
-
-        B->in_use = true;
-
-        BitBlt(hdc, rc->left, rc->top, width, height, buf, 0, 0, SRCCOPY);
-        SelectObject(buf, other);
-        DeleteDC(buf);
-#endif
-    }
-
-    void ClearBitmaps(bool force = false)
-    {
-        struct Bmp *B, **pB = &g_Buffers;
-        while (NULL != (B=*pB))
-        {
-            if (false == B->in_use || force)
-            {
-                *pB = B->next;
-                DeleteObject(B->bmp);
-                delete B;
-            }
-            else
-            {
-                B->in_use = false;
-                pB = &B->next;
-            }
+            B->in_use = false;
+            pB = &B->next;
         }
     }
-
-};
-
-//===========================================================================
+}

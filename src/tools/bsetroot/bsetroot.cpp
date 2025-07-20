@@ -21,7 +21,7 @@
 
 #include <bbstyle.h>
 #include <BBApi.h>
-#include "BImage.h"
+#include <BImage.h>
 #include "bbroot.h"
 #include "bbrc.h"
 
@@ -93,7 +93,7 @@ int image_resample(HIMG *img, int w, int h);
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 /* bimage utils */
-HIMG DesktopGradient(struct rootinfo *r, int width, int height);
+HIMG DesktopGradient(rootinfo* r, int width, int height);
 void Modula(HIMG Img, int x, int y, COLORREF fg);
 void copy_img(HIMG Img1, HIMG Img2, int x0, int y0, int xs, int ys, int hueIntensity, int saturationValue);
 int load_bmp(const char *filename, HIMG *pImg, string_node *searchpaths, const char *search_base);
@@ -128,8 +128,8 @@ int WINAPI WinMain(
     int screen_width;
     int screen_height;
 
-    struct rootinfo RI;
-    struct rootinfo *r = &RI;
+    rootinfo RI;
+    rootinfo* r = &RI;
 
     char *p; int n; FILE *fp; MSG msg;
 
@@ -381,9 +381,9 @@ void copy_img(HIMG Img1, HIMG Img2,
 }
 
 //===========================================================================
-HIMG DesktopGradient(struct rootinfo *r, int width, int height)
+HIMG DesktopGradient(rootinfo* r, int width, int height)
 {
-    struct bimage *b;
+    bbcore::bimage* b;
     HIMG h;
     StyleItem si;
 
@@ -395,8 +395,8 @@ HIMG DesktopGradient(struct rootinfo *r, int width, int height)
     si.bevelposition = r->bevelposition;
     si.parentRelative = false;
 
-    bimage_init(true, true);
-    b = bimage_create(width, height, &si);
+    bbcore::bimage_init(true, true);
+    b = bbcore::bimage_create(width, height, &si);
     h = image_create_fromraw(width, height, bimage_getpixels(b));
     bimage_destroy(b);
     return h;
@@ -424,7 +424,7 @@ void Modula(HIMG Img, int mx, int my, COLORREF fg)
 // Purpose: parses a given string and assigns settings to a StyleItem class
 
 [[maybe_unused]]
-const struct styleprop styleprop_1[] = {
+const styleprop styleprop_1[] = {
  {"solid"        ,B_SOLID           },
  {"horizontal"   ,B_HORIZONTAL      },
  {"vertical"     ,B_VERTICAL        },
@@ -438,7 +438,7 @@ const struct styleprop styleprop_1[] = {
  };
 
 [[maybe_unused]]
-const struct styleprop styleprop_2[] = {
+const styleprop styleprop_2[] = {
  {"flat"        ,BEVEL_FLAT      },
  {"raised"      ,BEVEL_RAISED    },
  {"sunken"      ,BEVEL_SUNKEN    },
@@ -446,14 +446,14 @@ const struct styleprop styleprop_2[] = {
  };
 
 [[maybe_unused]]
-const struct styleprop styleprop_3[] = {
+const styleprop styleprop_3[] = {
  {"bevel1"      ,BEVEL1  },
  {"bevel2"      ,BEVEL2  },
  {"bevel3"      ,BEVEL2+1},
  {NULL          ,-1      }
  };
 
-int findtex(const char *p, const struct styleprop *s)
+int findtex(const char *p, const styleprop* s)
 {
     do if (strstr(p, s->key)) break; while ((++s)->key);
     return s->val;

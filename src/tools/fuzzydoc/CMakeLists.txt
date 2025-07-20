@@ -1,4 +1,4 @@
-cmake_minimum_required (VERSION 3.13)
+cmake_minimum_required (VERSION 3.30)
 
 set (PROJECT fuzzydoc) 
 project (${PROJECT})
@@ -66,6 +66,7 @@ endif()
 # resource files copying
 file(GLOB RESOURCE_FILES LIST_DIRECTORIES false tpl_*.htm; fuzzydoc.txt)
 
+
 get_current_output_dir(FUZZYDOCRES_OUTPUT_DIR)
 
 # add 'copy' command for each resource file
@@ -76,7 +77,6 @@ foreach(FULLRESPATH IN LISTS RESOURCE_FILES)
 
     add_custom_command(
         OUTPUT ${FUZZYRES_OUTPUT_PATH}
-        POST_BUILD
         COMMAND
         ${CMAKE_COMMAND} -E copy
         ${FULLRESPATH}        # src
@@ -84,9 +84,11 @@ foreach(FULLRESPATH IN LISTS RESOURCE_FILES)
     )
 
     list(APPEND FUZZYDOC_OUTRESFILES ${FUZZYRES_OUTPUT_PATH})
-endforeach()
+endforeach() 
 
 add_custom_target(CopyFuzzydocResources ALL
                   DEPENDS  ${FUZZYDOC_OUTRESFILES}
                   VERBATIM
                   )
+
+add_dependencies(${PROJECT} CopyFuzzydocResources)

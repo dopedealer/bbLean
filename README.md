@@ -4,7 +4,7 @@
 
 Copyright © 2004-2009 grischka
 
-Copyright © 2024 kam1  ; xmalkut@gmail.com, kam1@jabber.ru
+Copyright © 2024-2025 kam1  ; xmalkut@gmail.com, kam1@jabber.ru
 
 ## Project goals:
 - keeping maximum stability and error-freeness as possible. No unstable code in main branch allowed.
@@ -30,14 +30,12 @@ Prerequisites:
     mkdir b
     cd b
     cmake .. 
-    cmake --build . -j 16 
+    cmake --build . --parallel
 
   End user build only allows not to use google test:
   
     cmake .. -DBUILD_TESTS=OFF -DCMAKE_BUILD_TYPE=Release
     cmake --build . -t package
-
-Currently old build way is retained. Will be removed later.
 
 bbLean is free software, released under the GNU General Public
 License (GPL version 2). For details see:

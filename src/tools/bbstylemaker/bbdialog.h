@@ -21,6 +21,14 @@
 */
 
 #ifndef BBDIALOG_H
+#define BBDIALOG_H
+
+#include <windows.h>
+#include <bbstyle.h>
+
+#define UPDOWN_TIMER 2
+#define UPDATE_TIMER 3
+#define SLIDER_TIMER 4
 
 // ----------------------
 enum {
@@ -36,19 +44,8 @@ enum {
     BN_COLOR
 };
 
-const char *dlg_item_types[] = {
-    "BN_NULL",
-    "BN_RECT",
-    "BN_STR" ,
-    "BN_BTN" ,
-    "BN_CHK" ,
-    "BN_ITM" ,
-    "BN_SLD" ,
-    "BN_EDT" ,
-    "BN_UPDN",
-    "BN_COLOR",
-    NULL
-};
+// TODO: remove global
+extern const char *dlg_item_types[];
 
 // ----------------------
 #define BN_DIS 1
@@ -66,35 +63,21 @@ const char *dlg_item_types[] = {
 #define BN_16  0x800
 #define BN_255 0x1000
 
-const char *dlg_item_flags[] = {
-    "BN_LFT",
-    "BN_CEN",
-    "BN_RHT",
-    "BN_RAD",
-    "BN_GRP",
-    "BN_EXT",
-    "BN_BUF",
-    "BN_16",
-    "BN_255",
-    NULL
-};
+// TODO: remove global
+extern const char* dlg_item_flags[];
 
 // ----------------------
 
 enum {
     FIRST_ITEM = 0,
 #define TOKEN(s) s,
-#include "tokens.h"
+#include "tokens.inl"
 #undef TOKEN
     LAST_ITEM
 };
 
-const char *dlg_item_strings[LAST_ITEM-FIRST_ITEM] = {
-#define TOKEN(s) #s,
-#include "tokens.h"
-#undef TOKEN
-    NULL
-};
+// TODO: remove global
+extern const char* dlg_item_strings[LAST_ITEM-FIRST_ITEM];
 
 // ----------------------
 // dialog types
@@ -122,23 +105,23 @@ const char *dlg_item_strings[LAST_ITEM-FIRST_ITEM] = {
 #define BMP_SLD2  4
 #define BMP_ALL   5
 
-struct dlg* dlg;
+struct dlg;
 
-typedef LRESULT CALLBACK dlg_proc (struct dlg* dlg, HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
+typedef LRESULT CALLBACK dlg_proc (dlg* dlg, HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
 struct button {
     const char *str;
     int typ, msg, x0, y0, w0, h0, f;
 
-    struct button *next;
-    struct dlg *dlg;
+    button* next;
+    dlg* dlg;
     DWORD_PTR data;
     int x, y, w, h;
 };
 
 struct dlg {
-    struct button *bn_ptr;
-    struct button *bn_act;
+    button* bn_ptr;
+    button* bn_act;
     int  tf, tx, ty;
     int  w, h;
     int  x, y;
@@ -169,39 +152,46 @@ struct dlg {
 /*----------------------------------------------------------------------------*/
 
 /*----------------------------------------------------------------------------*/
-int make_dlg_wnd(struct dlg* dlg, HWND parent_hwnd, int x, int y, const char *title, dlg_proc *proc);
+int make_dlg_wnd(dlg* dlg, HWND parent_hwnd, int x, int y, const char *title, dlg_proc *proc);
 
-void get_item_rect(struct button *b, RECT *r);
-void get_slider_rect(struct button *b, RECT *r);
-void set_slider(struct button *b, int my);
-void invalidate_item(struct dlg *d, int id);
-int inside_item(struct button *b, int mx, int my);
-void fix_box(struct dlg *dlg);
+void get_item_rect(button* b, RECT *r);
+void get_slider_rect(button* b, RECT *r);
+void set_slider(button* b, int my);
+void invalidate_item(dlg* d, int id);
+int inside_item(button* b, int mx, int my);
+void fix_box(dlg* dlg);
 
-void put_bitmap(struct dlg *d, HDC hdc, RECT *rc, StyleItem *pSI, int borderWidth, int index, RECT* rPaint);
-void create_editline (struct button *bp);
-void delete_bitmaps(struct dlg *d);
-void paint_box(struct dlg *d);
+void put_bitmap(dlg* d, HDC hdc, RECT *rc, StyleItem *pSI, int borderWidth, int index, RECT* rPaint);
+void create_editline (button* bp);
+void delete_bitmaps(dlg* d);
+void paint_box(dlg* d);
 
-int get_accel_msg(struct dlg *d, int key);
-int dlg_mouse (struct dlg *d, UINT msg, WPARAM wParam, LPARAM lParam);
-void dlg_timer(struct dlg* dlg, int n_timer);
+int get_accel_msg(dlg* d, int key);
+int dlg_mouse (dlg* d, UINT msg, WPARAM wParam, LPARAM lParam);
+void dlg_timer(dlg* dlg, int n_timer);
 
-void check_button (struct dlg *d, int msg, int f);
-void check_radio (struct dlg *d, int msg);
+void check_button (dlg* d, int msg, int f);
+void check_radio (dlg* d, int msg);
 
-void enable_button (struct dlg *d, int msg, int f);
-void enable_section(struct dlg *d, int i1, int i2, int en);
+void enable_button (dlg* d, int msg, int f);
+void enable_section(dlg* d, int i1, int i2, int en);
 
-void show_button (struct dlg *d, int msg, int f);
-void show_section(struct dlg *d, int i1, int i2, int en);
+void show_button (dlg* d, int msg, int f);
+void show_section(dlg* d, int i1, int i2, int en);
 
-void set_button_data (struct dlg *d, int msg, int f);
-void set_button_text (struct dlg *d, int msg, const char *text);
-struct button *getbutton (struct dlg *d, int msg);
-struct button * mousebutton(struct dlg* dlg, int mx, int my);
-void insert_first(struct dlg* dlg, struct button *cp);
+void set_button_data (dlg* d, int msg, int f);
+void set_button_text (dlg* d, int msg, const char *text);
+button* getbutton (dlg* d, int msg);
+button* mousebutton(dlg* dlg, int mx, int my);
+void insert_first(dlg* dlg, button* cp);
 
-/*----------------------------------------------------------------------------*/
-#endif //ndef BBDIALOG_H
-/*----------------------------------------------------------------------------*/
+WPARAM do_message_loop(void);
+void fix_dlg(dlg* dlg);
+void set_dlg_windowpos(dlg* dlg);
+dlg* make_dlg (const button* bp0, int w, int h);
+void invalidate_button(button* bp);
+void delete_dlg(dlg* dlg);
+void set_button_focus(dlg* dlg, int id);
+int get_button_text(dlg* dlg, int id, char* text, int bufsize);
+
+#endif //!BBDIALOG_H

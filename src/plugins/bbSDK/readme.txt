@@ -37,34 +37,7 @@
   ======
 
   bbSDK.cpp                 Source code (works as C or C++)
-  BBApi.h                   bbLean API header file
-  readme.txt                This file
-  bbSDK.dll                 The compiled plugin
-
-  # for MINGW
-  makefile-gcc              makefile for gnu make
-  libblackbox.a             blackbox import library for mingw
-  libblackbox.def           blackbox import definition file
-  bbSDK.cbp                 CodeBlocks project file
-
-  # for MSC
-  makefile-msc              makefile for MSC nmake
-  blackbox.lib              blackbox import library for MSVC
-  bbSDK.vcproj              VC8(Express) project file
-
-
-  Using the included makefiles:
-  =============================
-
-  Make shure the compiler's bin directory is on the PATH, then run make
-  in the bbSDK directory:
-
-  with gcc:
-    make -f makefile-gcc
-
-  with msc:
-    nmake -f makefile-msc
-
+  readme.txt                This file 
 
   History:
   ========

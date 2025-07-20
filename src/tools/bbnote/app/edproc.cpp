@@ -39,8 +39,8 @@ struct winvars editw =
     0,0
     };
 
-struct winvars *winp = &editw;
-struct edvars *ed0,*edp;
+winvars* winp = &editw;
+edvars *ed0,*edp;
 
 char caret;
 char scroll_lock;
@@ -231,7 +231,7 @@ char * format_status(char *bstr, int f)
 #if 0
         {
         char tmp[256];
-        struct edvars *p, *n;
+        edvars *p, *n;
         for (p=NULL, n=ed0; n; n=n->next)
             if (n->next==edp) p=n;
 
@@ -542,7 +542,7 @@ void paint_window(HWND hwnd) {
     }
 
     {
-        StyleItem *pSI = &MenuInfo.Scroller;
+        StyleItem *pSI = &gMenuInfo.Scroller;
         get_vscr_rect(&rw);
         MakeGradient_s(hdc, rw, pSI, pSI->bordered ?  pSI->borderWidth : 0);
     }
@@ -697,7 +697,7 @@ int set_currentdir(const char *file)
 }
 
 void init_edit(HWND hwnd) {
-    struct strl *e;
+    strl* e;
     int n = 0;
 
     makefonts();
@@ -1154,7 +1154,7 @@ LRESULT CALLBACK EditProc (HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam
     char *p,c;
     int i,k,n,o,r,f;
     POINT pt;
-    struct edvars *ev;
+    edvars* ev;
 
     r = 0;
 
@@ -1209,8 +1209,8 @@ LRESULT CALLBACK EditProc (HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam
 
     case BB_SETSTYLESTRUCT:
     {
-        StyleStruct *d = (StyleStruct *)wParam;
-        StyleStruct *s = (StyleStruct *)lParam;
+        bbcore::StyleStruct *d = (bbcore::StyleStruct *)wParam;
+        bbcore::StyleStruct *s = (bbcore::StyleStruct *)lParam;
         memset(d, 0, sizeof *d);
         memcpy(d, s, sizeof *d);
         break;
@@ -1465,8 +1465,8 @@ p0r:
         filemenu:
             if (ed0)
             {
-                struct edvars *e = ed0;
-                struct strl   *s = NULL;
+                edvars* e = ed0;
+                strl* s = NULL;
                 while (e)
                 {
                     char temp[MAX_PATH];
@@ -1591,8 +1591,8 @@ showf:
 
         case CMD_FILECHG:
         {
-            struct edvars *p=edp;
-            edp=(struct edvars*)lParam;
+            edvars* p=edp;
+            edp=(edvars*)lParam;
             settitle();
             set_update(hwnd);
             f_reload(0);
@@ -1605,7 +1605,7 @@ showf:
             i = LOWORD(wParam);
             if (i>=CMD_FILE && i< CMD_FILE_M)
             {
-                struct edvars *p=ed0;
+                edvars* p = ed0;
                 i-=CMD_FILE;
                 for (;i && p!=NULL; p=p->next,i--);
                 if (p) {
@@ -1778,8 +1778,8 @@ config:
         }
         unmark();
         if (wParam!=0) {
-            struct sea *s=(struct sea *)lParam;
-            struct edvars *ev0;
+            sea* s = (sea *)lParam;
+            edvars* ev0;
 
             for (ev0=edp;;) {
                 r=ed_search(s);

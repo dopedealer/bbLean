@@ -14,61 +14,22 @@ cmake_minimum_required (VERSION 3.21)
 set (PROJECT blackbox) 
 project (${PROJECT})
 
+
 set (INCLUDE_DIRS
     .
     ${BBLIB_INCLUDE_DIR}
-    ${BBCORE_INCLUDE_DIR}
+    ${BBCORE_INCLUDES}
     ) 
 
 set (LINK_DIRS
     ) 
 
 set (HEADERS
-    BB.h
-    BBApi.h
-    Blackbox.h
-    BBSendData.h
-    BBVWM.h
-    BImage.h
-    Desk.h
-    MessageManager.h
-    PluginManager.h
-    Settings.h
-    Stylestruct.h
-    Toolbar.h
-    Tray.h
-    win0x500.h
-    Workspaces.h
-    Menu/Menu.h
-    Menu/MenuMaker.h
 ) 
+
 set (SOURCES
     main.cpp
     BBApi.cpp
-    BBRoot.cpp
-    BBVWM.cpp
-    BImage.cpp
-    Blackbox.cpp
-    ConfigMenu.cpp
-    Desk.cpp
-    DesktopMenu.cpp
-    MessageManager.cpp
-    PluginManager.cpp
-    Settings.cpp
-    Toolbar.cpp
-    Tray.cpp
-    Utils.cpp
-    Workspaces.cpp
-    Menu/CommandItem.cpp
-    Menu/Contextmenu.cpp
-    Menu/Dragsource.cpp
-    Menu/Droptarget.cpp
-    Menu/FolderItem.cpp
-    Menu/Menu.cpp
-    Menu/MenuItem.cpp
-    Menu/MenuMaker.cpp
-    Menu/SpecialFolder.cpp
-    Menu/TitleItem.cpp
     resource.rc
 ) 
 
@@ -99,7 +60,7 @@ endif()
 
 # export include variables 
 set(BLACKBOX_INCLUDE_DIR ${CMAKE_CURRENT_LIST_DIR}/. CACHE INTERNAL "") 
-set(BLACKBOX_INCLUDES ${BBLIB_INCLUDE_DIR} ${BBCORE_INCLUDE_DIR} ${BLACKBOX_INCLUDE_DIR} CACHE INTERNAL "") 
+set(BLACKBOX_INCLUDES ${BBLIB_INCLUDE_DIR} ${BBCORE_INCLUDES} ${BLACKBOX_INCLUDE_DIR} CACHE INTERNAL "") 
 
 # export libs variables
 set(BLACKBOX_LIBRARY ${PROJECT} CACHE INTERNAL "") 
@@ -110,7 +71,7 @@ add_executable (${PROJECT} ${GUI_TYPE} ${HEADERS} ${SOURCES})
 target_link_directories(${PROJECT} PRIVATE ${LINK_DIRS})
 target_include_directories (${PROJECT} PRIVATE ${INCLUDE_DIRS} )
 target_link_libraries (${PROJECT} PRIVATE ${LIBS})
-target_compile_definitions(${PROJECT} PRIVATE __BBCORE__)
+target_compile_definitions(${PROJECT} PRIVATE __BBEXPORTS__)
 
 ## It is a dirty hack but existing compiled plugins do import functions
 ## directly from blackbox.exe. So we just cannot to remove it without breaking
@@ -131,7 +92,7 @@ elseif ( MINGW )
     # common options
     target_compile_options(${PROJECT} PRIVATE -Os -Wall -fno-strict-aliasing)
     # add latest c++ standard support
-    #target_compile_options(${PROJECT} PRIVATE -std=c++2b)
+    target_compile_options(${PROJECT} PRIVATE -std=c++2b)
     target_link_options(${PROJECT} PRIVATE $<$<CONFIG:RELEASE>:-s>)
 endif ()
 

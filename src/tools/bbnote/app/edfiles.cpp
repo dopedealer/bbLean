@@ -31,8 +31,8 @@ char unix_eol=0;
 #define BLN     2
 
 struct bufpage {
-    struct bufpage *next;
-    struct bufpage *prev;
+    bufpage* next;
+    bufpage* prev;
     int size;
     char cont[BLS];
 };
@@ -43,8 +43,8 @@ struct bufpage {
 static
 void ins_pg(void)
 {
-    struct bufpage *p;
-    p=(struct bufpage *)c_alloc(sizeof(struct bufpage));
+    bufpage* p;
+    p=(bufpage *)c_alloc(sizeof(bufpage));
     p->next=next_pg;
     p->prev=prev_pg;
     if (NULL!=prev_pg) prev_pg->next=p;
@@ -55,7 +55,7 @@ void ins_pg(void)
 static
 void del_pg(void)
 {
-    struct bufpage *p;
+    bufpage* p;
     p=next_pg;
     next_pg=p->next;
     prev_pg=p->prev;
@@ -125,9 +125,9 @@ void flush_all(void)
 }
 
 static
-struct bufpage *getstart(void)
+bufpage* getstart(void)
 {
-    struct bufpage *p,*n;
+    bufpage *p,*n;
     n=next_pg; p=prev_pg;
     for (;NULL!=p;p=(n=p)->prev);
     return n;
@@ -136,7 +136,7 @@ struct bufpage *getstart(void)
 static
 void fill_buffer(int o)
 {
-    struct bufpage *p,*n;
+    bufpage *p,*n;
     int i;
     i=o/BLS; buf_a=buf_e=i*BLS;
     p=NULL; n=getstart();
@@ -215,15 +215,16 @@ void insdelmem (int o, int len) {
 
 /*----------------------------------------------------------------------------*/
 void clear_buffer(void) {
-    struct bufpage *n=getstart();
+    bufpage* n = getstart();
     freelist(&n);
     next_pg = prev_pg = n;
     buf_a   = buf_e   = 0;
     u_reset();
 }
 
-struct edvars *new_buffer(void) {
-    return (struct edvars *)c_alloc(sizeof(struct edvars)-1+EDSZ);
+edvars* new_buffer(void)
+{
+    return (edvars *)c_alloc(sizeof(edvars)-1+EDSZ);
 }
 
 /*----------------------------------------------------------------------------*/
@@ -316,8 +317,8 @@ void inslist (void *a, void *e, void *i) {
         x=*(void**)e, *(void**)e=i, *(void**)i=x;
 }
 
-struct strl *newstr(const char *s) {
-    struct strl *b=(struct strl *)c_alloc(sizeof(struct strl)+strlen(s)+1);
+strl* newstr(const char *s) {
+    strl* b = (strl *)c_alloc(sizeof(strl)+strlen(s)+1);
     strcpy(b->str,s);
     return b;
 };
@@ -329,7 +330,8 @@ void freelist(void *p) {
     *(void**)p=q;
 }
 
-void appendstr(struct strl **p, const char *s) {
+void appendstr(strl** p, const char *s)
+{
     appendlist(p, newstr(s));
 }
 
@@ -427,8 +429,10 @@ r3:
 }
 
 
-void checkftime(HWND hwnd)  {
-    FILETIME t1; struct edvars *v;
+void checkftime(HWND hwnd)
+{
+    FILETIME t1;
+    struct edvars* v;
     for (v=ed0; NULL!=v; v=v->next)
         if (getftime_0(v->sfilename, &t1)
         && CompareFileTime(&v->sfiletime, &t1) != 0)
@@ -635,13 +639,13 @@ void addfile(void) {
 }
 
 void nextfile(void) {
-    struct edvars *p;
+    edvars* p;
     if (NULL!=(p=edp) && NULL!=(p=p->next))
         edp=p, settitle();
 }
 
-struct edvars *get_prev(void) {
-    struct edvars *p,*q;
+edvars* get_prev(void) {
+    edvars *p,*q;
     if (NULL!=(p=ed0) && edp!=p)
         for (;NULL!=(q=p->next); p=q)
             if (q==edp) return p;
@@ -650,12 +654,12 @@ struct edvars *get_prev(void) {
 
 
 void prevfile(void) {
-    struct edvars *p;
+    edvars* p;
     if (NULL!=(p=get_prev()))
         edp=p, settitle();
 }
 
-void insfile(struct edvars *p) {
+void insfile(edvars* p) {
     inslist(&ed0,edp,p);
     edp=p;
     settitle();
@@ -670,7 +674,7 @@ void NewFile(void)
 }
 
 void delfile(void) {
-    struct edvars *p;
+    edvars* p;
     if (NULL==(p=get_prev())) p=edp->next;
     clear_buffer();
     delitem(&ed0,edp);
@@ -683,7 +687,7 @@ void CloseFile(void) {
 }
 
 int LoadFile(LPSTR pszFileName) {
-    struct edvars *p;
+    edvars* p;
     char tmp[256];
 
     GetFullPathName(pszFileName,256,tmp,NULL);
@@ -743,7 +747,7 @@ void clean_up(void) {
 #ifdef BBOPT_MEMCHECK
     int n = m_alloc_size() - clip_s;
     if (ownd)
-        n-=sizeof(struct edvars)+EDSZ;
+        n-=sizeof(edvars)+EDSZ;
     if (0!=n) {
         char buf[40];
         sprintf(buf,"alloc = %d", n);
@@ -862,7 +866,7 @@ int QueryDiscard_1(HWND hwnd, int f) {
 
 int QueryDiscard(HWND hwnd, int f) {
     int r = 1;
-    struct edvars *p=edp;
+    edvars* p = edp;
     for (edp=ed0;edp!=NULL;edp=edp->next) {
         if (1 != (r=QueryDiscard_1(hwnd, f)))
             break;
@@ -884,7 +888,7 @@ int do_search (int msg, size_t param)
 {
     static HWND hwnd;
     static char s_dir, s_cont;
-    struct mark_s m;
+    mark_s m;
     int i; char c,tmpbuf[80],*p,rpltmp[80];
 
     switch(msg) {
@@ -933,7 +937,7 @@ int do_search (int msg, size_t param)
             s_dir=c;
             if (i) c|=4;
             {
-              struct sea sea;
+              sea sea;
               sea.from=fpos;
               sea.str=strcpy(tmpbuf,seabuf);
               sea.sf=c|seamodeflg;

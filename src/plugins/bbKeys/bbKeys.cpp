@@ -49,7 +49,7 @@ char rcpath[MAX_PATH];
 
 struct HotkeyType
 {
-    struct HotkeyType *next;
+    HotkeyType* next;
     unsigned id;
     unsigned linenum;
     unsigned vkey, modifier, is_ExecCommand;
@@ -181,7 +181,8 @@ void getparam(char *from, const char *token, char *to, bool from_right)
 
 unsigned getvkey (const char *v)
 {
-    static const struct vkTable { const char* key; int vKey; } vkTable[] =
+    static const struct vkTableKey { const char* key; int vKey; }
+    vkTable[] =
     {
         {"F1", VK_F1},
         {"F2", VK_F2},
@@ -245,7 +246,7 @@ unsigned getvkey (const char *v)
         { NULL, 0 }
     };
 
-    const struct vkTable *t = vkTable;
+    const vkTableKey* t = vkTable;
     if (0 == v[1]) {
         unsigned c = (unsigned char)v[0];
         if ((c >= 'A' && c <= 'Z') || (c >= '0' && c <= '9'))

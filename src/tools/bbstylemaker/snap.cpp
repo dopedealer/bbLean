@@ -20,6 +20,8 @@
  ============================================================================
 */
 
+#include "snap.h"
+
 /* SNAP WINDOWS CODE */
 
 int g_snap_dist = 7;
@@ -36,8 +38,8 @@ struct edges {
     };
 
 struct snap_info {
-    struct edges *h;
-    struct edges *v;
+    edges* h;
+    edges* v;
     bool sizing;
     bool same_level;
     int pad;
@@ -47,14 +49,14 @@ struct snap_info {
 
 
 // Local fuctions
-void snap_to_grid(struct edges *h, struct edges *v, bool sizing, int grid, int pad);
-void snap_to_edge(struct edges *h, struct edges *v, bool sizing, bool same_level, int pad);
+void snap_to_grid(edges* h, edges* v, bool sizing, int grid, int pad);
+void snap_to_edge(edges* h, edges* v, bool sizing, bool same_level, int pad);
 
-typedef int button_enum_proc_typ(struct button *bp, void *param);
+typedef int button_enum_proc_typ(button* bp, void *param);
 
-int snap_enum_proc(struct button *bp, void *param)
+int snap_enum_proc(button* bp, void *param)
 {
-    struct snap_info *si = (struct snap_info *)param;
+    snap_info* si = (snap_info *)param;
     if (bp != si->self && 0 == (bp->f & BN_HID))// && bp->typ == BN_BTN)
     {
         int x, y, w, h;
@@ -75,9 +77,9 @@ int snap_enum_proc(struct button *bp, void *param)
     return TRUE;
 }   
 
-void enum_buttons(struct dlg *dlg, button_enum_proc_typ *fn, void *param)
+void enum_buttons(dlg* dlg, button_enum_proc_typ *fn, void *param)
 {
-    struct button *bp;
+    button* bp{};
     for (bp = dlg->bn_ptr; bp; bp = bp->next) {
         if (0 == fn(bp, param))
             break;
@@ -88,10 +90,10 @@ void enum_buttons(struct dlg *dlg, button_enum_proc_typ *fn, void *param)
 //snap_windows
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-void snap_button(struct dlg *dlg, struct button *bp, bool sizing, int *content)
+void snap_button(dlg* dlg, button* bp, bool sizing, int *content)
 {
-    struct edges h;
-    struct edges v;
+    edges h;
+    edges v;
     void *parent = NULL;
 
     int snapdist = g_snap_dist;
@@ -113,7 +115,7 @@ void snap_button(struct dlg *dlg, struct button *bp, bool sizing, int *content)
     }
     else
     {
-        struct snap_info si;
+        snap_info si;
 
         si.h = &h;
         si.v = &v;
@@ -173,9 +175,10 @@ void snap_button(struct dlg *dlg, struct button *bp, bool sizing, int *content)
 
 //*****************************************************************************
 
-void snap_to_grid(struct edges *h, struct edges *v, bool sizing, int grid, int pad)
+void snap_to_grid(edges* h, edges* v, bool sizing, int grid, int pad)
 {
-    struct edges *g; int o, d;
+    edges* g;
+    int o, d;
     for (g = h;;g = v)
     {
         if (sizing)
@@ -198,9 +201,10 @@ void snap_to_grid(struct edges *h, struct edges *v, bool sizing, int grid, int p
 }
 
 //*****************************************************************************
-void snap_to_edge(struct edges *h, struct edges *v, bool sizing, bool same_level, int pad)
+void snap_to_edge(edges* h, edges* v, bool sizing, bool same_level, int pad)
 {
-    int o, d, n; struct edges *t;
+    int o, d, n;
+    edges* t;
     h->d = h->def; v->d = v->def;
     for (n = 2;;) // v- and h-edge
     {

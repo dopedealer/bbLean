@@ -20,11 +20,18 @@
  ============================================================================
 */
 
+#ifndef _BBSTYLEMAKER_H
+#define _BBSTYLEMAKER_H
+
 #define APPNAME "bbStyleMaker"
 #define APPNAME_VER "bbStyleMaker 1.31"
 
-#include "bbroot.h"
-#include "bbrc.h"
+
+#include <bbroot.h>
+#include <bbrc.h>
+#include <Settings.h>
+#include <Stylestruct.h>
+#include <BImage.h>
 
 // ------------------------------------------------
 typedef struct NStyleItem
@@ -133,7 +140,7 @@ typedef struct NStyleStruct
     bool menuTitleLabel;
     bool menuNoTitle;
 
-    struct rootinfo rootInfo;
+    ::rootinfo rootInfo;
     NStyleItem rootStyle;
     bool is_070;
 
@@ -141,18 +148,20 @@ typedef struct NStyleStruct
 
 // ------------------------------------------------
 extern char rcpath[];
-extern StyleStruct gui_style;
+extern bbcore::StyleStruct gui_style;
 extern const char *style_info_keys[];
 extern char *style_info[5];
 extern bool write_070;
 #define STYLEITEM_VERSION 3
-void parse_font(StyleItem *si, const char *font);
 
 // ------------------------------------------------
 extern NStyleStruct work_style;
-extern struct NStyleItem *P0, *B0;
+extern NStyleItem *P0, *B0;
 extern bool P0_dis;
-extern struct NStyleItem Palette[10];
+extern NStyleItem Palette[10];
+
+// TODO: remove global
+extern bbcore::SettingsCommon* gSettings;
 
 /*----------------------------------------------------------------------------*/
 
@@ -164,8 +173,8 @@ int choose_font(HWND hwnd, NStyleItem *pSI);
 
 int is_style_old(const char *style);
 int is_style_changed(void);
-int readstyle(const char *fname, StyleStruct*, int root);
-int writestyle(const char *fname, StyleStruct*, char **style_info, int flags);
+int readstyle(const char *fname, bbcore::StyleStruct*, int root);
+int writestyle(const char *fname, bbcore::StyleStruct*, char **style_info, int flags);
 void bb_rcreader_init(void);
 
 int Settings_ItemSize(int i);
@@ -206,3 +215,4 @@ RGBREF _RGBtoXYZ(RGBREF lRGBColor);
 
 /*----------------------------------------------------------------------------*/
 
+#endif //!_BBSTYLEMAKER_H

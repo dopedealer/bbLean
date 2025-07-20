@@ -20,6 +20,8 @@
   ========================================================================== */
 
 #include "BB.h"
+//#include <windows.h>
+//#include "bbversion.h"
 
 #define RT_MANIFEST 24
 #define CREATEPROCESS_MANIFEST_RESOURCE_ID  1

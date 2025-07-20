@@ -29,13 +29,17 @@
 #pragma warning(disable: 4244) // convert int to short
 #endif
 
+struct bufpage;
+struct undo_s;
+
 /*----------------------------------------------------------------------------*/
 
-struct edvars {
-    struct edvars *next;
+struct edvars
+{
+    edvars* next;
 
-    struct bufpage *sprev_pg;
-    struct bufpage *snext_pg;
+    bufpage* sprev_pg;
+    bufpage* snext_pg;
 
     int  sbuf_a,sbuf_e;
 
@@ -45,7 +49,7 @@ struct edvars {
 
     int scurx,scury,sclft,slmax;
 
-    struct undo_s *sundo_l,*sredo_l;
+    undo_s *sundo_l, *sredo_l;
 
     int  *sma,      *sme;
     int  *smxa,     *smxe;
@@ -69,7 +73,7 @@ struct edvars {
 #define changed()  (chg!=0)
 
 
-extern struct edvars *ed0,*edp,*new_buffer(void);
+extern edvars *ed0,*edp,*new_buffer(void);
 
 #define buffer  (edp->sbuffer)
 #define next_pg (edp->snext_pg)
@@ -131,7 +135,7 @@ void inslist  (void *a,void *e, void* i);
 
 void nextfile(void);
 void prevfile(void);
-void insfile(struct edvars*);
+void insfile(edvars*);
 
 void NewFile(void);
 void CloseFile(void);
@@ -201,12 +205,12 @@ struct mark_s {
     int xa,xe,x;
     char lf;
 };
-int getmark(struct mark_s *m);
+int getmark(mark_s* m);
 
 void ed_cmd(int cmd,...);
 
 struct sea { int from; char *str; int sf; int a; int e; };
-int  ed_search(struct sea *);
+int  ed_search(sea *);
 
 int  movpage(int);
 void domarking(int);
@@ -268,7 +272,7 @@ struct winvars {
     char _winid;
 };
 
-extern struct winvars editw,ow1,*winp;
+extern winvars editw,ow1,*winp;
 
 #define cwx (winp->_cwx)
 #define cwy (winp->_cwy)
@@ -327,7 +331,7 @@ extern int My_CaretSize;
 
 int rcomp (unsigned char *in, unsigned char *out, int omax, int cf);
 struct rmres { int p; int w; };
-int rmatch(int s, int a, int e, unsigned char *m, struct rmres *m_ptr, int (*get)(int));
+int rmatch(int s, int a, int e, unsigned char *m, rmres* m_ptr, int (*get)(int));
 
 #define OW_CLEAR 1001
 #define OW_PRINT 1002
@@ -355,8 +359,6 @@ extern struct proj {
 } proj;
 
 
-void init_drop(HWND);
-void exit_drop(void);
 int  do_drag(char *);
 void do_drop(char *, int);
 
@@ -368,7 +370,7 @@ void set_update(HWND);
 extern HWND seaDlg;
 
 extern struct efile {
-    struct efile *next;
+    efile* next;
     int i[4];
     char name[256];
 
@@ -392,7 +394,7 @@ extern char
 extern int tabs;
 
 #ifndef STRL
-struct strl { struct strl *next; char str[1]; };
+struct strl { strl* next; char str[1]; };
 #define STRL
 #endif
 
@@ -404,14 +406,14 @@ extern struct strl
     *lastproj
     ;
 
-struct strl *newstr(const char *s);
+strl* newstr(const char *s);
 void freelist(void *p);
-void appendstr(struct strl **p, const char *s);
+void appendstr(strl** p, const char *s);
 void clean_up(void);
 void openproject(char *);
 void manage_prj(void);
 
-char* projstrpath(struct strl *p);
+char* projstrpath(strl* p);
 
 void setsize(HWND);
 

@@ -249,7 +249,7 @@ LRESULT CALLBACK MsgWndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 }
 
 //===========================================================================
-void ReadStyleItem(const char * style, StyleItem *si, const char *rckey)
+void readStyleItem(const char * style, StyleItem *si, const char *rckey)
 {
     char buffer[256], temp[256];
     const char *p;
@@ -301,7 +301,7 @@ void *mGetSettingPtr(int id)
 
         default: return NULL;
     }
-    ReadStyleItem(style, &SI, key);
+    readStyleItem(style, &SI, key);
     return &SI;
 }
 
@@ -364,7 +364,7 @@ static int colors_changed;
 //===========================================================================
 struct colors_style { int id; COLORREF cr; };
 
-void set_gradient_colors(struct colors_style *cs, StyleItem *s1, StyleItem *s2)
+void set_gradient_colors(colors_style* cs, StyleItem *s1, StyleItem *s2)
 {
     if (s1->validated & VALID_TEXTURE)
     {
@@ -380,7 +380,7 @@ COLORREF get_flat_color(StyleItem *s)
     return s->type == B_SOLID ? s->Color : mixcolors(s->Color, s->ColorTo, 128);
 }
 
-void set_flat_color(struct colors_style *cs, StyleItem *s1)
+void set_flat_color(colors_style* cs, StyleItem *s1)
 {
     if (s1->validated & VALID_TEXTURE)
     {
@@ -401,7 +401,7 @@ void get_style_colors (COLORREF *cr_buffer)
 //    StyleItem window_focus_handle   = *(StyleItem*)pGetSettingPtr(SN_WINFOCUS_HANDLE  );
 //    StyleItem window_focus_grip     = *(StyleItem*)pGetSettingPtr(SN_WINFOCUS_GRIP    );
 
-    static struct colors_style colors_style [] =
+    static colors_style colors_style [] =
     {
         { COLOR_ACTIVECAPTION           , 0 },  // 0
         { COLOR_GRADIENTACTIVECAPTION   , 0 },  
@@ -641,7 +641,7 @@ struct color_info {
 
 DWORD WINAPI  mSetSysColors_thread(void *pv)
 {
-    struct color_info *ci = (struct color_info*)pv;
+    color_info* ci = (color_info*)pv;
     HMODULE hDll = ci->hDll;
     dbg_printf("enter thread %x", hDll);
 
@@ -659,9 +659,9 @@ BOOL WINAPI mSetSysColors(
     CONST COLORREF *lpaRgbValues    // address of array of RGB values  
    ) {
 
-    struct color_info *ci;
+    color_info* ci;
     DWORD threadid;
-    ci = (struct color_info*)malloc(sizeof *ci);
+    ci = (color_info*)malloc(sizeof *ci);
     ci->cElements = cElements;
     memcpy(ci->Elements, lpaElements, cElements * sizeof lpaElements[0]);
     memcpy(ci->Values, lpaRgbValues, cElements * sizeof lpaRgbValues[0]);

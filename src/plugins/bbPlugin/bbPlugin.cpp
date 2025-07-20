@@ -150,7 +150,7 @@ struct _menuitemnop : _menuitem
 //-----------------------------------------------------
 struct _menuitemsub : _menuitem
 {
-    struct n_menu *sub;
+    n_menu* sub;
     _menuitemsub(n_menu *m, const char *_text, n_menu* _sub)
         : _menuitem(m, _text, i_sub)
     {
@@ -723,7 +723,7 @@ int BBP_get_placement(const char* place_string)
 //===========================================================================
 #ifndef BBPLUGIN_NOMENU
 
-static char *make_key(char *buffer, struct plugin_info *PI, const char *rcs)
+static char *make_key(char *buffer, plugin_info* PI, const char *rcs)
 {
     const char *s;
     char *d = buffer;
@@ -734,28 +734,28 @@ static char *make_key(char *buffer, struct plugin_info *PI, const char *rcs)
     return buffer;
 }
 
-void BBP_write_string(struct plugin_info *PI, const char *rcs, const char *val)
+void BBP_write_string(plugin_info* PI, const char *rcs, const char *val)
 {
     char buffer[256];
     if (PI->rc_key)
         WriteString(PI->rcpath, make_key(buffer, PI, rcs), val);
 }
 
-void BBP_write_int(struct plugin_info *PI, const char *rcs, int val)
+void BBP_write_int(plugin_info* PI, const char *rcs, int val)
 {
     char buffer[256];
     if (PI->rc_key)
         WriteInt(PI->rcpath, make_key(buffer, PI, rcs), val);
 }
 
-void BBP_write_bool(struct plugin_info *PI, const char *rcs, bool val)
+void BBP_write_bool(plugin_info* PI, const char *rcs, bool val)
 {
     char buffer[256];
     if (PI->rc_key)
         WriteBool(PI->rcpath, make_key(buffer, PI, rcs), val);
 }
 
-const char* BBP_read_string(struct plugin_info *PI, char *dest, const char *rcs, const char *def)
+const char* BBP_read_string(plugin_info* PI, char *dest, const char *rcs, const char *def)
 {
     char buffer[256];
     const char *p = ReadString(PI->rcpath, make_key(buffer, PI, rcs), def);
@@ -763,33 +763,33 @@ const char* BBP_read_string(struct plugin_info *PI, char *dest, const char *rcs,
     return p;
 }
 
-int BBP_read_int(struct plugin_info *PI, const char *rcs, int def)
+int BBP_read_int(plugin_info* PI, const char *rcs, int def)
 {
     char buffer[256];
     return ReadInt(PI->rcpath, make_key(buffer, PI, rcs), def);
 }
 
-bool BBP_read_bool(struct plugin_info *PI, const char *rcs, bool def)
+bool BBP_read_bool(plugin_info* PI, const char *rcs, bool def)
 {
     char buffer[256];
     return ReadBool(PI->rcpath, make_key(buffer, PI, rcs), def);
 }
 
 
-const char * BBP_read_value(struct plugin_info *PI, const char *rcs, LONG *pPos)
+const char * BBP_read_value(plugin_info* PI, const char *rcs, LONG *pPos)
 {
     char buffer[256];
     return ReadValue(PI->rcpath, make_key(buffer, PI, rcs), pPos);
 }
 
-void BBP_rename_setting(struct plugin_info *PI, const char *rcs, const char *rcnew)
+void BBP_rename_setting(plugin_info* PI, const char *rcs, const char *rcnew)
 {
     char buffer1[256], buffer2[256];
     RenameSetting(PI->rcpath, make_key(buffer1, PI, rcs),
         rcnew ? make_key(buffer2, PI, rcnew) : NULL);
 }
 
-void write_rc(struct plugin_info *PI, void *v)
+void write_rc(plugin_info* PI, void *v)
 {
     if (NULL == PI->rc_key)
         return;
@@ -837,7 +837,7 @@ void write_rc(struct plugin_info *PI, void *v)
 
 //===========================================================================
 
-bool BBP_read_window_modes(struct plugin_info *PI, const char *rcfile)
+bool BBP_read_window_modes(plugin_info* PI, const char *rcfile)
 {
     if (0 == PI->rcpath[0])
         BBP_get_rcpath(PI->rcpath, PI->hInstance, rcfile);
@@ -868,7 +868,7 @@ bool BBP_read_window_modes(struct plugin_info *PI, const char *rcfile)
     return true;
 }
 
-void BBP_write_window_modes(struct plugin_info *PI)
+void BBP_write_window_modes(plugin_info* PI)
 {
     write_rc(PI, &PI->xpos);
     write_rc(PI, &PI->useSlit);
@@ -887,7 +887,7 @@ void BBP_write_window_modes(struct plugin_info *PI)
 
 //===========================================================================
 
-n_menu * BBP_n_placementmenu(struct plugin_info *PI, n_menu *m)
+n_menu * BBP_n_placementmenu(plugin_info* PI, n_menu *m)
 {
     n_menu *P; int n, last;
     P = n_submenu(m, "Placement");
@@ -904,7 +904,7 @@ n_menu * BBP_n_placementmenu(struct plugin_info *PI, n_menu *m)
     return P;
 }
 
-n_menu * BBP_n_orientmenu(struct plugin_info *PI, n_menu *m)
+n_menu * BBP_n_orientmenu(plugin_info* PI, n_menu *m)
 {
     n_menu *o = n_submenu(m, "Orientation");
     n_menuitem_bol(o, "Vertical", "orientation vertical",  false != PI->orient_vertical);
@@ -912,7 +912,7 @@ n_menu * BBP_n_orientmenu(struct plugin_info *PI, n_menu *m)
     return o;
 }
 
-void BBP_n_insertmenu(struct plugin_info *PI, n_menu *m)
+void BBP_n_insertmenu(plugin_info* PI, n_menu *m)
 {
     if (PI->hSlit)
     {
@@ -1034,7 +1034,7 @@ void BBP_edit_file(const char *path)
 #ifndef BBPLUGIN_NOMENU
 //===========================================================================
 
-bool BBP_broam_bool(struct plugin_info *PI, const char *temp, const char *key, bool *ip)
+bool BBP_broam_bool(plugin_info* PI, const char *temp, const char *key, bool *ip)
 {
     int n = strlen(key);
     const char *s;
@@ -1056,7 +1056,7 @@ bool BBP_broam_bool(struct plugin_info *PI, const char *temp, const char *key, b
     return true;
 }
 
-bool BBP_broam_int(struct plugin_info *PI, const char *temp, const char *key, int *ip)
+bool BBP_broam_int(plugin_info* PI, const char *temp, const char *key, int *ip)
 {
     int n = strlen(key);
     const char *s;
@@ -1074,7 +1074,7 @@ bool BBP_broam_int(struct plugin_info *PI, const char *temp, const char *key, in
     return true;
 }
 
-bool BBP_broam_string(struct plugin_info *PI, const char *temp, const char *key, const char **ps)
+bool BBP_broam_string(plugin_info* PI, const char *temp, const char *key, const char **ps)
 {
     int n = strlen(key);
     const char *s;
@@ -1092,7 +1092,7 @@ bool BBP_broam_string(struct plugin_info *PI, const char *temp, const char *key,
     return true;
 }
 
-int BBP_handle_broam(struct plugin_info *PI, const char *temp)
+int BBP_handle_broam(plugin_info* PI, const char *temp)
 {
     int v;
     const char *s;
@@ -1486,18 +1486,18 @@ pass_result:
 //===========================================================================
 struct class_info
 {
-    struct class_info *next;
+    class_info* next;
     char name[48];
     HINSTANCE hInstance;
     int refc;
 };
 
 
-static struct class_info *CI;
+static class_info* CI;
 
-static struct class_info **find_class(const char *name)
+static class_info** find_class(const char *name)
 {
-    struct class_info **pp;
+    class_info** pp;
     for (pp = &CI; *pp; pp = &(*pp)->next)
         if (0 == stricmp((*pp)->name, name)) break;
     return pp;
@@ -1509,7 +1509,7 @@ static struct class_info **find_class(const char *name)
 
 static int class_info_register(const char *class_name, HINSTANCE hInstance)
 {
-    struct class_info *p = *find_class(class_name);
+    class_info* p = *find_class(class_name);
     if (NULL == p)
     {
         WNDCLASS wc;
@@ -1528,7 +1528,7 @@ static int class_info_register(const char *class_name, HINSTANCE hInstance)
             return 0;
         }
 
-        p = (struct class_info*)m_alloc(sizeof(struct class_info));
+        p = (class_info*)m_alloc(sizeof(class_info));
         p->next = CI;
         CI = p;
         p->refc = 0;
@@ -1543,7 +1543,7 @@ static int class_info_register(const char *class_name, HINSTANCE hInstance)
 
 static void class_info_decref(const char *name)
 {
-    struct class_info *p, **pp = find_class(name);
+    class_info *p, **pp = find_class(name);
     if (NULL != (p = *pp) && --p->refc <= 0)
     {
         UnregisterClass(p->name, p->hInstance);

@@ -5,7 +5,8 @@ project (${PROJECT})
 
 set (INCLUDE_DIRS
     .
-    ${BLACKBOX_INCLUDES}
+    ${BBLIB_INCLUDE_DIR}
+    ${BBCORE_INCLUDES}
     ) 
 
 set (LINK_DIRS
@@ -14,18 +15,18 @@ set (LINK_DIRS
 
 set (HEADERS
     bbPlugin.h
-    drawico.h
     tooltips.h
     ) 
+
 set (SOURCES
     bbPlugin.cpp
-    drawico.cpp
     sysmenu.cpp
     tooltips.cpp
     ) 
 
 set (LIBS
-    ${BLACKBOX_LIBRARIES}
+    ${BBLIB_LIBRARY}
+    ${BBCORE_LIBRARY}
     )
 
 if (WIN32)
@@ -38,6 +39,10 @@ source_group ("Source Files" FILES ${SOURCES})
 if(UNIX AND (CMAKE_COMPILER_IS_GNUCC OR CMAKE_COMPILER_IS_GNUCXX) )
   list(APPEND LIBS dl) 
 endif()
+
+# export variables
+set(BBPLUGIN_INCLUDE_DIR ${CMAKE_CURRENT_LIST_DIR}/. CACHE INTERNAL "") 
+set(BBPLUGIN_LIBRARY ${PROJECT} CACHE INTERNAL "") 
 
 # library 
 add_library (${PROJECT} STATIC ${HEADERS} ${SOURCES})
@@ -60,7 +65,7 @@ elseif ( MINGW )
     # common options
     target_compile_options(${PROJECT} PRIVATE -Os -Wall -fno-strict-aliasing)
     # add latest c++ standard support
-    #target_compile_options(${PROJECT} PRIVATE -std=c++2b)
+    target_compile_options(${PROJECT} PRIVATE -std=c++2b)
     target_link_options(${PROJECT} PRIVATE $<$<CONFIG:RELEASE>:-s>)
 endif ()
 

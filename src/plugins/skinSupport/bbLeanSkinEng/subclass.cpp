@@ -36,28 +36,14 @@
 
 //===========================================================================
 void get_workarea(HWND hwnd, RECT *w, RECT *s)
-{
-    static HMONITOR (WINAPI *pMonitorFromWindow)(HWND hwnd, DWORD dwFlags);
-    static BOOL     (WINAPI *pGetMonitorInfoA)(HMONITOR hMonitor, LPMONITORINFO lpmi);
-
-    if (NULL == pMonitorFromWindow)
+{ 
+    MONITORINFO mi; mi.cbSize = sizeof(mi);
+    HMONITOR hMon = ::MonitorFromWindow(hwnd, MONITOR_DEFAULTTONEAREST);
+    if (hMon && ::GetMonitorInfoA(hMon, &mi))
     {
-        HMODULE hUserDll = GetModuleHandle("USER32.DLL");
-        *(FARPROC*)&pMonitorFromWindow = GetProcAddress(hUserDll, "MonitorFromWindow" );
-        *(FARPROC*)&pGetMonitorInfoA = GetProcAddress(hUserDll, "GetMonitorInfoA"   );
-        if (NULL == pMonitorFromWindow) *(DWORD*)&pMonitorFromWindow = 1;
-    }
-
-    if (*(DWORD*)&pMonitorFromWindow > 1)
-    {
-        MONITORINFO mi; mi.cbSize = sizeof(mi);
-        HMONITOR hMon = pMonitorFromWindow(hwnd, MONITOR_DEFAULTTONEAREST);
-        if (hMon && pGetMonitorInfoA(hMon, &mi))
-        {
-            if (w) *w = mi.rcWork;
-            if (s) *s = mi.rcMonitor;
-            return;
-        }
+        if (w) *w = mi.rcWork;
+        if (s) *s = mi.rcMonitor;
+        return;
     }
 
     if (w)
@@ -274,7 +260,7 @@ void exec_button_action(WinInfo *WI, int n)
             if (0 == (WI->style & WS_CHILD))
             {
                 COPYDATASTRUCT cds;
-                struct sysmenu_info s;
+                sysmenu_info s;
                 int b = mSkin.F.Title.borderWidth;
 
                 GetWindowRect(hwnd, &s.rect);
@@ -314,7 +300,7 @@ void PutGradient(WinInfo *WI, HDC hdc, RECT *rc, GradientItem *pG)
 {
     if (pG->parentRelative) {
         if (pG->borderWidth)
-            CreateBorder(hdc, rc, pG->borderColor, pG->borderWidth);
+            bbcore::createBorder(hdc, rc, pG->borderColor, pG->borderWidth);
         return;
     }
 
@@ -351,7 +337,7 @@ void PutGradient(WinInfo *WI, HDC hdc, RECT *rc, GradientItem *pG)
         other = SelectObject(WI->buf, bmp);
 
         copy_GradientItem(&si, pG);
-        MakeStyleGradient(WI->buf, &r, &si, true);
+        bbcore::makeStyleGradient(WI->buf, &r, &si, true);
     }
 
     BitBlt(hdc, rc->left, rc->top, width, height, WI->buf, 0, 0, SRCCOPY);
@@ -431,7 +417,7 @@ int get_window_icon(HWND hwnd, HICON *picon)
 
 //-----------------------------------------------------------------
 
-void PaintAll(struct WinInfo* WI)
+void PaintAll(WinInfo* WI)
 {
     int left    = WI->S.HiddenSide;
     int width   = WI->S.width;
@@ -497,7 +483,7 @@ void PaintAll(struct WinInfo* WI)
     {
         bool state;
         int b;
-        struct button_set *p;
+        button_set* p;
 
         b = mSkin.button_string[i] - '0';
         switch (b) {
@@ -861,7 +847,7 @@ void detach_skinner(WinInfo *WI)
 
 //-----------------------------------------------------------------
 // get button-id from mousepoint
-int get_button (struct WinInfo *WI, int x, int y)
+int get_button (WinInfo* WI, int x, int y)
 {
     int button_top = WI->S.HiddenTop + mSkin.buttonMargin;
     int margin = WI->S.HiddenSide + mSkin.buttonMargin;
@@ -895,7 +881,7 @@ int get_button (struct WinInfo *WI, int x, int y)
     else
     {
         int i, c = WI->button_count;
-        struct button_set *p = WI->button_set;
+        button_set* p = WI->button_set;
         for (i = 0; i < c; i++, p++)
             if (x >= p->pos && x < p->pos + mSkin.buttonSize)
                 break;
@@ -961,13 +947,6 @@ int get_caption_click(WPARAM wParam, char *pCA)
         return pCA[3];
     return pCA[0];
 }
-
-//-----------------------------------------------------------------
-//#define LOGMSGS
-
-#ifdef LOGMSGS
-#include "../winmsgs.cpp"
-#endif
 
 //===========================================================================
 

@@ -1,4 +1,6 @@
-#include "bsetshell.cpp"
+
+#include <windows.h>
+#include "bsetshell.h"
 
 1 ICON "Bsetshell.ico"
 

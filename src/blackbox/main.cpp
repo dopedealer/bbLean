@@ -7,6 +7,6 @@ int WINAPI WinMain(
     LPSTR lpCmdLine,
     int nShowCmd)
 {
-    Blackbox blackbox(hInstance, lpCmdLine);
+    bbcore::Blackbox blackbox(hInstance, lpCmdLine);
     return blackbox.run();
 }

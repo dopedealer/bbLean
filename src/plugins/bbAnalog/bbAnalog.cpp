@@ -96,7 +96,7 @@ COLORREF borderColor;
 
 void GetStyleSettings();
 
-struct plugin_info *g_PI;
+plugin_info* g_PI;
 
 //===========================================================================
 
@@ -143,7 +143,7 @@ struct bbanalog_plugin : plugin_info
     ~bbanalog_plugin()
     {
         BBP_Exit_Plugin(this);
-        struct plugin_info **pp;
+        plugin_info** pp;
         for (pp = &g_PI; *pp; pp = &(*pp)->next)
         {
             if (this == *pp) {
@@ -156,10 +156,10 @@ struct bbanalog_plugin : plugin_info
 
 //===========================================================================
 
-struct plugin_info *start_plugin(HINSTANCE hPluginInstance, HWND hSlit)
+plugin_info* start_plugin(HINSTANCE hPluginInstance, HWND hSlit)
 {
-    struct plugin_info *p;
-    struct bbanalog_plugin *PI;
+    plugin_info* p;
+    bbanalog_plugin* PI;
     int n;
 
     if (NULL == BBhwnd)
@@ -342,7 +342,7 @@ void bbanalog_plugin::draw_clock (HDC hdc)
         HGDIOBJ otherfont = SelectObject(hdc, CreateStyleFont(&myStyleItem));
 
         time_t systemTime; time(&systemTime);
-        struct tm *ltm = localtime(&systemTime);
+        tm* ltm = localtime(&systemTime);
 
         char currentDate[80], *p;
         strftime(currentDate, sizeof currentDate, date_format, ltm);

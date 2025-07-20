@@ -22,31 +22,10 @@
 
 // TinyDropTarg.cpp
 
-#include <shlobj.h>
-#include <shellapi.h>
+#include "TinyDropTarg.h" 
+#include <BBApi.h>
 
-class TinyDropTarget : public IDropTarget
-{
-public:
-    TinyDropTarget(HWND hwnd);
-    virtual ~TinyDropTarget();
-    // IUnknown methods
-    STDMETHOD(QueryInterface)(REFIID iid, void** ppvObject);
-    STDMETHOD_(ULONG, AddRef)();
-    STDMETHOD_(ULONG, Release)();
-    // IDropTarget methods
-    STDMETHOD(DragEnter)(LPDATAOBJECT pDataObject, DWORD grfKeyState, POINTL pt, LPDWORD pdwEffect);
-    STDMETHOD(DragOver)(DWORD grfKeyState, POINTL pt, LPDWORD pdwEffect);
-    STDMETHOD(DragLeave)();
-    STDMETHOD(Drop)(LPDATAOBJECT pDataObject, DWORD grfKeyState, POINTL pt, LPDWORD pdwEffect);
-private:
-    DWORD m_dwRef;
-    bool valid_data;
-public:
-    HWND m_hwnd;
-    HWND task_over;
-    void handle_task_timer(void);
-};
+#include "bbLeanBar.h"
 
 TinyDropTarget::TinyDropTarget(HWND hwnd)
 {
@@ -191,7 +170,7 @@ void TinyDropTarget::handle_task_timer(void)
 // the interface
 
 // call after the bar window is created with it's hwnd
-class TinyDropTarget *init_drop_targ(HWND hwnd)
+TinyDropTarget *init_drop_targ(HWND hwnd)
 {
     class TinyDropTarget *m_TinyDropTarget = new TinyDropTarget(hwnd);
     RegisterDragDrop(hwnd, m_TinyDropTarget);
@@ -199,14 +178,14 @@ class TinyDropTarget *init_drop_targ(HWND hwnd)
 }
 
 // call before the bar window is destroyed
-void exit_drop_targ (class TinyDropTarget *m_TinyDropTarget)
+void exit_drop_targ (TinyDropTarget* m_TinyDropTarget)
 {
     RevokeDragDrop(m_TinyDropTarget->m_hwnd);
     m_TinyDropTarget->Release();
 }
 
 // call on WM_TIMER / TASK_RISE_TIMER
-void handle_task_timer(class TinyDropTarget *m_TinyDropTarget)
+void handle_task_timer(TinyDropTarget* m_TinyDropTarget)
 {
     m_TinyDropTarget->handle_task_timer();
 }

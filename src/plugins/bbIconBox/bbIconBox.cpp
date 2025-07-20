@@ -25,6 +25,9 @@
 #include "bbIconBox.h"
 #include "bbversion.h"
 
+// forward declarations
+struct icon_box;
+
 const char szVersion     [] = "bbIconBox " BBLEAN_VERSION;
 const char szAppName     [] = "bbIconBox";
 const char szInfoVersion [] = BBLEAN_VERSION;
@@ -55,7 +58,7 @@ LPCSTR pluginInfo(int field)
 // Global variables
 
 HWND BBhwnd;    // Blackbox window handle
-struct icon_box *g_PI;
+icon_box* g_PI;
 int currentDesk;
 int BBVersion;
 int box_count;
@@ -219,7 +222,7 @@ struct icon_box : public plugin_info
     HBITMAP my_bmp;
 
     struct rc { const char *key; int m; void *v; void *d; };
-    struct rc * m_rc;
+    rc* m_rc;
 
     #define M_BOL 1
     #define M_INT 2
@@ -230,7 +233,7 @@ struct icon_box : public plugin_info
     {
         BBP_clear(this, FIRSTITEM);
 
-        struct rc tmp_rc [] = {
+        rc tmp_rc[] = {
         { "path",             M_STR, my_Folder.path    , (void*)0     },
         { "title",            M_STR, m_title           , (void*)0     },
         { "rows",             M_INT, &rows             , (void*)4     },
@@ -244,7 +247,7 @@ struct icon_box : public plugin_info
         { NULL, 0, NULL, 0 }
         };
 
-        m_rc = (struct rc*)m_alloc(sizeof tmp_rc);
+        m_rc = (rc*)m_alloc(sizeof tmp_rc);
         memcpy(m_rc, tmp_rc, sizeof tmp_rc);
 
         icon_box **pp = &g_PI;
@@ -320,15 +323,15 @@ icon_box::~icon_box()
         DeleteObject(my_bmp);
 
     m_free(m_rc);
-    struct icon_box **p = &g_PI; int n = 0;
+    icon_box** p = &g_PI; int n = 0;
     while (*p)
     {
         if (this == *p)
-            *p = (struct icon_box*)(*p)->next;
+            *p = (icon_box*)(*p)->next;
         else
         {
             (*p)->m_index = n++;
-            p = (struct icon_box**)&(*p)->next;
+            p = (icon_box**)&(*p)->next;
         }
     }
 
@@ -342,12 +345,12 @@ void write_boxes(void)
     sprintf(rckey, "%s.id.count:", szAppName);
     WriteInt(g_rcpath, rckey, box_count);
 
-    struct icon_box *p = g_PI; int n = 0;
+    icon_box* p = g_PI; int n = 0;
     while (p)
     {
         sprintf(rckey, "%s.id.%d:", szAppName, ++n);
         WriteString(g_rcpath, rckey, p->m_name);
-        p = (struct icon_box *)p->next;
+        p = (icon_box *)p->next;
     }
 }
 
@@ -797,7 +800,7 @@ struct folder_box : icon_box
     LPCITEMIDLIST do_dragover(Item *icon)
     {
         if (icon)
-            return icon->data ? first_pidl((struct pidl_node*)icon->data) : NULL;
+            return icon->data ? first_pidl((pidl_node*)icon->data) : NULL;
         if (my_Folder.pidl_list)
             return first_pidl(my_Folder.pidl_list);
         return NULL;
@@ -810,7 +813,7 @@ struct folder_box : icon_box
         {
             LPCITEMIDLIST pidl = NULL;
             if (icon->data)
-                pidl = first_pidl((struct pidl_node*)icon->data);
+                pidl = first_pidl((pidl_node*)icon->data);
 
             if (message == WM_LBUTTONUP) {
                 exec_pidl(pidl, NULL);
@@ -1211,7 +1214,7 @@ void icon_box::GetStyleSettings()
 
 void icon_box::write_rc(void *v)
 {
-    struct rc *p = m_rc;
+    rc* p = m_rc;
     do
     {
         if (NULL == v || p->v == v) switch (p->m)
@@ -1225,7 +1228,7 @@ void icon_box::write_rc(void *v)
 }
 bool icon_box::GetRCSettings(void)
 {
-    struct rc *p = m_rc;
+    rc* p = m_rc;
     do
     {
         switch (p->m)
@@ -1382,7 +1385,7 @@ void icon_box::common_broam(const char *temp)
             strlwr(strcpy(name, path));
 
         } else {
-            struct pidl_node *pidl_list = get_folder_pidl_list(path, defaultrcPath());
+            pidl_node* pidl_list = get_folder_pidl_list(path, defaultrcPath());
             if (NULL == pidl_list) {
                 sprintf(buffer, "Invalid Path: %s", path);
                 BBP_messagebox(this, MB_OK, buffer, szAppName, MB_OK|MB_TOPMOST|MB_SETFOREGROUND);

@@ -27,7 +27,7 @@ Item *join_folders(Item *mi);
 void del_item(Item *item, bool is_file)
 {
     if (is_file) {
-        struct pidl_node *pidl = (struct pidl_node *)item->data;
+        pidl_node* pidl = (pidl_node *)item->data;
         delete_pidl_list(&pidl);
         if (item->hIcon)
             DestroyIcon(item->hIcon);
@@ -61,7 +61,7 @@ void ClearFolder(Folder *pFolder)
 
 void LoadFolder(Folder *pFolder, int iconsize, HWND hwnd)
 {
-    struct pidl_node *pidl_list;
+    pidl_node* pidl_list;
     LPCITEMIDLIST pIDFolder;
 
     pidl_list = get_folder_pidl_list(pFolder->path, defaultrcPath());
@@ -77,13 +77,13 @@ void LoadFolder(Folder *pFolder, int iconsize, HWND hwnd)
     {
         LPCITEMIDLIST pIDFolder = first_pidl(pidl_list);
 
-        struct enum_files *ef;
+        enum_files* ef;
         if (ef_open(pIDFolder, &ef))
         {
             while (ef_next(ef))
             {
                 int attr;
-                struct pidl_node *pidl;
+                pidl_node* pidl;
 
                 if (0 == ef_getpidl(ef, &pidl))
                     continue;

@@ -18,11 +18,15 @@
 // BBNOTE.C - main entry point, bb-stylized menu, config dialog
 
 #include "bbstyle_bbnote.h"
+
 #include <commctrl.h>
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <malloc.h>
+
+#include <BBSendData.h>
+
 #include "eddef.h"
 
 #ifdef _MSC_VER
@@ -51,8 +55,10 @@ HWND cwnd;
 int dlg_title_h;
 int title_h;
 
+bbcore::SettingsCommon* gSettings{};
+
 /*----------------------------------------------------------------------------*/
-struct strl *editfiles;
+strl* editfiles;
 
 extern char seabuf[80];
 extern char rplbuf[80];
@@ -85,7 +91,9 @@ struct ini {
     const char *key;
     char f;
     void *val;
-} ini[] = {
+}
+bbnoteIni[] =
+{
     { "textfont",       16, My_Font },
     { "textfontsize",   2, &My_FontSize_n },
     { "textfontweight", 2, &My_FontWeight_n },
@@ -142,9 +150,11 @@ void rw_colors(int m) {
     }} while (++n<10); } while (++s<2);
 }
 
-void readcfg(void) {
-    char buf[128]; int i = 0;
-    struct ini *ip = ini;
+void readcfg(void)
+{
+    char buf[128];
+    int i = 0;
+    ini* ip = bbnoteIni;
     //return;
     do {
         GetPrivateProfileString(inisec, ip->key, "", buf, 256, ininame);
@@ -163,7 +173,7 @@ void readcfg(void) {
 
 void savecfg(void) {
     char buf[128]; int i = 0;
-    struct ini *ip = ini + 0;
+    ini* ip = bbnoteIni + 0;
     if (cfg_f==0) return;
     do {
         if (ip->f&4)  i=*(int*)ip->val;
@@ -233,9 +243,9 @@ void get_files(const char *s)
 
 void makedlgfont(void)
 {
-    fnt1 = MenuInfo.hFrameFont;
-    fnt2 = MenuInfo.hTitleFont;
-    title_h = dlg_title_h = MenuInfo.nTitleHeight;
+    fnt1 = gMenuInfo.hFrameFont;
+    fnt2 = gMenuInfo.hTitleFont;
+    title_h = dlg_title_h = gMenuInfo.nTitleHeight;
 
     TEXTMETRIC TXM;
 
@@ -262,8 +272,15 @@ WPARAM do_message_loop(void)
 
 /*----------------------------------------------------------------------------*/
 
-int WINAPI WinMain (HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR szCmdLine, int iCmdShow)
+int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR szCmdLine, int iCmdShow)
 {
+    // init settings
+    // TODO: remove singletone, remove global variable
+    bbcore::SettingsPars settingsPars{};
+    settingsPars.bbsettingNowindow = true;
+    bbcore::SettingsCommon settings(settingsPars);
+    gSettings = &settings;
+
     static TCHAR szAppName[] = TEXT("BBNoteWindow") ;
     WNDCLASS wndclass ;
     HWND hwnd;
@@ -401,8 +418,8 @@ struct button {
 };
 
 struct dlg {
-    struct button *btp;
-    struct button *bpa;
+    button* btp;
+    button* bpa;
     int  tf, tx, ty;
     int  wx, wy, typ;
     int dlg_title_h, tab;
@@ -412,7 +429,7 @@ struct dlg {
 };
 
 /*----------------------------------------------------------------------------*/
-void get_item_rect (struct button *bp, RECT *r)
+void get_item_rect (button* bp, RECT *r)
 {
     r->top    = bp->y + dlg_title_h;
     r->left   = bp->x;
@@ -420,7 +437,7 @@ void get_item_rect (struct button *bp, RECT *r)
     r->right  = r->left + bp->xl;
 }
 
-void get_slider_rect(struct button *bp, RECT *r)
+void get_slider_rect(button* bp, RECT *r)
 {
     int dx = bp->xl;
     int k  = bp->yl - dx;
@@ -430,7 +447,7 @@ void get_slider_rect(struct button *bp, RECT *r)
     r->right    = r->left + bp->xl;
 }
 
-void set_slider(int my, struct button *bp)
+void set_slider(int my, button* bp)
 {
     int dx = bp->xl;
     int k  = bp->yl - dx;
@@ -439,7 +456,7 @@ void set_slider(int my, struct button *bp)
 }
 
 
-int inside_item(int mx, int my, struct button *bp)
+int inside_item(int mx, int my, button* bp)
 {
     if (bp->f&BN_DIS)
         return 0;
@@ -468,7 +485,7 @@ int inside_item(int mx, int my, struct button *bp)
 
 /*----------------------------------------------------------------------------*/
 /*
-struct button mainfrm[] = {
+button mainfrm[] = {
     { "",   0,  0,  -15, 15, 15, 0, BN_SCR, 1},
     {NULL}
 };
@@ -477,9 +494,9 @@ struct button mainfrm[] = {
 int vscr;
 int but1;
 
-#define VSCR_SIZE MenuInfo.nScrollerSize
-#define VSCR_TOP (MenuInfo.nTitleHeight + MenuInfo.nFrameMargin - imin(gMStyle.MenuFrame.borderWidth,gMStyle.MenuTitle.borderWidth) + MenuInfo.nScrollerTopOffset)
-#define VSCR_SIDE MenuInfo.nScrollerSideOffset
+#define VSCR_SIZE gMenuInfo.nScrollerSize
+#define VSCR_TOP (gMenuInfo.nTitleHeight + gMenuInfo.nFrameMargin - imin(gMStyle.MenuFrame.borderWidth,gMStyle.MenuTitle.borderWidth) + gMenuInfo.nScrollerTopOffset)
+#define VSCR_SIDE gMenuInfo.nScrollerSideOffset
 
 void get_vscr_rect(RECT* rw)
 {
@@ -791,7 +808,7 @@ HWND editline (RECT *r, HWND hwnd, const char *txt)
 #define IDGREP      409
 #define SEA_INIT    410
 
-struct button bts[] = {
+button bts[] = {
     { "&up",      0,   6, 18,  20, 10,  0, BN_BTN, IDUP},
     { "&down",    0,  30, 18,  30, 10,  0, BN_BTN, IDOK},
     { "close",    0,  64, 18,  30, 10,  0, BN_BTN, IDCANCEL},
@@ -806,23 +823,23 @@ struct button bts[] = {
 };
 
 /*----------------------------------------------------------------------------*/
-struct dlg *fix_dlg (struct button *bp0, int wx, int wy)
+dlg* fix_dlg (button* bp0, int wx, int wy)
 {
-    struct dlg *dlg;
-    struct button *bp;
+    dlg* dlgObj;
+    button* bp;
     int x1 = dzx * 10 + 40, y1 = dzy * 8 + 32;
     int n;
     const int x0 = 80, y0 = 80;
 
-    dlg = (struct dlg *)c_alloc(sizeof(*dlg));
+    dlgObj = (dlg *)c_alloc(sizeof(*dlgObj));
 
     n=0, bp = bp0;
     do n++; while ((bp++)->str);
 
-    dlg->btp = (struct button *)c_alloc(n*sizeof(*bp));
-    memmove(dlg->btp, bp0, n*sizeof(*bp));
+    dlgObj->btp = (button *)c_alloc(n*sizeof(*bp));
+    memmove(dlgObj->btp, bp0, n*sizeof(*bp));
 
-    bp = dlg->btp;
+    bp = dlgObj->btp;
     do {
         bp->x  = bp->x  * x1 / x0;
         bp->xl = bp->xl * x1 / x0;
@@ -830,16 +847,16 @@ struct dlg *fix_dlg (struct button *bp0, int wx, int wy)
         bp->yl = bp->yl * y1 / y0;
     } while ((++bp)->str);
 
-    dlg->dlg_title_h = dlg_title_h;
+    dlgObj->dlg_title_h = dlg_title_h;
 
-    dlg->wx = wx * x1 / x0;
-    dlg->wy = wy * y1 / y0 + dlg->dlg_title_h;
+    dlgObj->wx = wx * x1 / x0;
+    dlgObj->wy = wy * y1 / y0 + dlgObj->dlg_title_h;
 
-    return dlg;
+    return dlgObj;
 }
 
 /*----------------------------------------------------------------------------*/
-struct button * check_accel_msg(struct button *bp0, struct button *bp, int key)
+button* check_accel_msg(button* bp0, button* bp, int key)
 {
     const char *p;
     while (bp)
@@ -860,9 +877,9 @@ struct button * check_accel_msg(struct button *bp0, struct button *bp, int key)
     return NULL;
 }
 
-int get_list_accel_msg(struct dlg *dlg, int key)
+int get_list_accel_msg(dlg* dlg, int key)
 {
-    struct button *bp, *bp1, *bp2;
+    button *bp, *bp1, *bp2;
 
     for (bp = dlg->btp; bp->str; bp++)
     {
@@ -889,9 +906,9 @@ int get_list_accel_msg(struct dlg *dlg, int key)
     return 0;
 }
 
-int get_accel_msg(struct dlg *dlg, int key)
+int get_accel_msg(dlg* dlg, int key)
 {
-    struct button *bp = check_accel_msg(NULL, dlg->btp, key);
+    button* bp = check_accel_msg(NULL, dlg->btp, key);
     if (bp)
     {
         if (bp->typ==BN_CHK) bp->f^=BN_ON;
@@ -904,29 +921,29 @@ int get_accel_msg(struct dlg *dlg, int key)
 /*----------------------------------------------------------------------------*/
 struct dlg_param
 {
-    struct dlg *dlg;
+    dlg* dlg;
     WNDPROC wp;
 };
 
 LRESULT CALLBACK def_dlgproc (HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
-    struct dlg_param *dp = (struct dlg_param *)((CREATESTRUCT*)lParam)->lpCreateParams;
+    dlg_param* dp = (dlg_param *)((CREATESTRUCT*)lParam)->lpCreateParams;
     SetWindowLongPtr(hwnd, GWLP_WNDPROC,  (LONG_PTR)dp->wp);
     SetWindowLongPtr(hwnd, 0, (LONG_PTR)dp->dlg);
     return DefWindowProc (hwnd, msg, wParam, lParam);
 }
 
-int make_dlg_wnd (struct dlg *dlg, HWND hwnd, int x, int y, const char *title, WNDPROC DlgProc)
+int make_dlg_wnd (dlg* dlgObj, HWND hwnd, int x, int y, const char *title, WNDPROC DlgProc)
 {
     static TCHAR classname[] = TEXT("BBNoteDlg") ;
     WNDCLASS wndclass ;
     static int cn;
 
     RECT r;
-    struct dlg_param dp = { dlg, DlgProc };
-    struct button *bp;
+    dlg_param dp = { dlgObj, DlgProc };
+    button* bp;
 
-    strcpy(dlg->title, title);
+    strcpy(dlgObj->title, title);
 
     if (0==cn)
     {
@@ -935,7 +952,7 @@ int make_dlg_wnd (struct dlg *dlg, HWND hwnd, int x, int y, const char *title, W
         wndclass.style         = CS_DBLCLKS;//|CS_HREDRAW;
         wndclass.lpfnWndProc   = def_dlgproc;
         //wndclass.cbClsExtra  = 0 ;
-        wndclass.cbWndExtra    = sizeof (struct dlg *);
+        wndclass.cbWndExtra    = sizeof (dlg *);
         wndclass.hInstance     = hInst;
         wndclass.hCursor       = LoadCursor(NULL, IDC_ARROW);
         //wndclass.hbrBackground = GetStockObject(LTGRAY_BRUSH);
@@ -946,28 +963,28 @@ int make_dlg_wnd (struct dlg *dlg, HWND hwnd, int x, int y, const char *title, W
         cn++;
     }
 
-    dlg->hwnd = CreateWindowEx(
+    dlgObj->hwnd = CreateWindowEx(
         WS_EX_TOOLWINDOW,
         classname,                  // window class name
         NULL,
         WS_POPUP|WS_VISIBLE,
         x,
         y,
-        dlg->wx,
-        dlg->wy,
+        dlgObj->wx,
+        dlgObj->wy,
         hwnd,      // parent window handle
         NULL,      // window menu handle
         hInst,     // program instance handle
         (void*)&dp    // creation parameters
         );
 
-    bp = dlg->btp;
+    bp = dlgObj->btp;
     do if (bp->typ==BN_EDT && 0==(bp->f&BN_DIS)) {
         r.left   = bp->x;
-        r.top    = bp->y + dlg->dlg_title_h;
+        r.top    = bp->y + dlgObj->dlg_title_h;
         r.right  = bp->xl;
         r.bottom = bp->yl;
-        bp->data = reinterpret_cast<size_t>(editline(&r, dlg->hwnd, bp->str));
+        bp->data = reinterpret_cast<size_t>(editline(&r, dlgObj->hwnd, bp->str));
     } while ((++bp)->str);
 
     return 1;
@@ -980,8 +997,9 @@ int bb_search_dialog(HWND hwnd)
 
     LRESULT CALLBACK SearchProc(HWND, UINT, WPARAM, LPARAM) ;
 
-    RECT r; int i,k; struct button *bp;
-    struct dlg *dlg;
+    RECT r; int i,k;
+    button* bp;
+    dlg* dlg;
 
     if (mwnd) {
         PostMessage(mwnd, WM_COMMAND, 1000, 0);
@@ -1019,7 +1037,7 @@ int bb_search_dialog(HWND hwnd)
 
 void MakeGradient_s (HDC hdc, RECT rw, StyleItem *si, int borderWidth)
 {
-    MakeGradient(hdc, rw,
+    bbcore::makeGradient(hdc, rw,
         si->parentRelative ? -1 : si->type,
         si->Color,
         si->ColorTo,
@@ -1057,7 +1075,7 @@ void draw_frame(HDC hdc, RECT *prect, int title_h, RECT *ptext)
     b = gMStyle.MenuTitle.borderWidth;
     f = gMStyle.MenuFrame.borderWidth;
 
-    if (hdc) CreateBorder(hdc, &rw, gMStyle.MenuFrame.borderColor, f);
+    if (hdc) bbcore::createBorder(hdc, &rw, gMStyle.MenuFrame.borderColor, f);
 
     if (gMStyle.MenuTitle.parentRelative || gMStyle.menuTitleLabel)
         rw.top += f;
@@ -1101,7 +1119,7 @@ void draw_frame(HDC hdc, RECT *prect, int title_h, RECT *ptext)
 }
 
 /*----------------------------------------------------------------------------*/
-void paint_box(HWND hwnd, struct dlg *dlg)
+void paint_box(HWND hwnd, dlg* dlg)
 {
 
     PAINTSTRUCT ps ;
@@ -1110,7 +1128,7 @@ void paint_box(HWND hwnd, struct dlg *dlg)
     RECT rw, r;
     int cwx, cwy;
 
-    struct button *bp;
+    button* bp;
     StyleItem *si;
     char bstr[256];
     COLORREF c;
@@ -1222,7 +1240,7 @@ void paint_box(HWND hwnd, struct dlg *dlg)
                     DeleteObject(SelectObject(hdc, hp0));
                 }
                 else
-                    CreateBorder(hdc, &r, c, 1);
+                    bbcore::createBorder(hdc, &r, c, 1);
             }
 
 
@@ -1236,7 +1254,7 @@ void paint_box(HWND hwnd, struct dlg *dlg)
             else
                 c = gMStyle.MenuFrame.ColorTo;
 
-            CreateBorder (hdc, &rw, c, 1);
+            bbcore::createBorder (hdc, &rw, c, 1);
             break;
 
         case BN_STR:
@@ -1289,10 +1307,10 @@ void paint_box(HWND hwnd, struct dlg *dlg)
             rw.left   += (bp->xl)/2 - 2;
             rw.right  = rw.left + 4;
 
-            //CreateBorder (hdc, rw, gMStyle.MenuFrame.textcolor, 1);
+            //bbcore::createBorder (hdc, rw, gMStyle.MenuFrame.textcolor, 1);
 
             si = &gMStyle.MenuFrame;
-            MakeGradient(hdc, rw,
+            bbcore::makeGradient(hdc, rw,
                 si->type,
                 si->Color,
                 si->ColorTo,
@@ -1325,9 +1343,9 @@ void paint_box(HWND hwnd, struct dlg *dlg)
 }
 
 /*----------------------------------------------------------------------------*/
-void check_radio (struct dlg *dlg, int msg)
+void check_radio (dlg* dlg, int msg)
 {
-    struct button *bp,*ap;
+    button *bp, *ap;
     bp=dlg->btp;
     for (;;) {
         if (msg==bp->msg)  break;
@@ -1353,9 +1371,9 @@ void check_radio (struct dlg *dlg, int msg)
 }
 
 
-int dlg_domouse (struct dlg *dlg, UINT msg, WPARAM wParam, LPARAM lParam)
+int dlg_domouse (dlg* dlg, UINT msg, WPARAM wParam, LPARAM lParam)
 {
-    struct button *bp,*bpb;
+    button *bp,*bpb;
     int mx, my;
     int f;
     RECT r;
@@ -1498,10 +1516,10 @@ int dlg_domouse (struct dlg *dlg, UINT msg, WPARAM wParam, LPARAM lParam)
 /*----------------------------------------------------------------------------*/
 int do_search (int msg, size_t param);
 
-void do_search_0 (int msg, struct dlg *dlg)
+void do_search_0 (int msg, dlg* dlg)
 {
     int i,k;
-    struct button *bp;
+    button* bp;
     SendMessage((HWND)dlg->btp[8].data, WM_GETTEXT, 80, (LPARAM)seabuf);
     SendMessage((HWND)dlg->btp[9].data, WM_GETTEXT, 80, (LPARAM)rplbuf);
     k=16; i=3; seamodeflg = 0;
@@ -1517,7 +1535,7 @@ void do_search_0 (int msg, struct dlg *dlg)
 LRESULT CALLBACK SearchProc (HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
 
-    struct dlg *dlg = (struct dlg *)GetWindowLongPtr(hwnd, 0);
+    dlg* dlgObj = (dlg *)GetWindowLongPtr(hwnd, 0);
     int f;
 
     switch (msg) {
@@ -1529,17 +1547,17 @@ LRESULT CALLBACK SearchProc (HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 
         case WM_DESTROY:
             mwnd = NULL;
-            m_free(dlg->btp);
-            m_free(dlg);
+            m_free(dlgObj->btp);
+            m_free(dlgObj);
             return 0;
 
         // -------------------------------------
         case WM_SYSKEYDOWN:
-            f = get_accel_msg(dlg, wParam);
+            f = get_accel_msg(dlgObj, wParam);
         sea:
             if (f==-1) goto iv;
             if (f==0)  return 0;
-            do_search_0(f, dlg);
+            do_search_0(f, dlgObj);
             if (f==IDCANCEL)
                 DestroyWindow(hwnd);
             return 0;
@@ -1555,7 +1573,7 @@ LRESULT CALLBACK SearchProc (HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
         case WM_LBUTTONDBLCLK:
         case WM_LBUTTONDOWN:
         case WM_LBUTTONUP:
-            f = dlg_domouse (dlg, msg, wParam, lParam);
+            f = dlg_domouse (dlgObj, msg, wParam, lParam);
             goto sea;
 
 
@@ -1564,15 +1582,15 @@ LRESULT CALLBACK SearchProc (HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 
             case VK_TAB:
                     SetFocus(
-                        GetFocus() == (HWND)dlg->btp[8].data
-                        ? (HWND)dlg->btp[9].data
-                        : (HWND)dlg->btp[8].data
+                        GetFocus() == (HWND)dlgObj->btp[8].data
+                        ? (HWND)dlgObj->btp[9].data
+                        : (HWND)dlgObj->btp[8].data
                         );
                     break;
 
             case VK_F3:
             leav:
-                    do_search_0(IDCANCEL, dlg);
+                    do_search_0(IDCANCEL, dlgObj);
                     SetFocus(ewnd);
                     break;
 
@@ -1602,7 +1620,7 @@ LRESULT CALLBACK SearchProc (HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
             return 1;
 
         case WM_PAINT:
-            paint_box(hwnd, dlg);
+            paint_box(hwnd, dlgObj);
             return 0;
 
 
@@ -1630,7 +1648,7 @@ LRESULT CALLBACK SearchProc (HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 
             if (1000 == LOWORD(wParam))
             {
-                HWND edw = (HWND)dlg->btp[8].data;
+                HWND edw = (HWND)dlgObj->btp[8].data;
                 do_search(0, (size_t)ewnd);
                 SendMessage (edw, WM_SETTEXT, 0, (LPARAM)seabuf);
                 SendMessage (edw, EM_SETSEL, 0,-1);
@@ -1647,7 +1665,7 @@ LRESULT CALLBACK SearchProc (HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 #define IDALWAYS    11
 #define IDNEVER     12
 
-struct button btm[] = {
+button btm[] = {
     { "",         0,   6, 6, 40,  0, 0, BN_STR, 0  },
     { "&ok",      0,   0, 6, 36, 10, BN_DIS, BN_BTN, IDOK     },
     { "&yes",     0,  40, 6, 36, 10, BN_DIS, BN_BTN, IDYES    },
@@ -1666,8 +1684,8 @@ int bb_msgbox(HWND hwnd, const char *s, int f)
 
     RECT r;
     HDC hdc; HFONT hf; RECT r1;
-    struct dlg *dlg;
-    struct button *bp;
+    dlg* dlg;
+    button* bp;
     int i,x,y,z, xs, ys;
 
     //how many buttons to display ?
@@ -1731,15 +1749,15 @@ int bb_msgbox(HWND hwnd, const char *s, int f)
 LRESULT CALLBACK MsgProc (HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
     int f;
-    struct dlg *dlg = (struct dlg *)GetWindowLongPtr(hwnd, 0);
+    dlg* dlgObj = (dlg *)GetWindowLongPtr(hwnd, 0);
     switch (msg) {
 
         case WM_CREATE:
             return 0;
 
         case WM_DESTROY:
-            m_free(dlg->btp);
-            m_free(dlg);
+            m_free(dlgObj->btp);
+            m_free(dlgObj);
             return 0;
 
         case WM_SYSKEYDOWN:
@@ -1749,7 +1767,7 @@ LRESULT CALLBACK MsgProc (HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
         case WM_LBUTTONDBLCLK:
         case WM_LBUTTONDOWN:
         case WM_LBUTTONUP:
-            f = dlg_domouse (dlg, msg, wParam, lParam);
+            f = dlg_domouse (dlgObj, msg, wParam, lParam);
         post:
             if (f<=0) return 0;
             PostQuitMessage(f);
@@ -1764,24 +1782,24 @@ LRESULT CALLBACK MsgProc (HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
                  break;
 
             case VK_ESCAPE:
-                if (0==(dlg->btp[4].f&BN_DIS)) { f=IDCANCEL; goto post; }
-                if (0==(dlg->btp[3].f&BN_DIS)) { f=IDNO; goto post; }
+                if (0==(dlgObj->btp[4].f&BN_DIS)) { f=IDCANCEL; goto post; }
+                if (0==(dlgObj->btp[3].f&BN_DIS)) { f=IDNO; goto post; }
 
             case VK_RETURN:
-                if (0==(dlg->btp[1].f&BN_DIS)) { f=IDOK;  goto post; }
-                if (0==(dlg->btp[2].f&BN_DIS)) { f=IDYES; goto post; }
+                if (0==(dlgObj->btp[1].f&BN_DIS)) { f=IDOK;  goto post; }
+                if (0==(dlgObj->btp[2].f&BN_DIS)) { f=IDYES; goto post; }
             }
             return 0;
 
     case WM_CHAR:
-            f = get_accel_msg(dlg, LOWORD(wParam));
+            f = get_accel_msg(dlgObj, LOWORD(wParam));
             goto post;
 
         case WM_ERASEBKGND:
             return 1;
 
         case WM_PAINT:
-            paint_box(hwnd, dlg);
+            paint_box(hwnd, dlgObj);
             return 0;
 
     }
@@ -1791,7 +1809,7 @@ LRESULT CALLBACK MsgProc (HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 /*----------------------------------------------------------------------------*/
 
 /*----------------------------------------------------------------------------*/
-struct button menu1[] = {
+button menu1[] = {
     { "&list\tctrl-l",      0, 0,0,0,0, 0,      BN_ITM, CMD_LIST  },
     { "&new\tctrl-n",       0, 0,0,0,0, 0,      BN_ITM, CMD_NEW     },
     { "&open\tctrl-o",      0, 0,0,0,0, 0,      BN_ITM, CMD_OPEN    },
@@ -1816,14 +1834,15 @@ struct button menu1[] = {
 
 
 /*----------------------------------------------------------------------------*/
-int bb_menu_1(HWND hwnd, int f, struct button *menu, const char *title, int mf)
+int bb_menu_1(HWND hwnd, int f, button* menu, const char *title, int mf)
 {
 
     LRESULT CALLBACK MenuProc (HWND, UINT, WPARAM, LPARAM) ;
     HDC hdc; HFONT hf; RECT r1; POINT pt;
 
-    struct button *bp;
-    struct dlg *dlg; char bstr[256], *p;
+    button* bp;
+    dlg* dlgObj;
+    char bstr[256], *p;
 
     int x,z,y,tb;
 
@@ -1857,8 +1876,8 @@ int bb_menu_1(HWND hwnd, int f, struct button *menu, const char *title, int mf)
         x = tb;
 
     x += 4*FRM;
-    z = MenuInfo.nItemHeight;
-    int d = MenuInfo.nFrameMargin - gMStyle.MenuFrame.borderWidth;
+    z = gMenuInfo.nItemHeight;
+    int d = gMenuInfo.nFrameMargin - gMStyle.MenuFrame.borderWidth;
     bp = menu;
     y = d;
     while (bp->str)
@@ -1878,20 +1897,20 @@ int bb_menu_1(HWND hwnd, int f, struct button *menu, const char *title, int mf)
         }
     }
 
-    dlg = (struct dlg *)c_alloc(sizeof(*dlg));
-    dlg->dlg_title_h = dlg_title_h;
-    dlg->btp = menu;
-    dlg->wx  = x + 2*d;
-    dlg->wy  = y + dlg->dlg_title_h + MenuInfo.nFrameMargin;
-    dlg->tab = tb;
-    dlg->typ = D_MENU;
-    dlg->flg = mf;
+    dlgObj = (dlg *)c_alloc(sizeof(*dlgObj));
+    dlgObj->dlg_title_h = dlg_title_h;
+    dlgObj->btp = menu;
+    dlgObj->wx  = x + 2*d;
+    dlgObj->wy  = y + dlgObj->dlg_title_h + gMenuInfo.nFrameMargin;
+    dlgObj->tab = tb;
+    dlgObj->typ = D_MENU;
+    dlgObj->flg = mf;
 
     if (f)
     {
         GetCursorPos(&pt);
         x = imax(pt.x - x/2, 0);
-        y = imax(pt.y - (2==f ? dlg->dlg_title_h*3/2 : dlg->dlg_title_h/2), 0);
+        y = imax(pt.y - (2==f ? dlgObj->dlg_title_h*3/2 : dlgObj->dlg_title_h/2), 0);
     }
 
     else
@@ -1900,12 +1919,12 @@ int bb_menu_1(HWND hwnd, int f, struct button *menu, const char *title, int mf)
         x = r1.left+1, y = r1.top+title_h;
     }
 
-    y = imax(imin(y, DT.bottom - dlg->wy), DT.top);
+    y = imax(imin(y, DT.bottom - dlgObj->wy), DT.top);
 
 
     bb_sound(0);
 
-    make_dlg_wnd (dlg, hwnd, x, y, title, MenuProc);
+    make_dlg_wnd (dlgObj, hwnd, x, y, title, MenuProc);
     return 0;
 }
 
@@ -1917,16 +1936,16 @@ int bb_menu(HWND hwnd, int f)
 /*----------------------------------------------------------------------------*/
 int bcomp (const void *a, const void *b)
 {
-    return stricmp(((struct button *)a)->str, ((struct button *)b)->str);
+    return stricmp(((button *)a)->str, ((button *)b)->str);
 }
 
-void bb_file_menu (HWND hwnd, int f, struct strl *sp)
+void bb_file_menu (HWND hwnd, int f, strl* sp)
 {
     int l,c;
-    static struct strl *s0;
-    struct strl *s;
-    static struct button *bp0;
-    struct button *bp;
+    static strl* s0;
+    strl* s;
+    static button* bp0;
+    button* bp;
 
     freelist(&s0);
     if (bp0) m_free(bp0);
@@ -1934,7 +1953,7 @@ void bb_file_menu (HWND hwnd, int f, struct strl *sp)
     s = s0 = sp, l = 0;
     while (s) l++, s=s->next;
 
-    bp0 = bp = (struct button *)c_alloc((l+1) * sizeof(struct button));
+    bp0 = bp = (button *)c_alloc((l+1) * sizeof(button));
 
     s = sp; c = CMD_FILE;
     while (s)
@@ -1946,7 +1965,7 @@ void bb_file_menu (HWND hwnd, int f, struct strl *sp)
         bp ++; c++;
     }
 
-    qsort(bp0, l, sizeof(struct button), bcomp);
+    qsort(bp0, l, sizeof(button), bcomp);
 
     bb_menu_1(hwnd, f, bp0, "list", 1);
 }
@@ -1956,14 +1975,14 @@ LRESULT CALLBACK MenuProc (HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
 
     int f;
-    struct dlg *dlg = (struct dlg *)GetWindowLongPtr(hwnd, 0);
+    dlg* dlgObj = (dlg *)GetWindowLongPtr(hwnd, 0);
     switch (msg) {
 
         case WM_CREATE:
             return 0;
 
         case WM_DESTROY:
-            m_free(dlg);
+            m_free(dlgObj);
             return 0;
 
         case WM_SYSKEYUP:
@@ -1977,7 +1996,7 @@ LRESULT CALLBACK MenuProc (HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
         case WM_LBUTTONDBLCLK:
         case WM_LBUTTONDOWN:
         case WM_LBUTTONUP:
-            f = dlg_domouse (dlg, msg, wParam, lParam);
+            f = dlg_domouse (dlgObj, msg, wParam, lParam);
         post:
             if (f<=0) return 0;
 
@@ -1987,7 +2006,7 @@ LRESULT CALLBACK MenuProc (HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
             if (f == IDCANCEL) goto quit;
 
         case WM_KILLFOCUS:
-            //if (dlg->flg&1) return 0;
+            //if (dlgObj->flg&1) return 0;
 
         case WM_RBUTTONUP:
         quit:
@@ -2009,8 +2028,8 @@ LRESULT CALLBACK MenuProc (HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
             case VK_DOWN:
                 f=1; k1:
                 {
-                struct button *bp=NULL,*bp1;
-                for (bp1=dlg->btp; bp1->str; bp1++)
+                button* bp = NULL, *bp1;
+                for (bp1=dlgObj->btp; bp1->str; bp1++)
                     if (bp1->f&BN_ACT) (bp=bp1)->f&=~BN_ACT;
 
                 if (bp==NULL)
@@ -2026,9 +2045,9 @@ LRESULT CALLBACK MenuProc (HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
                     }
                     if (f>0 && (++bp)->str==NULL)
                  k2:
-                        bp=dlg->btp;
+                        bp=dlgObj->btp;
 
-                    if (f<0 && (bp--)==dlg->btp)
+                    if (f<0 && (bp--)==dlgObj->btp)
                         for (;(++bp)[1].str;);
                 }
                 bp->f|=BN_ACT;
@@ -2040,7 +2059,7 @@ LRESULT CALLBACK MenuProc (HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
             return 0;
 
         case WM_CHAR:
-            f = get_list_accel_msg(dlg, LOWORD(wParam));
+            f = get_list_accel_msg(dlgObj, LOWORD(wParam));
             InvalidateRect(hwnd, NULL, FALSE);
             goto post;
 
@@ -2048,7 +2067,7 @@ LRESULT CALLBACK MenuProc (HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
             return 1;
 
         case WM_PAINT:
-            paint_box(hwnd, dlg);
+            paint_box(hwnd, dlgObj);
             return 0;
 
     }
@@ -2056,26 +2075,26 @@ LRESULT CALLBACK MenuProc (HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 }
 
 /*----------------------------------------------------------------------------*/
-struct button *getbutton (struct dlg *dlg, int msg)
+button* getbutton (dlg* dlg, int msg)
 {
-    struct button *bp;
+    button* bp;
     for (bp=dlg->btp; bp->str; bp++)
         if (msg==bp->msg) return bp;
     return NULL;
 }
 
-void enable_button (struct dlg *dlg, int msg, int f)
+void enable_button (dlg* dlg, int msg, int f)
 {
-    struct button *bp = getbutton (dlg, msg);
+    button* bp = getbutton (dlg, msg);
     if (bp) {
         if (f) bp->f &=~BN_DIS;
         else   bp->f |=BN_DIS;
     }
 }
 
-void check_button (struct dlg *dlg, int msg, int f)
+void check_button (dlg* dlg, int msg, int f)
 {
-    struct button *bp = getbutton (dlg, msg);
+    button* bp = getbutton (dlg, msg);
     if (bp) {
         if (0==f) bp->f &=~BN_ON;
         else   bp->f |=BN_ON;
@@ -2088,7 +2107,7 @@ static int xp;
 static int yp;
 
 
-struct button bcfg[] = {
+button bcfg[] = {
     { fontname,         0,  40,  6, 112,  10,   0, BN_EDT,    0},
     { "font",           0,  12,  6,  20,   8,   BN_LEFT, BN_STR,    0},
 
@@ -2126,22 +2145,22 @@ int bb_config_dialog(HWND hwnd)
     LRESULT CALLBACK ConfigProc(HWND, UINT, WPARAM, LPARAM) ;
 
     RECT r;
-    struct dlg *dlg;
+    dlg* dlgObj;
 
     if (cwnd) {
         PostMessage(cwnd, WM_COMMAND, 1000, 0);
         return 0;
     }
 
-    dlg = fix_dlg(bcfg, 204, 106);
+    dlgObj = fix_dlg(bcfg, 204, 106);
 
     //center dialog
     GetWindowRect (ewnd, &r);
-    xp = r.left + imax(20, (r.right  - r.left - dlg->wx)/2);
-    yp = r.top  + imax(20, (r.bottom - r.top - dlg->wy)/3);
+    xp = r.left + imax(20, (r.right  - r.left - dlgObj->wx)/2);
+    yp = r.top  + imax(20, (r.bottom - r.top - dlgObj->wy)/3);
 
 
-    if (0==make_dlg_wnd (dlg, hwnd, xp, yp, "settings", ConfigProc))
+    if (0==make_dlg_wnd (dlgObj, hwnd, xp, yp, "settings", ConfigProc))
         return 0;
 
     EnableWindow(hwnd, FALSE);
@@ -2150,9 +2169,8 @@ int bb_config_dialog(HWND hwnd)
 }
 
 LRESULT CALLBACK ConfigProc (HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
-{
-
-    struct dlg *dlg = (struct dlg *)GetWindowLongPtr(hwnd, 0);
+{ 
+    dlg* dlgObj = (dlg *)GetWindowLongPtr(hwnd, 0);
     int f;
 
     switch (msg) {
@@ -2161,24 +2179,24 @@ LRESULT CALLBACK ConfigProc (HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 
             strcpy(fontname, My_Font);
 
-            SendMessage((HWND)dlg->btp[0].data, WM_SETTEXT, 0, (LPARAM)fontname);
+            SendMessage((HWND)dlgObj->btp[0].data, WM_SETTEXT, 0, (LPARAM)fontname);
 
         upd:
-            getbutton(dlg, 163)->data = My_FontSize_n;
-            check_button(dlg, 164, My_FontWeight_n>FW_NORMAL);
+            getbutton(dlgObj, 163)->data = My_FontSize_n;
+            check_button(dlgObj, 164, My_FontWeight_n>FW_NORMAL);
 
-            check_radio(dlg, smart ? 131 : 132);
-            check_button(dlg, 133, tuse);
-            getbutton(dlg,134)->data = tabs;
-            enable_button(dlg, 133, 0==smart);
-            enable_button(dlg, 134, 0==smart);
+            check_radio(dlgObj, smart ? 131 : 132);
+            check_button(dlgObj, 133, tuse);
+            getbutton(dlgObj,134)->data = tabs;
+            enable_button(dlgObj, 133, 0==smart);
+            enable_button(dlgObj, 134, 0==smart);
 
-            check_button(dlg, 121, false == ltup);
-            check_button(dlg, 122, open_new_win);
-            check_button(dlg, 123, syncolors);
-            check_button(dlg, 124, unix_eol);
+            check_button(dlgObj, 121, false == ltup);
+            check_button(dlgObj, 122, open_new_win);
+            check_button(dlgObj, 123, syncolors);
+            check_button(dlgObj, 124, unix_eol);
 
-            getbutton(dlg, 136)->data = mousewheelfac;
+            getbutton(dlgObj, 136)->data = mousewheelfac;
 
         iv:
             InvalidateRect(hwnd, NULL, FALSE);
@@ -2187,8 +2205,8 @@ LRESULT CALLBACK ConfigProc (HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 
         case WM_DESTROY:
             cwnd = NULL;
-            m_free(dlg->btp);
-            m_free(dlg);
+            m_free(dlgObj->btp);
+            m_free(dlgObj);
             return 0;
 
         case WM_WINDOWPOSCHANGED:
@@ -2198,7 +2216,7 @@ LRESULT CALLBACK ConfigProc (HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 
 
         case WM_SYSKEYDOWN:
-            f = get_accel_msg(dlg, wParam);
+            f = get_accel_msg(dlgObj, wParam);
             goto domsg;
 
 
@@ -2209,7 +2227,7 @@ LRESULT CALLBACK ConfigProc (HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
         case WM_LBUTTONDBLCLK:
         case WM_LBUTTONDOWN:
         case WM_LBUTTONUP:
-            f = dlg_domouse (dlg, msg, wParam, lParam);
+            f = dlg_domouse (dlgObj, msg, wParam, lParam);
         domsg:
             if (f==131)
             {
@@ -2226,40 +2244,40 @@ LRESULT CALLBACK ConfigProc (HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 
             if (f==134)
             {
-                tabs = getbutton(dlg, f)->data;
+                tabs = getbutton(dlgObj, f)->data;
             }
             if (f==136)
             {
-                mousewheelfac = imax(1,getbutton(dlg, f)->data);
+                mousewheelfac = imax(1,getbutton(dlgObj, f)->data);
                 goto upd;
             }
             if (f==133)
             {
-                tuse = 0!=(getbutton(dlg, f)->f&BN_ON);
+                tuse = 0!=(getbutton(dlgObj, f)->f&BN_ON);
                 goto upd;
             }
 
             if (f==121)
             {
-                ltup = 0==(getbutton(dlg, f)->f&BN_ON);
+                ltup = 0==(getbutton(dlgObj, f)->f&BN_ON);
                 goto upd;
             }
 
             if (f==122)
             {
-                open_new_win = 0!=(getbutton(dlg, f)->f&BN_ON);
+                open_new_win = 0!=(getbutton(dlgObj, f)->f&BN_ON);
                 goto upd;
             }
 
             if (f==123)
             {
-                syncolors = 0!=(getbutton(dlg, f)->f&BN_ON);
+                syncolors = 0!=(getbutton(dlgObj, f)->f&BN_ON);
                 goto post_upd;
             }
 
             if (f==124)
             {
-                unix_eol = 0!=(getbutton(dlg, f)->f&BN_ON);
+                unix_eol = 0!=(getbutton(dlgObj, f)->f&BN_ON);
                 goto upd;
             }
 
@@ -2289,10 +2307,10 @@ LRESULT CALLBACK ConfigProc (HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 
 
    setfont:
-            SendMessage((HWND)dlg->btp[0].data, WM_GETTEXT, 128, (LPARAM)fontname);
+            SendMessage((HWND)dlgObj->btp[0].data, WM_GETTEXT, 128, (LPARAM)fontname);
             strcpy (My_Font, fontname);
-            My_FontSize_n   = getbutton(dlg, 163)->data;
-            My_FontWeight_n = getbutton(dlg, 164)->f&BN_ON ? FW_BOLD:FW_NORMAL;
+            My_FontSize_n   = getbutton(dlgObj, 163)->data;
+            My_FontWeight_n = getbutton(dlgObj, 164)->f&BN_ON ? FW_BOLD:FW_NORMAL;
 
             deletefonts();
             makefonts();
@@ -2308,7 +2326,7 @@ LRESULT CALLBACK ConfigProc (HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
                     break;
 
             case VK_RETURN:
-                if (GetFocus() == (HWND)dlg->btp[0].data)
+                if (GetFocus() == (HWND)dlgObj->btp[0].data)
                     goto setfont;
 
                 f=IDOK; goto post;
@@ -2333,7 +2351,7 @@ LRESULT CALLBACK ConfigProc (HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
                 return 1;
 
             case WM_PAINT:
-                paint_box(hwnd, dlg);
+                paint_box(hwnd, dlgObj);
                 return 0;
 
         // -------------------------------------
@@ -2385,7 +2403,6 @@ void bb_close_dlg(void)
 /*----------------------------------------------------------------------------*/
 // communication with the blackbox core comes here:
 
-#include "BBSendData.h"
 UINT msgs[] = { BB_RECONFIGURE, 0 };
 UINT bb_broadcast_msg;
 HWND BBhwnd;
@@ -2416,13 +2433,15 @@ bool bb_register(HWND hwnd)
 {
     BBN_GetBBWnd();
     bb_broadcast_msg = RegisterWindowMessage("TaskbarCreated");
-    return 0 != BBSendData(BBhwnd, BB_REGISTERMESSAGE, (WPARAM)hwnd, msgs, sizeof msgs);
+    return 0 != bbcore::BBSendData(BBhwnd, BB_REGISTERMESSAGE, (WPARAM)hwnd, msgs, sizeof msgs);
 }
 
 void bb_unregister(HWND hwnd)
 {
     if (BBN_GetBBWnd())
-        BBSendData(BBhwnd, BB_UNREGISTERMESSAGE, (WPARAM)hwnd, msgs, sizeof msgs);
+    {
+        bbcore::BBSendData(BBhwnd, BB_UNREGISTERMESSAGE, (WPARAM)hwnd, msgs, sizeof msgs);
+    }
 }
 
 struct getdata_info {
@@ -2430,7 +2449,7 @@ struct getdata_info {
     char *dest;
 };
 
-BOOL bbgetdata(HWND hwnd, unsigned msg, void *dest, struct getdata_info *gdi)
+BOOL bbgetdata(HWND hwnd, unsigned msg, void *dest, getdata_info* gdi)
 {
     gdi->msg = msg;
     gdi->dest = (char*)dest;
@@ -2440,7 +2459,7 @@ BOOL bbgetdata(HWND hwnd, unsigned msg, void *dest, struct getdata_info *gdi)
 #if 1
 bool bb_getstyle(HWND hwnd)
 {
-    struct getdata_info gdi;
+    getdata_info gdi;
     char stylefile[MAX_PATH];
 
     if (false == BBN_GetBBWnd())
@@ -2452,7 +2471,7 @@ bool bb_getstyle(HWND hwnd)
 #else
 bool bb_getstyle(HWND hwnd)
 {
-    struct getdata_info gdi;
+    getdata_info gdi;
     if (false == BBN_GetBBWnd())
         return false;
     if (false == bbgetdata(hwnd, BB_GETSTYLESTRUCT, &gMStyle, &gdi))
@@ -2463,13 +2482,13 @@ bool bb_getstyle(HWND hwnd)
 
 int handle_received_data(HWND hwnd, UINT msg, WPARAM wParam, const void *data, unsigned data_size)
 {
-    struct getdata_info *gdi;
+    getdata_info* gdi;
     if (msg != BB_SENDDATA)
         return 0;
-    gdi = (struct getdata_info*)wParam;
+    gdi = (getdata_info*)wParam;
     switch(gdi->msg) {
     case BB_GETSTYLESTRUCT:
-        memcpy(gdi->dest, data, imin(sizeof (StyleStruct), data_size));
+        memcpy(gdi->dest, data, imin(sizeof (bbcore::StyleStruct), data_size));
         break;
     case BB_GETSTYLE:
         strcpy(gdi->dest, (const char*)data);
@@ -2480,7 +2499,7 @@ int handle_received_data(HWND hwnd, UINT msg, WPARAM wParam, const void *data, u
 
 int bbn_receive_data(HWND hwnd, LPARAM lParam)
 {
-    return BBReceiveData(hwnd, lParam, handle_received_data);
+    return bbcore::BBReceiveData(hwnd, lParam, handle_received_data);
 }
 
 

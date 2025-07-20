@@ -30,13 +30,12 @@ set (SOURCES
     edproc.cpp
     match3.cpp
     readstyle.cpp
-    ${BLACKBOX_INCLUDE_DIR}/Settings.cpp     # hack!! remove
-    ${BLACKBOX_INCLUDE_DIR}/BImage.cpp       # hack!! remove
     resource.rc
 ) 
 
 set (LIBS
     ${BBLIB_LIBRARY}
+    ${BBCORE_LIBRARY}
 )
 
 if (WIN32)
@@ -64,7 +63,7 @@ add_executable (${PROJECT} ${GUI_TYPE} ${HEADERS} ${SOURCES})
 target_link_directories(${PROJECT} PRIVATE ${LINK_DIRS})
 target_include_directories (${PROJECT} PRIVATE ${INCLUDE_DIRS} )
 target_link_libraries (${PROJECT} PRIVATE ${LIBS})
-target_compile_definitions(${PROJECT} PRIVATE BBSETTING_STYLEREADER_ONLY BBSETTING_NOWINDOW)
+#target_compile_definitions(${PROJECT} PRIVATE MYDEF)
 
 # add optional compile options
 if( MSVC ) 

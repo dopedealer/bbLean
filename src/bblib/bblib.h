@@ -186,7 +186,7 @@ BBLIB_EXPORT char *replace_slashes(char *buffer, const char *path);
 BBLIB_EXPORT bool file_exists(const char* path); 
 
 BBLIB_EXPORT void bbshell_set_utf8(int f);
-BBLIB_EXPORT void bbshell_set_defaultrc_path(const char *s);
+//BBLIB_EXPORT void bbshell_set_defaultrc_path(const char *s);
 
 /* winutils.cpp */
 

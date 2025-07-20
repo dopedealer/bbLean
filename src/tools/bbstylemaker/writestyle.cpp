@@ -26,18 +26,20 @@
   #pragma warning(disable: 4800) // 'force int to bool'
 #endif
 
-#include "BBApi.h"
+#include <BBApi.h>
 #include <commdlg.h>
-#include "win0x500.h"
-#include "bblib.h"
-#include "Stylestruct.h"
+#include <win0x500.h>
+#include <bblib.h>
+#include <Stylestruct.h>
+
 #include "bbstylemaker.h"
+#include "writestyle.h"
 
 #define NLS2(a,b) b
 
 static char stylerc_path[MAX_PATH];
 
-char *rgb_string(char *buffer, COLORREF value)
+char* rgb_string(char* buffer, COLORREF value)
 {
     sprintf(buffer, "rgb:%02x/%02x/%02x",
         GetRValue(value),
@@ -46,11 +48,9 @@ char *rgb_string(char *buffer, COLORREF value)
     return buffer;
 }
 
-#include "utils.cpp"
-#include "rcfile.cpp"
-#include "readroot.cpp"
-#define BBSETTINGS_INTERNAL
-#include "Settings.h"
+#include <Settings.h>
+
+#include "./helpers/utils.h"
 
 static
 void fn_write_error(const char *filename)
@@ -59,7 +59,7 @@ void fn_write_error(const char *filename)
         "Error: Could not open \"%s\" for writing."), filename);
 }
 
-static struct rcreader_init g_rc =
+static rcreader_init g_rc =
 {
     NULL,               // struct fil_list *rc_files;
     fn_write_error,     // void (*write_error)(const char *filename);
@@ -90,19 +90,19 @@ char *style_info[5];
 
 void check_style(const char *style)
 {
-    struct fil_list *fl = read_file(style);
-    struct lin_list *tl;
+    fil_list* fl = read_file(style);
+    lin_list* tl;
     dolist (tl, fl->lines)
         if (tl->str[0] && !check_key(tl->str))
             debug_printf("check failed: %s", tl->str);
 }
 
-int readstyle(const char *fname, StyleStruct* s, int root)
+int readstyle(const char *fname, bbcore::StyleStruct* s, int root)
 {
     if (root)
         strcpy(stylerc_path, fname);
 
-    ReadStyle(fname, s);
+    gSettings->readStyle(fname, s);
 
     if (root) {
         int i;
@@ -121,10 +121,10 @@ int readstyle(const char *fname, StyleStruct* s, int root)
 
 struct ck {
     const char *p;
-    const struct ck *k;
+    const ck* k;
 };
 
-const struct ck cp_font [] = {
+const ck cp_font [] = {
     { "font"                , NULL },
     { "fontHeight"          , NULL },
     { "fontWeight"          , NULL },
@@ -133,13 +133,13 @@ const struct ck cp_font [] = {
     { NULL, NULL}
 };
 
-const struct ck cp_border [] = {
+const ck cp_border [] = {
     { "borderColor"         , NULL },
     { "borderWidth"         , NULL },
     { NULL, NULL}
 };
 
-const struct ck cp_texture [] = {
+const ck cp_texture [] = {
     { ""                    , NULL },
     { "color"               , NULL },
     { "colorTo"             , NULL },
@@ -152,32 +152,32 @@ const struct ck cp_texture [] = {
     { NULL, NULL}
 };
 
-const struct ck cp_ee_label [] = {
+const ck cp_ee_label [] = {
     { ">"                   , cp_texture },
     { "textColor"           , NULL },
     { NULL, NULL}
 };
 
-const struct ck cp_ee_label_mar [] = {
+const ck cp_ee_label_mar [] = {
     { "marginWidth"         , NULL },
     { NULL                  , cp_ee_label },
 };
 
 
-const struct ck cp_ee_button [] = {
+const ck cp_ee_button [] = {
     { ">"                   , cp_texture },
     { "picColor"            , NULL },
     { "foregroundColor"     , NULL },
     { NULL, NULL}
 };
 
-const struct ck cp_button [] = {
+const ck cp_button [] = {
     { "pressed"         , cp_ee_button },
     { "marginWidth"     , NULL },
     { NULL              , cp_ee_button },
 };
 
-const struct ck cp_toolbar [] = {
+const ck cp_toolbar [] = {
     { ">"               , cp_ee_label_mar },
     { "label"           , cp_ee_label_mar },
     { "clock"           , cp_ee_label },
@@ -186,7 +186,7 @@ const struct ck cp_toolbar [] = {
     { NULL              , cp_font }
 };
 
-const struct ck cp_ee_mframe [] = {
+const ck cp_ee_mframe [] = {
     { ">"                   , cp_texture },
     { "textColor"           , NULL },
     { "disableColor"        , NULL },
@@ -198,24 +198,24 @@ const struct ck cp_ee_mframe [] = {
     { NULL, NULL}
 };
 
-const struct ck cp_menu_title [] = {
+const ck cp_menu_title [] = {
     { ">"               , cp_ee_label_mar },
     { NULL              , cp_font },
 };
 
-const struct ck cp_menu_frame [] = {
+const ck cp_menu_frame [] = {
     { ">"               , cp_ee_mframe },
     { NULL              , cp_font },
 };
 
 
-const struct ck cp_menu_bullet [] = {
+const ck cp_menu_bullet [] = {
     { "position"        , NULL },
     { ""                , NULL },
     { NULL, NULL}
 };
 
-const struct ck cp_menu [] = {
+const ck cp_menu [] = {
     { "title"           , cp_menu_title },
     { "frame"           , cp_menu_frame },
     { "active"          , cp_ee_mframe },
@@ -226,27 +226,27 @@ const struct ck cp_menu [] = {
 
 // ------------------------------------------
 
-const struct ck cp_win_han [] = {
+const ck cp_win_han [] = {
     { "focus"           , cp_texture },
     { "unfocus"         , cp_texture },
     { NULL, NULL}
 };
 
-const struct ck cp_win_tit [] = {
+const ck cp_win_tit [] = {
     { "focus"           , cp_texture },
     { "unfocus"         , cp_texture },
     { "marginWidth"     , NULL },
     { NULL, NULL}
 };
 
-const struct ck cp_win_lbl [] = {
+const ck cp_win_lbl [] = {
     { "focus"           , cp_ee_label },
     { "unfocus"         , cp_ee_label },
     { "marginWidth"     , NULL },
     { NULL, NULL}
 };
 
-const struct ck cp_win_btn [] = {
+const ck cp_win_btn [] = {
     { "pressed"         , cp_ee_button },
     { "focus"           , cp_ee_button },
     { "unfocus"         , cp_ee_button },
@@ -255,7 +255,7 @@ const struct ck cp_win_btn [] = {
 };
 
 // ------------------------------------------
-const struct ck cp_win_frm [] = {
+const ck cp_win_frm [] = {
     { "focusColor"      , NULL },
     { "unfocusColor"    , NULL },
     { "borderWidth"     , NULL },
@@ -265,7 +265,7 @@ const struct ck cp_win_frm [] = {
 };
 
 // ------------------------------------------
-const struct ck cp_window [] = {
+const ck cp_window [] = {
     { "title"           , cp_win_tit },
     { "label"           , cp_win_lbl },
     { "button"          , cp_win_btn },
@@ -276,13 +276,13 @@ const struct ck cp_window [] = {
     { NULL              , cp_font }
 };
 
-const struct ck cp_slit [] = {
+const ck cp_slit [] = {
     { ">"                   , cp_texture },
     { "marginWidth"         , NULL },
     { NULL, NULL}
 };
 
-const struct ck cp_info [] = {
+const ck cp_info [] = {
     { "name",       NULL },
     { "author",     NULL },
     { "date",       NULL },
@@ -291,7 +291,7 @@ const struct ck cp_info [] = {
     { NULL, NULL}
 };
 
-const struct ck cp_misc [] = {
+const ck cp_misc [] = {
     { "borderWidth"         , NULL },
     { "borderColor"         , NULL },
     { "bevelWidth"          , NULL },
@@ -305,7 +305,7 @@ const struct ck cp_misc [] = {
     { NULL, NULL}
 };
 
-const struct ck cp_all [] = {
+const ck cp_all [] = {
     { "toolbar"     , cp_toolbar },
     { "menu"        , cp_menu },
     { "window"      , cp_window },
@@ -314,7 +314,7 @@ const struct ck cp_all [] = {
     { NULL          , cp_misc },
 };
 
-int check_item(const char *dd, const struct ck *ck)
+int check_item(const char *dd, const ck* ck)
 {
     const char *cc; int c;
 
@@ -358,9 +358,9 @@ int check_key(const char *dd)
 }
 
 // check for the presence of a specific comment string in the style
-struct lin_list *FindRCComment(struct fil_list *fl, LPCSTR keyword)
+lin_list* FindRCComment(fil_list* fl, LPCSTR keyword)
 {
-    struct lin_list *tl;
+    lin_list* tl;
     dolist (tl, fl->lines)
         if (tl->k==1 && 0==stricmp(tl->str+tl->k, keyword))
             return tl;
@@ -368,7 +368,7 @@ struct lin_list *FindRCComment(struct fil_list *fl, LPCSTR keyword)
 }
 
 // add one line to a style
-void add_line(struct lin_list ***tlp, struct lin_list *sl)
+void add_line(lin_list*** tlp, lin_list* sl)
 {
     sl->next = **tlp;
     **tlp = sl;
@@ -377,9 +377,9 @@ void add_line(struct lin_list ***tlp, struct lin_list *sl)
 }
 
 // add more lines to a style
-void add_lines(struct lin_list **tlp, struct lin_list *sl)
+void add_lines(lin_list** tlp, lin_list* sl)
 {
-    struct lin_list *tl;
+    lin_list* tl;
     while (sl)
     {
         tl = sl->next;
@@ -389,17 +389,17 @@ void add_lines(struct lin_list **tlp, struct lin_list *sl)
 }
 
 // search a line in a style
-struct lin_list **get_line(struct fil_list *fl, struct lin_list *tl)
+lin_list** get_line(fil_list* fl, lin_list* tl)
 {
-    struct lin_list **tlp;
+    lin_list** tlp;
     for (tlp = &fl->lines; *tlp != tl; tlp = &(*tlp)->next);
     return tlp;
 }
 
 // search best place to put a line, i.e. after some similar line
-struct lin_list **get_line_after(struct fil_list *fl, const char *key)
+lin_list** get_line_after(fil_list* fl, const char *key)
 {
-    struct lin_list **tlp, **slp;
+    lin_list** tlp, **slp;
     tlp = &fl->lines;
     slp = get_simkey(tlp, key);
     if (slp) {
@@ -416,7 +416,7 @@ struct lin_list **get_line_after(struct fil_list *fl, const char *key)
 }
 
 // check if this is the 3dc start comment
-bool is_3dc_start(struct lin_list *tl)
+bool is_3dc_start(lin_list* tl)
 {
     const char *s;
     return tl && (s = tl->str + tl->k,
@@ -426,9 +426,9 @@ bool is_3dc_start(struct lin_list *tl)
 }
 
 // pull out the 3dc info from a style
-struct lin_list *get_3dc(struct fil_list *fl)
+lin_list* get_3dc(fil_list* fl)
 {
-    struct lin_list **tlp, *tl, *sl = NULL, **slp = &sl;
+    lin_list **tlp, *tl, *sl = NULL, **slp = &sl;
     for (tlp = &fl->lines; NULL != (tl = *tlp); )
     {
         if (tl->str[0]) {
@@ -459,9 +459,9 @@ struct lin_list *get_3dc(struct fil_list *fl)
 
 // Remove all unknown items from style, optionally append them at the end
 // under a comment string !-- other --
-struct lin_list *ClearRCFile(struct fil_list *fl, bool append, bool is_070)
+lin_list* ClearRCFile(fil_list* fl, bool append, bool is_070)
 {
-    struct lin_list *tl, **tlp = &fl->lines, *sl = NULL, **slp = &sl;
+    lin_list *tl, **tlp = &fl->lines, *sl = NULL, **slp = &sl;
 
     while (NULL != (tl = *tlp)) {
         if (tl->str[0] && false == tl->dirty) {
@@ -492,21 +492,21 @@ struct lin_list *ClearRCFile(struct fil_list *fl, bool append, bool is_070)
 // It reads wildcard-suggestions from the bbstylemaker.rc file and then
 // checks whether it would make sense to apply them
 
-struct lin_list* make_wildcard(
-    struct fil_list *fl,
+lin_list* make_wildcard(
+    fil_list* fl,
     const char *wc,
-    struct lin_list *ol,
-    struct lin_list **dl
+    lin_list* ol,
+    lin_list** dl
     )
 {
     struct wc_list {
-        struct wc_list *next;
+        wc_list* next;
         int n;
         const char *str;
     };
 
-    struct lin_list *sl, **slp, *rl, *ql;
-    struct wc_list *wl = NULL, *w, *w2;
+    lin_list *sl, **slp, *rl, *ql;
+    wc_list *wl = NULL, *w, *w2;
 
     char wbuf[200];
     int m, n;
@@ -524,7 +524,7 @@ struct lin_list* make_wildcard(
                     break;
 
             if (NULL == w) {
-                w = (struct wc_list *)m_alloc(sizeof *w);
+                w = (wc_list *)m_alloc(sizeof *w);
                 cons_node(&wl, w);
                 w->n = 0;
                 w->str = new_str(sl->str + sl->k);
@@ -595,10 +595,10 @@ struct lin_list* make_wildcard(
     return sl;
 }
 
-struct lin_list *make_wildcards(struct fil_list *fl)
+lin_list* make_wildcards(fil_list* fl)
 {
     LONG l = 0;
-    struct lin_list *tl, *sl = NULL, **slp = &sl, *dl = NULL;
+    lin_list *tl, *sl = NULL, **slp = &sl, *dl = NULL;
 
     for (;;) {
         const char *p = read_value(rcpath, "bbstylemaker.wildcards.try", &l);
@@ -620,7 +620,8 @@ struct lin_list *make_wildcards(struct fil_list *fl)
 
 //===========================================================================
 
-struct bulletstyles { const char *s; int b; } bulletstyles[]= {
+struct bulletstyles { const char *s; int b; }
+gBulletstyles[]= {
     { "empty"    , BS_EMPTY },
     { "triangle" , BS_TRIANGLE },
     { "square"   , BS_SQUARE },
@@ -631,14 +632,15 @@ struct bulletstyles { const char *s; int b; } bulletstyles[]= {
 
 int get_bulletstyle (const char *tmp)
 {
-    struct bulletstyles *bp;
-    for (bp = bulletstyles; bp->s && stricmp(tmp,bp->s);bp++);
+    bulletstyles* bp;
+    for (bp = gBulletstyles; bp->s && stricmp(tmp,bp->s);bp++);
     return bp->b;
 }
 
 int get_bulletpos (const char *tmp)
 {
-    static const struct { const char *s; int b; } *bp,bs[]= {
+    static const struct { const char *s; int b; }
+    *bp, bs[]= {
         { "right" , DT_RIGHT },
         { "default" , -1 },
         { NULL  , DT_LEFT }
@@ -651,7 +653,7 @@ const char * get_bullet_string (int s)
 {
     if (s > BS_CIRCLE || s < BS_EMPTY)
         s = BS_TRIANGLE;
-    return bulletstyles[s].s;
+    return gBulletstyles[s].s;
 }
 
 
@@ -761,48 +763,48 @@ int make_fontstring(StyleItem *si, char *out)
 
 //===========================================================================
 static
-void write_style_item (const char * style, StyleStruct *pStyle, StyleItem *si, const char *key, int v, int sn)
+void write_style_item (const char * style, bbcore::StyleStruct *pStyle, StyleItem *si, const char *key, int v, int sn)
 {
     struct s_prop { const char *k; short mode; short v; };
 
-    static const struct s_prop s_prop_065[]= {
+    static const s_prop s_prop_065[]= {
     // texture type
-    { "",                  C_TEX , V_TEX  },
+    { "",                  bbcore::C_TEX , V_TEX  },
     // colors, from, to, text, pics
-    { ".color",            C_CO1 , V_CO1 },
-    { ".colorTo",          C_CO2 , V_CO2 },
-    { ".picColor",         C_PIC , V_PIC },
-    { ".textColor",        C_TXT , V_TXT },
-    { ".disableColor",     C_DIS , V_DIS },
+    { ".color",            bbcore::C_CO1 , V_CO1 },
+    { ".colorTo",          bbcore::C_CO2 , V_CO2 },
+    { ".picColor",         bbcore::C_PIC , V_PIC },
+    { ".textColor",        bbcore::C_TXT , V_TXT },
+    { ".disableColor",     bbcore::C_DIS , V_DIS },
     // font settings
-    { ".font",             C_FON , V_FON },
-    { ".justify",          C_JUS , V_JUS },
+    { ".font",             bbcore::C_FON , V_FON },
+    { ".justify",          bbcore::C_JUS , V_JUS },
     { NULL, 0, 0}
     };
 
-    static const struct s_prop s_prop_070[]= {
+    static const s_prop s_prop_070[]= {
     // texture type
-    { ".appearance",       C_TEX , V_TEX  },
+    { ".appearance",       bbcore::C_TEX , V_TEX  },
 
     // colors, from, to, text, pics
-    { ".color1",           C_CO1 , V_CO1 },
-    { ".color2",           C_CO2 , V_CO2 },
-    { ".foregroundColor",  C_PIC , V_PIC },
-    { ".textColor",        C_TXT , V_TXT },
-    { ".disabledColor",    C_DIS , V_DIS },
+    { ".color1",           bbcore::C_CO1 , V_CO1 },
+    { ".color2",           bbcore::C_CO2 , V_CO2 },
+    { ".foregroundColor",  bbcore::C_PIC , V_PIC },
+    { ".textColor",        bbcore::C_TXT , V_TXT },
+    { ".disabledColor",    bbcore::C_DIS , V_DIS },
 
     // borders & margins - _new in BBNix 0.70
-    { ".borderColor",      C_BOC , V_BOC },
-    { ".borderWidth",      C_BOW , V_BOW },
-    { ".marginWidth",      C_MAR , V_MAR },
+    { ".borderColor",      bbcore::C_BOC , V_BOC },
+    { ".borderWidth",      bbcore::C_BOW , V_BOW },
+    { ".marginWidth",      bbcore::C_MAR , V_MAR },
 
     // font settings
-    { ".font",             C_FON , V_FON },
-    { ".alignment",        C_JUS , V_JUS },
+    { ".font",             bbcore::C_FON , V_FON },
+    { ".alignment",        bbcore::C_JUS , V_JUS },
     { NULL, 0, 0}
     };
 
-    const struct s_prop *cp = s_prop_070;
+    const s_prop* cp = s_prop_070;
     char fullkey[80];
     char tex[100];
     int l, t, u;
@@ -823,7 +825,7 @@ void write_style_item (const char * style, StyleStruct *pStyle, StyleItem *si, c
             switch (cp->mode) {
 
             // --- textture ---
-            case C_TEX:
+            case bbcore::C_TEX:
                 tp = tex;
                 if (sn == SN_MENUTITLE && pStyle->menuNoTitle) {
                     addstr(&tp, "hidden", 0);
@@ -879,7 +881,7 @@ void write_style_item (const char * style, StyleStruct *pStyle, StyleItem *si, c
                 break;
 
             // --- colors ---
-            case C_CO1:
+            case bbcore::C_CO1:
                 if (false == si->parentRelative) {
                     if (si->type == B_SOLID && false == si->interlaced && pStyle->is_070)
                         strcpy(fullkey + l, ".backgroundColor");
@@ -887,21 +889,21 @@ void write_style_item (const char * style, StyleStruct *pStyle, StyleItem *si, c
                 }
                 break;
 
-            case C_CO2:
+            case bbcore::C_CO2:
                 if (false == si->parentRelative && !(si->type == B_SOLID && false == si->interlaced)) {
                     WriteColorEx(style, fullkey, si->ColorTo);
                 }
                 break;
 
-            case C_TXT:
+            case bbcore::C_TXT:
                 WriteColorEx(style, fullkey, si->TextColor);
                 break;
 
-            case C_DIS:
+            case bbcore::C_DIS:
                 WriteColorEx(style, fullkey, si->disabledColor);
                 break;
 
-            case C_PIC:
+            case bbcore::C_PIC:
                 if (0 == (v & V_TXT))
                     WriteColorEx(style, fullkey, si->picColor);
                 else
@@ -909,23 +911,23 @@ void write_style_item (const char * style, StyleStruct *pStyle, StyleItem *si, c
                     WriteColorEx(style, fullkey, si->foregroundColor);
                 break;
 
-            case C_BOC:
+            case bbcore::C_BOC:
                 if (si->borderWidth)
                     WriteColorEx(style, fullkey, si->borderColor);
                 break;
 
-            case C_BOW:
+            case bbcore::C_BOW:
                 if (si->borderWidth)
                     write_int(style, fullkey, si->borderWidth);
                 break;
 
-            case C_MAR:
+            case bbcore::C_MAR:
                 if (si->validated & V_MAR)
                     write_int(style, fullkey, si->marginWidth);
                 break;
 
             // --- Font ---
-            case C_FON:
+            case bbcore::C_FON:
                 if (0 == useWildcards)
                 {
                     const char *p = read_string(style, fullkey, "");
@@ -933,7 +935,8 @@ void write_style_item (const char * style, StyleStruct *pStyle, StyleItem *si, c
                     memset(&SI, 0, sizeof SI);
                     SI.FontHeight = 12;
                     SI.FontWeight = FW_NORMAL;
-                    parse_font(&SI, p);
+
+                    gSettings->parseFontNameToStyleItem(&SI, p);
                     if (SI.FontHeight == si->FontHeight
                         && SI.FontWeight == si->FontWeight
                         && 0 == strcmp(SI.Font, si->Font)) {
@@ -960,7 +963,7 @@ void write_style_item (const char * style, StyleStruct *pStyle, StyleItem *si, c
                 break;
 
             // --- Alignment ---
-            case C_JUS:
+            case bbcore::C_JUS:
                 write_string(style, fullkey,
                     si->Justify == DT_CENTER?"center":
                     si->Justify == DT_RIGHT?"right":
@@ -980,7 +983,7 @@ const char header_string[] = "! Stylefile for blackbox";
 int is_style_old(const char *style)
 {
     bool is_070;
-    struct fil_list *fl;
+    fil_list* fl;
 
     is_070 = get_070(style);
     //debug_printf("070: %d (%s)", is_070, style);
@@ -1001,19 +1004,19 @@ int is_style_old(const char *style)
 
 int writestyle(
     const char *style,
-    StyleStruct *pStyle,
+    bbcore::StyleStruct *pStyle,
     char **style_info,
     int flags
     )
 {
-    struct fil_list *fl;
-    struct lin_list *sl, *tl, **tlp, *tl_3dc;
+    fil_list* fl;
+    lin_list *sl, *tl, **tlp, *tl_3dc;
     const char *auto_string;
     bool newfile;
     bool tabify;
     bool has_auto;
     const char *p, *q;
-    const struct items *s;
+    const bbcore::items* s{};
     int i, r;
 
 
@@ -1080,14 +1083,14 @@ int writestyle(
     }
 
     // skip old 065 global items
-    s = GetStyleItems();
+    s = gSettings->getStyleItems();
     while (s->sn != SN_ROOTCOMMAND)
         ++s;
 
     do
     {
         int sn = s->sn;
-        void *v = StyleStructPtr(sn, pStyle);
+        void* v = bbcore::StyleStructPtr(sn, pStyle);
         const char *t = NULL;
 
         // skip these if in 065 mode
@@ -1125,23 +1128,23 @@ int writestyle(
         // output the items
         switch (s->type)
         {
-            case C_STY:
+            case bbcore::C_STY:
                 write_style_item (style, pStyle, (StyleItem*)v, s->rc_string, s->flags, s->sn);
                 break;
 
-            case C_INT:
+            case bbcore::C_INT:
                 write_int(style, s->rc_string, *(int*)v);
                 break;
 
-            case C_BOL:
+            case bbcore::C_BOL:
                 write_bool(style, s->rc_string, *(bool*)v);
                 break;
 
-            case C_COL:
+            case bbcore::C_COL:
                 WriteColorEx(style, s->rc_string, *(COLORREF*)v);
                 break;
 
-            case C_STR:
+            case bbcore::C_STR:
                 p = (const char*)v;
                 if (0 == *p && sn != SN_ROOTCOMMAND)
                     continue;

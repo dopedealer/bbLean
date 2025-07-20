@@ -35,7 +35,7 @@ static bool usingNT;
 
 struct tt
 {
-    struct tt *next;
+    tt* next;
     char used_flg;
     char text[256];
     WCHAR wstr[256];
@@ -82,7 +82,7 @@ void InitToolTips(HINSTANCE hInstance)
 
 void ExitToolTips()
 {
-    struct tt **tp, *t;
+    tt **tp, *t;
 
     DestroyWindow(hToolTips);
     hToolTips = NULL;
@@ -101,7 +101,7 @@ void ExitToolTips()
 
 void SetToolTip(HWND hwnd, RECT *tipRect, const char *tipText)
 {
-    struct tt **tp, *t;
+    tt **tp, *t;
     UINT_PTR n = 0;
 
     if (NULL==hToolTips || 0 == *tipText)
@@ -128,7 +128,7 @@ void SetToolTip(HWND hwnd, RECT *tipRect, const char *tipText)
             n = t->ti.uId;
     }
 
-    *tp = t = c_new (struct tt);
+    *tp = t = c_new(tt);
     t->used_flg  = 1;
 
     strcpy(t->text, tipText);
@@ -156,7 +156,7 @@ void SetToolTip(HWND hwnd, RECT *tipRect, const char *tipText)
 
 void ClearToolTips(HWND hwnd)
 {
-    struct tt **tp, *t;
+    tt **tp, *t;
 
     tp=&tt0;
     while (NULL!=(t=*tp))
@@ -184,7 +184,7 @@ void ClearToolTips(HWND hwnd)
 
 //===========================================================================
 
-struct plugin_info *g_bbb;
+plugin_info* g_bbb;
 
 void exit_bb_balloon(void)
 {
@@ -233,7 +233,7 @@ public:
     {
         this->finished = true;
         BBP_Exit_Plugin(this);
-        for (struct plugin_info **pp = &g_bbb; *pp; pp = &(*pp)->next) {
+        for (plugin_info** pp = &g_bbb; *pp; pp = &(*pp)->next) {
             if (this == *pp) {
                 *pp = this->next;
                 break;

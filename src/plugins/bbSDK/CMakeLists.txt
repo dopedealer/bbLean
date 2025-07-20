@@ -19,7 +19,8 @@ set (SOURCES
 ) 
 
 set (LIBS
-    ${BLACKBOX_LIBRARIES}
+    ${BBLIB_LIBRARY}
+    ${BLACKBOX_LIBRARY}
 )
 
 if (WIN32)

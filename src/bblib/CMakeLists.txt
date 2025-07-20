@@ -16,12 +16,14 @@ set (HEADERS
     bbroot.h
     bbshell.h
     bbstyle.h
+    drawico.h
 ) 
 set (SOURCES
     bbrc.cpp
     bbroot.cpp
     bools.cpp
     colors.cpp
+    drawico.cpp
     m_alloc.cpp
     numbers.cpp
     paths.cpp

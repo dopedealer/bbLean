@@ -21,7 +21,6 @@ set (HEADERS
 ) 
 set (SOURCES
     bsetroot.cpp
-    ${BLACKBOX_INCLUDE_DIR}/BImage.cpp # hack!! remove in future !
     bsrt-rsc.rc
 ) 
 
@@ -31,6 +30,7 @@ endif()
 
 set (LIBS
     ${BBLIB_LIBRARY}
+    ${BBCORE_LIBRARY}
     ${CXIMAGE_LIBRARIES}
 )
 

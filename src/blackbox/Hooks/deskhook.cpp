@@ -49,9 +49,9 @@ typedef struct tagMOUSEHOOKSTRUCTEX : public tagMOUSEHOOKSTRUCT
 HHOOK hDeskHook{};
 HHOOK g_hShellHook{};
 unsigned WM_ShellHook{};
-HWND BBhwnd{};
+HWND gBBhwnd{};
 HWND DTWnd{};
-bool underExplorer{};
+bool gUnderExplorer{};
 bool progman_present{};
 bool is_win2k{};
 
@@ -68,14 +68,11 @@ HINSTANCE hInstance = NULL;
 LRESULT CALLBACK MouseProc(int nCode, WPARAM wParam, LPARAM lParam);
 LRESULT CALLBACK ShellProc(int nCode, WPARAM wParam, LPARAM lParam);
 
-void dbg_printf (const char *fmt, ...)
-{
-    char buffer[4096];
+void dbg_printf(const char *fmt, ...)
+{ 
     va_list arg; 
     va_start(arg, fmt);
-    vsprintf (buffer, fmt, arg);
-    strcat(buffer, "\n");
-    OutputDebugString(buffer);
+    ::debug_vprintf(fmt, arg);
     va_end(arg);
 }
 
@@ -111,14 +108,14 @@ void post_click(int n)
         wParam |= MK_CONTROL;
     if (0x8000 & GetAsyncKeyState(VK_SHIFT))
         wParam |= MK_SHIFT;
-    PostMessage(BBhwnd, BB_DESKCLICK, wParam, n);
+    PostMessage(gBBhwnd, BB_DESKCLICK, wParam, n);
 }
 
 LRESULT CALLBACK MouseProc(int nCode, WPARAM wParam, LPARAM lParam)
 {
     if (nCode == HC_ACTION
      && ((MOUSEHOOKSTRUCT*)lParam)->hwnd == DTWnd
-     && (false == underExplorer
+     && (false == bbcore::gUnderExplorer
          || false == progman_present
          || 0 == (GetAsyncKeyState(VK_CONTROL) & 0x8000)
          ))
@@ -127,7 +124,7 @@ LRESULT CALLBACK MouseProc(int nCode, WPARAM wParam, LPARAM lParam)
         {
             case WM_LBUTTONDOWN:
                 if (progman_present)
-                    PostMessage(BBhwnd, BB_HIDEMENU, 0, 0);
+                    PostMessage(gBBhwnd, BB_HIDEMENU, 0, 0);
                 else
                     post_click(0);
                 break;
@@ -184,7 +181,7 @@ LRESULT CALLBACK ShellProc(int nCode, WPARAM wParam, LPARAM lParam)
         if (HSHELL_REDRAW == nCode && lParam)
             nCode |= 0x8000;
 
-        PostMessage(BBhwnd, WM_ShellHook, nCode, wParam);
+        PostMessage(gBBhwnd, WM_ShellHook, nCode, wParam);
     }
 
     return CallNextHookEx( g_hShellHook, nCode, wParam, lParam );
@@ -195,8 +192,8 @@ EXTERN_C DLL_EXPORT void SetHooks(HWND BlackboxWnd, int flags)
 {
     if (BlackboxWnd)
     {
-        BBhwnd = BlackboxWnd;
-        underExplorer = flags & 1;
+        gBBhwnd = BlackboxWnd;
+        bbcore::gUnderExplorer = flags & 1;
 
         OSVERSIONINFO osInfo;
         osInfo.dwOSVersionInfoSize = sizeof(osInfo);

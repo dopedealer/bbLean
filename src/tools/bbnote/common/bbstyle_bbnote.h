@@ -19,6 +19,7 @@
 
 #define VERSION_STRING "BBNote 1.08"
 
+#include <bbcore.h>
 #include "BBApi.h"
 #include "win0x500.h"
 #include "bblib.h"
@@ -28,7 +29,7 @@
 //#define MAX_LINE_LENGTH 256
 
 void MakeGradient_s (HDC hdc, RECT rw, StyleItem *si, int borderWidth);
-extern StyleStruct gMStyle;
+extern bbcore::StyleStruct gMStyle;
 
 // FolderItem bullet positions
 #define FOLDER_RIGHT    0
@@ -38,41 +39,7 @@ extern StyleStruct gMStyle;
 // A structure with precalculated menu metrics,
 // as filled in by 'MenuMaker_Reconfigure()'.
 
-struct MenuInfo
-{
-    HFONT hFrameFont; // fonts...
-    HFONT hTitleFont;
-
-    int nTitleHeight; // total height of title
-    int nTitleIndent; // left/right text indent
-
-    int nItemHeight; // height of normal item
-    int nItemLeftIndent; // text indent
-    int nItemRightIndent;
-
-    int nFrameMargin; // outer margin of menu frame, including border
-    int nTitleMargin; // frame margin around title (normally 0)
-
-    int nSubmenuOverlap;
-    int MaxWidth;     // as configured
-
-    COLORREF separatorColor;
-    int separatorWidth; // in pixel
-    bool check_is_pr; // whether checkmarks cant use the hilite style
-    bool openLeft;
-
-    // presets for possible scrollbuttons
-    int nScrollerSize;
-    int nScrollerSideOffset;
-    int nScrollerTopOffset;
-    StyleItem Scroller;
-
-    int nBulletPosition;
-    int nBulletStyle;
-    int nIconSize;
-};
-
-extern struct MenuInfo MenuInfo;
+extern bbcore::MenuInfo gMenuInfo;
 
 /*----------------------------------------------------------------------------*/
 
@@ -102,11 +69,11 @@ struct strl { struct strl *next; char str[1]; };
 #define STRL
 #endif
 
-struct strl *newstr(const char *s);
+strl* newstr(const char *s);
 void freelist(void *p);
-void appendstr(struct strl **p, const char *s);
+void appendstr(strl** p, const char *s);
 
-void bb_file_menu(HWND, int, struct strl *);
+void bb_file_menu(HWND, int, strl*);
 bool bb_getstyle(HWND hwnd);
 void bb_reconfig(void);
 void bb_sound(int f);
@@ -121,7 +88,7 @@ void bb_rcreader_init(void);
 
 int fileexist(char*);
 
-extern struct strl *editfiles;
+extern strl* editfiles;
 extern char defstyle[];
 
 extern HFONT fnt1, fnt2;

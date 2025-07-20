@@ -76,6 +76,25 @@ typedef struct StyleItem
 
 } StyleItem;
 
+typedef struct ShortStyleItem
+{
+    /* 0.0.80 */
+    int bevelstyle;
+    int bevelposition;
+    int type;
+    bool parentRelative;
+    bool interlaced;
+    /* 0.0.90 */
+    COLORREF Color;
+    COLORREF ColorTo;
+    COLORREF TextColor;
+    int FontHeight;
+    int FontWeight;
+    int Justify;
+    int validated;
+    char Font[16];
+} ShortStyleItem;
+
 
 #ifdef __cplusplus
 }
