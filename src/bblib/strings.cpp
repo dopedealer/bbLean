@@ -219,6 +219,7 @@ _char:
     }
 }
 
+/// \brief Returns formatted string allocated with malloc()
 char *m_format(const char *fmt, ...)
 {
     va_list arg_list;

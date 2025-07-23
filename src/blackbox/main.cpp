@@ -1,5 +1,5 @@
 
-#include "Blackbox.h"
+#include "exports.h" 
 
 int WINAPI WinMain(
     HINSTANCE hInstance,
@@ -8,5 +8,6 @@ int WINAPI WinMain(
     int nShowCmd)
 {
     bbcore::Blackbox blackbox(hInstance, lpCmdLine);
+    gApp = &blackbox;
     return blackbox.run();
 }

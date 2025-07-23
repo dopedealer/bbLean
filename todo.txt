@@ -12,95 +12,31 @@
                 * make a class Blackbox
                 * make call of Blackbox class to run
                 * move winmain to main.cpp
-            - move content of blackbox to bbcore lib
-                * make a list of exported bbapi
-                x create 'storage' file for bbapi replacement in bbcore (bbcoreapi)
-                * make compilation of bblib fully separate from blackbox
-                ? cannot directly move all to bbcore - impossible to used both libs by consumers together - doubled content
-                    - move all files and put all content to namespaces (except: main.cpp, bbapi xx)
-                        * resolve bblib includes dir and headers from blackbox dir (bbapi.h)
-                            * move bblib from c to cpp
-                                * fix bblib: pidl.c uses defaultrcPath() from blackbox proj
-                                * remove include of blackbox headers to bblib
-                        * fix the .\blackbox\Settings.h variables containment
-                        * fix the exported api's from blackbox that contain ellipsis - blocks moving to namespace
-                        * fix missing va_end paired to va_start (or leads to #UB)
-                        * resolve code duplication in blackbox of exported api's and tools (and names collisions)
-                        ? the BBSETTING_STYLEREADER_ONLY in settins.cpp prevents from normal moving to namespace
-                            ? bbrcPath cannot find from settings.cpp when in-compile hack
-                                ? it cannot be resolved in case of in-compile of settings.cpp because needed bbrcPath() is not compiled in that case
-                            ? the __BBCORE__ macro in settings.cpp prevents clean move out api
-                    ? make wrapper calls for every exported blackbox api
-                    - make callable functions with moved original content from exported api in bbcore lib
-            - make separate static only lib bbcore with namespace bbcore inside, no exports
-                ? __BBCORE__ prevents from splitting
-                    ? uses __BBCORE__ strange files:
-                        ? bb.h contains extern globals under this macro . But separate functions for blackbox case compilation
-                        ? bbapi.cpp (no one uses except blackbox)
-                        ? fix bbapi.cpp (no one uses except blackbox)
-                        ? settings.cpp (used by bbnote, bbstylemaker) ; changes func behaviour
-                            ? resolve __BBCORE__ in settings.cpp
-                            ? BBSETTING_NOWINDOW - settings.cpp
-                            ? BBSETTING_STYLEREADER_ONLY
-                                ? BBSETTING tricky extern define
-                                    ? the variables defined directly in settings.h in one case
-                            ? __BBSM__
-                        - utils.cpp (used by bbiconbox, bbstylemaker)
-                        - bbapi.h (defines exported special name functions for plugins)
-                        - bbsenddata.h (if macro and x64 changes func behaviour)
-                        - utils.cpp (adds print log fn)
-            - move blackbox to use bbcore lib
-            - move all blackbox functionality to bbcore lib
-            - replace direct in-compile of cpp from ex blackbox in bsetroot to usage of static lib bbcore
-            - try remove direct in-compile of image_cx.cpp
-            ? needs functions bimage_init bimage_create bimage_destroy bimage_getpixels
-                ? try move bimage functions to bblib
-                    ? bimage uses global static variables
-                        - try remove bimage global variables
-            ? bbstylemaker requires in-compile Settings.cpp, BImage.cpp
-                ? stylemaker defines it's macro BBSETTING_STYLEREADER_ONLY and causes compilation different code in Settings.cpp
-                ? requires functions parse_font, ReadStyle, GetStyleItems, StyleStructPtr
-            ? bbnote requres in-compile sources: Settings.cpp, BImage.cpp
-                ? adds macroses BBSETTING_STYLEREADER_ONLY BBSETTING_NOWINDOW that changes compiled code
-                ? missing in-compile functions: bimage_init, ReadStyle
-                - BImage.cpp ; ?  
-        - resolve: exports in original are exported from exe and plugins use it
-            - cover bblib exported api with tests
-            ? make possible compilation of bbcore as static and as dynamic lib
-        - remove hack in bbnote - in-compile sources from other dir
-        - remove hack compilations of:
-            - cpp files from bbstylemaker
-            - in bbLeanSkinEng remove direct in-compile hack of ../../blackbox/BImage.cpp !!!
-            - remove direct cpp file include from:
-                - bbleanBar
-                - bbstylemaker
-                - find where is more such includes
-            - make bblib buildable as dynamic based on option
-                - make compilation
-                    - error: undefined symbol: bbWC2MB in pidl.c (located in blackbox)
-                        - move bbWC2MB,bbWC2MB to strings.c and exported with usage and forwarding export in blackbox
-                            * create helper wchar string convertin func in bblib
-                            ? pidl uses bbWC2MB that depends on flag
-                            ? the bbWC2MB depends on property Settings_UTF8Encoding in blackbox
-                            - make tests for wchar_to_mbs
-                    - undefined symbol: defaultrcPath in pidl.c (located in blackbox)
-            - change multiple settings object instances to single
-            - make blackbox exported api via proxying to some global object (singletone?)
-                - make setter of global api object via interface
-                - make set/unset global interface near (where?) blackbox object creation (in main?)
-                - make all exported apis work only via this interface
-        - make sure needed defs defined based on option
-        - set correct artifacts gaterhing to instaler build
-        - remove global variable in rc functionality 
+            * move content of blackbox to bbcore lib
+            * make separate static only lib bbcore with namespace bbcore inside, no exports
+            * move blackbox to use bbcore lib
+            * move all blackbox functionality to bbcore lib
+            * replace direct export api realisation to methods calling in blackbox class
+            * verify export proxies scope actions
+            * verify export apis scope actions
+            - make sure comments to proxy export methods present
+            * replace direct in-compile of cpp from ex blackbox in bsetroot to usage of static lib bbcore
+            * try remove direct in-compile of image_cx.cpp
+        * remove hack compilations of:
+            * cpp files from bbstylemaker
+            x make bblib buildable as dynamic based on option
+            * make blackbox exported api via proxying to some global object
+        x make sure needed defs defined based on option
+        * set correct artifacts gaterhing to instaler build
+        x remove global variable in rc functionality 
         * remove #include "../../plugins/bbPlugin/drawico.cpp"  from MenuItem.cpp
-    - remove blackbox/bbcore in-compile include from bblib (start with remove include dir)
-    - remove usage of defaultrcPath and other fn fromiz blacbox inside bblib
-    - remove global variables in bblib (rc global state)
-    - remove global variables all over bblean repository code
-    - try to remove include blackbox dir from bblib
+    * remove blackbox/bbcore in-compile include from bblib (start with remove include dir)
+    x remove usage of defaultrcPath and other fn fromiz blacbox inside bblib
+    x remove global variables in bblib (rc global state)
+    x remove global variables all over bblean repository code
+    x try to remove include blackbox dir from bblib
     - add nls txt to docs copying
-- split BBSendData.h to h and cpp files
-- move all functions that ends with XXX_command to corresponding source fiels (commands.cpp, commands.h)
+x split BBSendData.h to h and cpp files
 
 - make other refactorings
     - remove duplicate code from fuzzydoc - bblib
@@ -123,7 +59,6 @@
             - barinfo()
             - slit_info()
             - barinfo struct (class)
-? remove __BBCORE__ macro usage in blackbox.exe
 - add 'no skin' variant to use original grey skin
 ? change structure - source + include dirs for plugins
 - move to wchar_t paths usage (inside)
@@ -154,6 +89,9 @@
 - modify default styles to show user's windows wallpaper
     - test style with wallpaper engine
 - replace explicit imports for functions that present at least from vista/xp
+- add hints (tray popups) on tray icons mouse hover
+- replace global settings singletone - change to interface usage from blackbox class
+
 
 - other refactorings
     - bbkeys refactoring
@@ -189,6 +127,10 @@
       may be public? Methods instead of global functions ?
     - remove all static variables from class Menu (at least g_MenuWindowList_, g_MenuStructList, g_MenuRefList)
     - rewrite implicit import mechanisms (probably replace to my lib loader usage)
+    - move all export methods from blackbox.h to specific subsystem classes.
+      Make composition of methods instead of calling of something in bbcore.
+    - make bbcore::makeGradient function parameters passed as struct instead of large number of pars
+    - move all functions that ends with XXX_command to corresponding source fiels (commands.cpp, commands.h)
 
 
 - add manifest to make winapi dialogs look more pretty
@@ -206,12 +148,14 @@ bugs to fix:
 - correct work 'as shell' under windows 10
 - correct work 'as shell' under windows 11
 - oni.exe game does not run via menu under windows 10 x64
-- fix volume tray icon work
+- fix volume tray icon work (w10, 11)
 - duplicated 'programs' in submenu (windows 10)
 - japan hieroglyphs in fs names doesn't shown properly in start menu navigation
+- somewhy remains lock of blackbox files after exit from it when running in 'over explorer' mode
 
 features request:
 ----------------
+- add to bbstylemaker browser button to select image
 - work with Wallpaper Engine app
 - xoblite_bb5_rc4 plugins compatibility
 - custom control panel app - 'restoring' classic one
@@ -219,3 +163,4 @@ features request:
 - make bbnote support utf-8 and display as utf-8 by default
 - add 'browse' button with dialog calling in bbstylemaker for image file path setting
 ? fix tips work for some bbleanbar items ? (settip fn)
+- make utility like lupdate to parse the NLS2 - like constructs and make&merge the output translation files

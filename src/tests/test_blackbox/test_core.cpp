@@ -6,14 +6,14 @@
 
 #include <windows.h> 
 
-//#include <bblib.h>
-//#include <bbrc.h>
-//#include <bbroot.h>
-//#include <bbshell.h>
-
 #include <BBApi.h>
+#include <Blackbox.h>
 
-TEST(DummyBlackboxTest, TestCompilation) 
+
+TEST(AppObjectTest, Instantiation) 
 {
-} 
+    char cmdlineWithoutApp[] = "\x00";
+    HINSTANCE hInstance{};
 
+    bbcore::Blackbox blackbox(hInstance, cmdlineWithoutApp);
+} 

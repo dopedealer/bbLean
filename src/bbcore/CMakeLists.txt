@@ -70,6 +70,7 @@ set (SOURCES
     BBVWM.cpp
     BImage.cpp
     Blackbox.cpp
+    Blackbox.exports.cpp
     commands.cpp
     Desk.cpp
     Menu/Dragsource.cpp

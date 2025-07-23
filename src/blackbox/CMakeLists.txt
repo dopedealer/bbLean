@@ -25,11 +25,12 @@ set (LINK_DIRS
     ) 
 
 set (HEADERS
+    exports.h
 ) 
 
 set (SOURCES
     main.cpp
-    BBApi.cpp
+    exports.cpp
     resource.rc
 ) 
 

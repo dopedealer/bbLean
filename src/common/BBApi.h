@@ -602,13 +602,20 @@ extern "C" {
 
     /* Path where blackbox.exe is (including trailing backslash) */
     API_EXPORT char* WINAPI GetBlackboxPath(char* path, int maxLength);
-    /*
-       Get full Path for a given filename. The file is searched:
-       1) If pluginInstance is not NULL: In the directory that contains the DLL
-       2) In the blackbox directory.
-       Returns true if the file was found.
-       If not, 'pszOut' is set to the default location (plugin directory)
-    */
+
+    
+
+    /// \brief Lookup a configuration file
+    /// \param pszOut The location where to put the result
+    /// \param filename Name of file to look for
+    /// \param pluginInstance Module handle or NULL
+    /// \returns bool = true of found, FALSE otherwise 
+    /// 
+    /// Get full Path for a given filename. The file is searched:
+    /// 1) If pluginInstance is not NULL: In the directory that contains the DLL
+    /// 2) In the blackbox directory.
+    /// Returns true if the file was found.
+    /// If not, 'pszOut' is set to the default location (plugin directory) 
     API_EXPORT bool FindRCFile(char* pszOut, const char* fileName, HINSTANCE pluginInstance);
 
     /* Get configuration filepaths */

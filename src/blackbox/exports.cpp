@@ -4,13 +4,17 @@
 #include <bbcore.h>
 #include <BBApi.h>
 
+#include "exports.h"
+
+BlackboxAppType* gApp{};
+
 //===========================================================================
 // API: ReadBool
 //===========================================================================
 
 bool ReadBool(const char* fileName, const char* szKey, bool bDefault)
 {
-    return read_bool(fileName, szKey, bDefault);
+    return gApp->read_bool(fileName, szKey, bDefault);
 }
 
 //===========================================================================
@@ -19,7 +23,7 @@ bool ReadBool(const char* fileName, const char* szKey, bool bDefault)
 
 int ReadInt(const char* fileName, const char* szKey, int nDefault)
 {
-    return read_int(fileName, szKey, nDefault);
+    return gApp->read_int(fileName, szKey, nDefault);
 }
 
 //===========================================================================
@@ -28,7 +32,7 @@ int ReadInt(const char* fileName, const char* szKey, int nDefault)
 
 COLORREF ReadColor(const char* fileName, const char* szKey, const char* defaultColor)
 {
-    return bbcore::readColor(fileName, szKey, defaultColor);
+    return gApp->readColor(fileName, szKey, defaultColor);
 }
 
 //===========================================================================
@@ -37,7 +41,7 @@ COLORREF ReadColor(const char* fileName, const char* szKey, const char* defaultC
 
 const char* ReadString(const char* fileName, const char* szKey, const char* szDefault)
 {
-    return read_string(fileName, szKey, szDefault);
+    return gApp->read_string(fileName, szKey, szDefault);
 } 
 
 //===========================================================================
@@ -46,7 +50,7 @@ const char* ReadString(const char* fileName, const char* szKey, const char* szDe
 
 const char* ReadValue(const char* path, const char* szKey, long *ptr)
 {
-    return read_value(path, szKey, ptr);
+    return gApp->read_value(path, szKey, ptr);
 }
 
 //===========================================================================
@@ -54,7 +58,7 @@ const char* ReadValue(const char* path, const char* szKey, long *ptr)
 //===========================================================================
 void WriteValue(const char* path, const char* szKey, const char* value)
 {
-    write_value(path, szKey, value);
+    gApp->write_value(path, szKey, value);
 } 
 
 //===========================================================================
@@ -62,7 +66,7 @@ void WriteValue(const char* path, const char* szKey, const char* value)
 //===========================================================================
 int FoundLastValue(void)
 {
-    return found_last_value();
+    return gApp->found_last_value();
 }
 
 //===========================================================================
@@ -71,7 +75,7 @@ int FoundLastValue(void)
 
 void WriteBool(const char* fileName, const char* szKey, bool value)
 {
-    write_bool(fileName, szKey, value);
+    return gApp->write_bool(fileName, szKey, value);
 }
 
 //===========================================================================
@@ -80,7 +84,7 @@ void WriteBool(const char* fileName, const char* szKey, bool value)
 
 void WriteInt(const char* fileName, const char* szKey, int value)
 {
-    return write_int(fileName, szKey, value);
+    return gApp->write_int(fileName, szKey, value);
 }
 
 //===========================================================================
@@ -89,7 +93,7 @@ void WriteInt(const char* fileName, const char* szKey, int value)
 
 void WriteString(const char* fileName, const char* szKey, const char* value)
 {
-    return write_string(fileName, szKey, value);
+    return gApp->write_string(fileName, szKey, value);
 }
 
 //===========================================================================
@@ -98,7 +102,7 @@ void WriteString(const char* fileName, const char* szKey, const char* value)
 
 void WriteColor(const char* fileName, const char* szKey, COLORREF value)
 {
-    return write_color(fileName, szKey, value);
+    return gApp->write_color(fileName, szKey, value);
 }
 
 //===========================================================================
@@ -107,7 +111,7 @@ void WriteColor(const char* fileName, const char* szKey, COLORREF value)
 
 bool DeleteSetting(LPCSTR path, LPCSTR szKey)
 {
-    return bbcore::deleteSetting(path, szKey);
+    return gApp->deleteSetting(path, szKey);
 } 
 
 //===========================================================================
@@ -116,7 +120,7 @@ bool DeleteSetting(LPCSTR path, LPCSTR szKey)
 
 bool RenameSetting(const char* path, const char* szKey, const char* new_keyword)
 {
-    return bbcore::renameSetting(path, szKey, new_keyword);
+    return gApp->renameSetting(path, szKey, new_keyword);
 } 
 
 
@@ -131,7 +135,7 @@ bool RenameSetting(const char* path, const char* szKey, const char* new_keyword)
 
 bool FindRCFile(char* pszOut, const char* filename, HINSTANCE module)
 {
-    return bbcore::findRCFile(pszOut, filename, module);
+    return gApp->findRCFile(pszOut, filename, module);
 }
 
 //===========================================================================
@@ -141,7 +145,7 @@ bool FindRCFile(char* pszOut, const char* filename, HINSTANCE module)
 EXTERN_C 
 const char* ConfigFileExists(const char* filename, const char* pluginDir)
 {
-    return bbcore::bbConfigFileExists(filename, pluginDir);
+    return gApp->bbConfigFileExists(filename, pluginDir);
 }
 
 //===========================================================================
@@ -151,7 +155,7 @@ const char* ConfigFileExists(const char* filename, const char* pluginDir)
 
 bool FileExists(const char* szFileName)
 {
-    return file_exists(szFileName);
+    return gApp->file_exists(szFileName);
 }
 
 //===========================================================================
@@ -161,7 +165,7 @@ bool FileExists(const char* szFileName)
 
 FILE* FileOpen(const char* szPath)
 {
-    return bbcore::fileOpen(szPath);
+    return gApp->fileOpen(szPath);
 }
 
 //===========================================================================
@@ -171,7 +175,7 @@ FILE* FileOpen(const char* szPath)
 
 bool FileClose(FILE *fp)
 {
-    return bbcore::fileClose(fp);
+    return gApp->fileClose(fp);
 }
 
 //===========================================================================
@@ -181,7 +185,7 @@ bool FileClose(FILE *fp)
 
 bool FileRead(FILE *fp, char* buffer)
 {
-    return bbcore::fileRead(fp, buffer);
+    return gApp->fileRead(fp, buffer);
 }
 
 //===========================================================================
@@ -191,7 +195,7 @@ bool FileRead(FILE *fp, char* buffer)
 
 bool ReadNextCommand(FILE *fp, char* szBuffer, unsigned dwLength)
 {
-    return bbcore::readNextCommand(fp, szBuffer, dwLength);
+    return gApp->readNextCommand(fp, szBuffer, dwLength);
 }
 
 //===========================================================================
@@ -206,7 +210,7 @@ bool ReadNextCommand(FILE *fp, char* szBuffer, unsigned dwLength)
 
 HMONITOR GetMonitorRect(void *from, RECT *r, int flags)
 {
-    return bbcore::getMonitorRect(from, r, flags);
+    return gApp->getMonitorRect(from, r, flags);
 }
 
 //===========================================================================
@@ -235,7 +239,7 @@ void SnapWindowToEdge(WINDOWPOS* wp, LPARAM nDist, UINT flags, ...)
 {
     va_list va{}; 
     va_start(va, flags);
-    bbcore::snapWindowToEdgeV(wp, nDist, flags, va);
+    gApp->snapWindowToEdgeV(wp, nDist, flags, va);
     va_end(va);
 }
 
@@ -246,7 +250,7 @@ void SnapWindowToEdge(WINDOWPOS* wp, LPARAM nDist, UINT flags, ...)
 
 bool SetTransparency(HWND hwnd, BYTE alpha)
 {
-    return bbcore::setTransparency(hwnd, alpha);
+    return gApp->setTransparency(hwnd, alpha);
 }
 
 //===========================================================================
@@ -258,7 +262,7 @@ bool SetTransparency(HWND hwnd, BYTE alpha)
 
 int GetAppByWindow(HWND hwnd, char* processName)
 {
-    return bbcore::getAppByWindow(hwnd, processName);
+    return gApp->getAppByWindow(hwnd, processName);
 }
 
 //===========================================================================
@@ -269,7 +273,7 @@ int GetAppByWindow(HWND hwnd, char* processName)
 
 bool IsAppWindow(HWND hwnd)
 {
-    return bbcore::isAppWindow(hwnd);
+    return gApp->isAppWindow(hwnd);
 }
 
 //===========================================================================
@@ -280,7 +284,7 @@ bool IsAppWindow(HWND hwnd)
 
 void SetDesktopMargin(HWND hwnd, int location, int margin)
 {
-    return bbcore::setDesktopMargin(hwnd, location, margin);
+    return gApp->setDesktopMargin(hwnd, location, margin);
 }
 
 //===========================================================================
@@ -291,7 +295,7 @@ void SetDesktopMargin(HWND hwnd, int location, int margin)
 
 const char* Tokenize(const char* string, char* buf, const char* delims)
 {
-    return bbcore::tokenize(string, buf, delims);
+    return gApp->tokenize(string, buf, delims);
 }
 
 //===========================================================================
@@ -306,7 +310,7 @@ int BBTokenize(
     unsigned dwNumBuffers,
     char* szExtraParameters)
 {
-    return bbcore::bbTokenize(srcString, lpszBuffers, dwNumBuffers, szExtraParameters);
+    return gApp->bbTokenize(srcString, lpszBuffers, dwNumBuffers, szExtraParameters);
 }
 
 //===========================================================================
@@ -316,7 +320,7 @@ int BBTokenize(
 
 void ParseItem(const char* szItem, StyleItem *item)
 {
-    parse_item(szItem, item);
+    gApp->parse_item(szItem, item);
 } 
 
 //===========================================================================
@@ -326,7 +330,7 @@ void ParseItem(const char* szItem, StyleItem *item)
 
 bool IsInString(const char* inputString, const char* searchString)
 {
-    return bbcore::isInString(inputString, searchString);
+    return gApp->isInString(inputString, searchString);
 }
 
 //===========================================================================
@@ -336,7 +340,7 @@ bool IsInString(const char* inputString, const char* searchString)
 
 char* StrRemoveEncap(char* str)
 {
-    return bbcore::strRemoveEncap(str);
+    return gApp->strRemoveEncap(str);
 }
 
 //===========================================================================
@@ -347,7 +351,7 @@ char* StrRemoveEncap(char* str)
 
 void ReplaceEnvVars(char* str)
 {
-    return bbcore::replaceEnvVars(str);
+    return gApp->replaceEnvVars(str);
 }
 
 //===========================================================================
@@ -357,7 +361,7 @@ void ReplaceEnvVars(char* str)
 
 char* ReplaceShellFolders(char* str)
 {
-    return bbcore::replaceShellFolders(str);
+    return gApp->replaceShellFolders(str);
 }
 
 //===========================================================================
@@ -383,7 +387,7 @@ BOOL BBExecute(
     int nShowCmd,
     int flags)
 {
-    return bbcore::bbExecute(Owner, szVerb, szFile, szArgs, szDirectory, nShowCmd, flags);
+    return gApp->bbExecute(Owner, szVerb, szFile, szArgs, szDirectory, nShowCmd, flags);
 }
 #endif
 
@@ -394,7 +398,7 @@ BOOL BBExecute(
 
 void Log(const char* Title, const char* Line)
 {
-    return bbcore::log(Title, Line);
+    return gApp->log(Title, Line);
 }
 
 //===========================================================================
@@ -404,7 +408,7 @@ void Log(const char* Title, const char* Line)
 
 int MBoxErrorFile(const char* szFile)
 {
-    return bbcore::mboxErrorFile(szFile);
+    return gApp->mboxErrorFile(szFile);
 }
 
 //===========================================================================
@@ -414,7 +418,7 @@ int MBoxErrorFile(const char* szFile)
 
 int MBoxErrorValue(const char* szValue)
 {
-    return bbcore::mboxErrorValue(szValue);
+    return gApp->mboxErrorValue(szValue);
 } 
 
 //===========================================================================
@@ -423,7 +427,7 @@ int MBoxErrorValue(const char* szValue)
 //===========================================================================
 bool IsUsingUtf8Encoding(void)
 {
-    return bbcore::isUsingUtf8Encoding();
+    return gApp->isUsingUtf8Encoding(); 
 }
 
 //===========================================================================
@@ -432,7 +436,7 @@ bool IsUsingUtf8Encoding(void)
 
 void* GetSettingPtr(int sn_index)
 {
-    return bbcore::getSettingPtr(sn_index);
+    return gApp->getSettingPtr(sn_index);
 } 
 
 //===========================================================================
@@ -446,7 +450,7 @@ int ReadStyleItem(
     StyleItem* pStyleItemDefault
     )
 {
-    return bbcore::readStyleItem(fileName, szKey, pStyleItemOut, pStyleItemDefault);
+    return gApp->readStyleItem(fileName, szKey, pStyleItemOut, pStyleItemDefault);
 } 
 
 //===========================================================================
@@ -478,7 +482,7 @@ void MakeGradient(
     COLORREF borderColor,
     int borderWidth)
 {
-    return bbcore::makeGradient(hdc, rect, type, Color, 
+    return gApp->makeGradient(hdc, rect, type, Color, 
             ColorTo, interlaced, bevelstyle, bevelposition, 
             bevelWidth, borderColor, borderWidth);
 } 
@@ -491,7 +495,7 @@ void MakeGradient(
 
 void MakeStyleGradient(HDC hdc, RECT* rp, StyleItem* pSI, bool withBorder)
 {
-    return bbcore::makeStyleGradient(hdc, rp, pSI, withBorder);
+    return gApp->makeStyleGradient(hdc, rp, pSI, withBorder);
 }
 
 //===========================================================================
@@ -500,7 +504,7 @@ void MakeStyleGradient(HDC hdc, RECT* rp, StyleItem* pSI, bool withBorder)
 
 void CreateBorder(HDC hdc, RECT* rp, COLORREF borderColor, int borderWidth)
 {
-    return bbcore::createBorder(hdc, rp, borderColor, borderWidth);
+    return gApp->createBorder(hdc, rp, borderColor, borderWidth);
 }
 
 //===========================================================================
@@ -510,7 +514,7 @@ void CreateBorder(HDC hdc, RECT* rp, COLORREF borderColor, int borderWidth)
 
 char* WINAPI GetBlackboxPath(char* pszPath, int nMaxLen)
 {
-    return bbcore::getBlackboxPath(pszPath, nMaxLen);
+    return gApp->getBlackboxPath(pszPath, nMaxLen);
 }
 
 //===========================================================================
@@ -519,7 +523,7 @@ char* WINAPI GetBlackboxPath(char* pszPath, int nMaxLen)
 
 const char* bbrcPath(const char* other)
 {
-    return bbcore::bbRcPath(other);
+    return gApp->bbRcPath(other);
 }
 
 //===========================================================================
@@ -529,7 +533,7 @@ const char* bbrcPath(const char* other)
 
 const char* extensionsrcPath(const char* other)
 {
-    return bbcore::bbExtensionsRcPath(other);
+    return gApp->bbExtensionsRcPath(other);
 }
 
 //===========================================================================
@@ -539,7 +543,7 @@ const char* extensionsrcPath(const char* other)
 
 const char* menuPath(const char* other)
 {
-    return bbcore::bbMenuPath(other);
+    return gApp->bbMenuPath(other);
 }
 
 //===========================================================================
@@ -549,7 +553,7 @@ const char* menuPath(const char* other)
 
 const char* plugrcPath(const char* other)
 {
-    return bbcore::bbPluginsRcPath(other);
+    return gApp->bbPluginsRcPath(other);
 }
 
 //===========================================================================
@@ -559,7 +563,7 @@ const char* plugrcPath(const char* other)
 
 const char* stylePath(const char* other)
 {
-    return bbcore::bbStylePath(other);
+    return gApp->bbStylePath(other);
 }
 
 //===========================================================================
@@ -567,7 +571,7 @@ const char* stylePath(const char* other)
 //===========================================================================
 const char* defaultrcPath(void)
 {
-    return bbcore::bbDefaultrcPath();
+    return gApp->bbDefaultrcPath();
 }
 
 //===========================================================================
@@ -576,7 +580,7 @@ const char* defaultrcPath(void)
 
 void GetBlackboxEditor(char* editor)
 {
-    return bbcore::getBlackboxEditor(editor);
+    return gApp->getBlackboxEditor(editor);
 }
 
 //===========================================================================
@@ -586,7 +590,7 @@ void GetBlackboxEditor(char* editor)
 
 HWND GetBBWnd(void)
 {
-    return bbcore::getBBWnd();
+    return gApp->getBBWnd();
 }
 
 //===========================================================================
@@ -598,7 +602,7 @@ HWND GetBBWnd(void)
 
 const char* GetBBVersion(void)
 {
-    return bbcore::getBBVersion();
+    return gApp->getBBVersion();
 }
 
 //===========================================================================
@@ -607,7 +611,7 @@ const char* GetBBVersion(void)
 
 bool GetUnderExplorer(void)
 {
-    return bbcore::getUnderExplorer();
+    return gApp->getUnderExplorer();
 }
 
 //===========================================================================
@@ -616,7 +620,7 @@ bool GetUnderExplorer(void)
 
 LPCSTR GetOSInfo(void)
 {
-    return bbcore::getOSInfo();
+    return gApp->getOSInfo();
 } 
 
 //===========================================================================
@@ -625,7 +629,7 @@ LPCSTR GetOSInfo(void)
 
 Menu* MakeContextMenu(const char* path, const void* pidl)
 {
-    return bbcore::makeContextMenu(path, pidl);
+    return gApp->makeContextMenu(path, pidl);
 }
 
 //===========================================================================
@@ -641,7 +645,7 @@ Menu* MakeContextMenu(const char* path, const void* pidl)
 
 Menu* MakeNamedMenu(const char* HeaderText, const char* IDString, bool popup)
 {
-    return bbcore::makeNamedMenu(HeaderText, IDString, popup);
+    return gApp->makeNamedMenu(HeaderText, IDString, popup);
 }
 
 //===========================================================================
@@ -650,7 +654,7 @@ Menu* MakeNamedMenu(const char* HeaderText, const char* IDString, bool popup)
 
 MenuItem* MakeMenuItem(Menu *PluginMenu, const char* Title, const char* Cmd, bool ShowIndicator)
 {
-    return bbcore::makeMenuItem(PluginMenu, Title, Cmd, ShowIndicator);
+    return gApp->makeMenuItem(PluginMenu, Title, Cmd, ShowIndicator);
 }
 
 //===========================================================================
@@ -659,7 +663,7 @@ MenuItem* MakeMenuItem(Menu *PluginMenu, const char* Title, const char* Cmd, boo
 
 MenuItem* MakeMenuNOP(Menu *PluginMenu, const char* Title)
 {
-    return bbcore::makeMenuNOP(PluginMenu, Title);
+    return gApp->makeMenuNOP(PluginMenu, Title);
 }
 
 //===========================================================================
@@ -669,7 +673,7 @@ MenuItem* MakeMenuNOP(Menu *PluginMenu, const char* Title)
 MenuItem* MakeMenuItemInt(Menu* PluginMenu, const char* Title, const char* Cmd,
     int val, int minval, int maxval)
 {
-    return bbcore::makeMenuItemInt(PluginMenu, Title, Cmd, val, minval, maxval);
+    return gApp->makeMenuItemInt(PluginMenu, Title, Cmd, val, minval, maxval);
 }
 
 //===========================================================================
@@ -679,7 +683,7 @@ MenuItem* MakeMenuItemInt(Menu* PluginMenu, const char* Title, const char* Cmd,
 MenuItem* MakeMenuItemString(Menu* PluginMenu, const char* Title, const char* Cmd,
     const char* init_string)
 {
-    return bbcore::makeMenuItemString(PluginMenu, Title, Cmd, init_string);
+    return gApp->makeMenuItemString(PluginMenu, Title, Cmd, init_string);
 }
 
 //===========================================================================
@@ -688,7 +692,7 @@ MenuItem* MakeMenuItemString(Menu* PluginMenu, const char* Title, const char* Cm
 
 MenuItem* MakeSubmenu(Menu* ParentMenu, Menu* ChildMenu, const char* Title)
 {
-    return bbcore::makeSubmenu(ParentMenu, ChildMenu, Title);
+    return gApp->makeSubmenu(ParentMenu, ChildMenu, Title);
 } 
 
 //===========================================================================
@@ -697,7 +701,7 @@ MenuItem* MakeSubmenu(Menu* ParentMenu, Menu* ChildMenu, const char* Title)
 
 MenuItem* MakeMenuItemPath(Menu* ParentMenu, const char* Title, const char* path, const char* Cmd)
 {
-    return bbcore::makeMenuItemPath(ParentMenu, Title, path, Cmd);
+    return gApp->makeMenuItemPath(ParentMenu, Title, path, Cmd);
 }
 
 //===========================================================================
@@ -708,7 +712,7 @@ MenuItem* MakeMenuItemPath(Menu* ParentMenu, const char* Title, const char* path
 
 void ShowMenu(Menu* pluginMenu)
 {
-    return bbcore::showMenu(pluginMenu);
+    return gApp->showMenu(pluginMenu);
 } 
 
 //===========================================================================
@@ -717,7 +721,7 @@ void ShowMenu(Menu* pluginMenu)
 
 bool MenuExists(const char* IDString_part)
 {
-    return bbcore::menuExists(IDString_part);
+    return gApp->menuExists(IDString_part);
 } 
 
 //===========================================================================
@@ -733,7 +737,7 @@ void MenuItemOption(MenuItem *pItem, int option, ...)
 
     va_list vl{};
     va_start(vl, option);
-    bbcore::menuItemOptionV(pItem, option, vl);
+    gApp->menuItemOptionV(pItem, option, vl);
     va_end(vl);
 } 
 
@@ -750,7 +754,7 @@ void MenuOption(Menu *pMenu, int flags, ...)
 
     va_list vl{}; 
     va_start(vl, flags);
-    bbcore::menuOptionV(pMenu, flags, vl); 
+    gApp->menuOptionV(pMenu, flags, vl); 
     va_end(vl);
 }
 
@@ -760,7 +764,7 @@ void MenuOption(Menu *pMenu, int flags, ...)
 //===========================================================================
 Menu* MakeMenu(const char* headerText)
 {
-    return bbcore::makeMenu(headerText);
+    return gApp->makeMenu(headerText);
 } 
 
 //===========================================================================
@@ -770,7 +774,7 @@ Menu* MakeMenu(const char* headerText)
 
 void DelMenu(Menu* pluginMenu)
 {
-    return bbcore::delMenu(pluginMenu);
+    return gApp->delMenu(pluginMenu);
 } 
 
 //===========================================================================
@@ -780,7 +784,7 @@ void DelMenu(Menu* pluginMenu)
 
 HFONT CreateStyleFont(StyleItem* pSI)
 {
-    return bbcore::createStyleFont(pSI);
+    return gApp->createStyleFont(pSI);
 }
 
 //===========================================================================
@@ -789,7 +793,7 @@ HFONT CreateStyleFont(StyleItem* pSI)
 
 ToolbarInfo* GetToolbarInfo(void)
 {
-    return bbcore::getToolbarInfo();
+    return gApp->getToolbarInfo();
 }
 
 //===========================================================================
@@ -798,7 +802,7 @@ ToolbarInfo* GetToolbarInfo(void)
 
 int GetTraySize(void)
 {
-    return bbcore::getTraySize();
+    return gApp->getTraySize();
 }
 
 //===========================================================================
@@ -807,7 +811,7 @@ int GetTraySize(void)
 
 systemTray* GetTrayIcon(int icon_index)
 {
-    return bbcore::getTrayIcon(icon_index);
+    return gApp->getTrayIcon(icon_index);
 }
 
 //===========================================================================
@@ -817,7 +821,7 @@ systemTray* GetTrayIcon(int icon_index)
 
 int ForwardTrayMessage(int icon_index, UINT message, systemTrayIconPos *pos)
 {
-    return bbcore::forwardTrayMessage(icon_index, message, pos);
+    return gApp->forwardTrayMessage(icon_index, message, pos);
 }
 
 //===========================================================================
@@ -829,7 +833,7 @@ int BBMessageBox(int flg, const char *fmt, ...)
 {
     va_list args; 
     va_start(args, fmt);
-    auto result = bbcore::bbMessageBoxV(flg, fmt, args);
+    auto result = gApp->bbMessageBoxV(flg, fmt, args);
     va_end(args);
 
     return result;
@@ -843,7 +847,7 @@ void dbg_printf(const char *fmt, ...)
 {
     va_list args;
     va_start(args, fmt);
-    ::debug_vprintf(fmt, args);
+    gApp->debug_vprintf(fmt, args);
     va_end(args);
 }
 
@@ -853,7 +857,7 @@ void dbg_printf(const char *fmt, ...)
 
 void bbDrawPix(HDC hDC, RECT *rc, COLORREF color, int pic)
 {
-    return bbcore::bbDrawPixImpl(hDC, rc, color, pic);
+    return gApp->bbDrawPixImpl(hDC, rc, color, pic);
 }
 
 //===========================================================================
@@ -862,7 +866,7 @@ void bbDrawPix(HDC hDC, RECT *rc, COLORREF color, int pic)
 
 void bbDrawText(HDC hDC, const char* text, RECT* p_rect, unsigned format, COLORREF c)
 {
-    return bbcore::bbDrawTextImpl(hDC, text, p_rect, format, c);
+    return gApp->bbDrawTextImpl(hDC, text, p_rect, format, c);
 }
 
 //===========================================================================
@@ -871,7 +875,7 @@ void bbDrawText(HDC hDC, const char* text, RECT* p_rect, unsigned format, COLORR
 
 int bbMB2WC(const char *src, WCHAR *wstr, int len)
 {
-    return bbcore::bbMbyteToWideChar(src, wstr, len);
+    return gApp->bbMbyteToWideChar(src, wstr, len);
 }
 
 //===========================================================================
@@ -880,7 +884,7 @@ int bbMB2WC(const char *src, WCHAR *wstr, int len)
 
 int bbWC2MB(const WCHAR *src, char *str, int len)
 {
-    return bbcore::bbWideCharToMbyte(src, str, len);
+    return gApp->bbWideCharToMbyte(src, str, len);
 }
 
 //===========================================================================
@@ -889,7 +893,7 @@ int bbWC2MB(const WCHAR *src, char *str, int len)
 
 bool SetTaskLocation(HWND hwnd, struct taskinfo* t, UINT flags)
 {
-    return bbcore::setTaskLocation(hwnd, t, flags);
+    return gApp->setTaskLocation(hwnd, t, flags);
 }
 
 //===========================================================================
@@ -907,7 +911,7 @@ bool SetTaskLocation(HWND hwnd, struct taskinfo* t, UINT flags)
 //===========================================================================
 void MakeSticky(HWND hwnd)
 {
-    return bbcore::makeSticky(hwnd);
+    return gApp->makeSticky(hwnd);
 }
 
 //===========================================================================
@@ -915,7 +919,7 @@ void MakeSticky(HWND hwnd)
 //===========================================================================
 void RemoveSticky(HWND hwnd)
 {
-    return bbcore::removeSticky(hwnd);
+    return gApp->removeSticky(hwnd);
 }
 
 //===========================================================================
@@ -923,7 +927,7 @@ void RemoveSticky(HWND hwnd)
 //===========================================================================
 bool CheckSticky(HWND hwnd)
 {
-    return bbcore::checkSticky(hwnd);
+    return gApp->checkSticky(hwnd);
 }
 
 //===========================================================================
@@ -932,7 +936,7 @@ bool CheckSticky(HWND hwnd)
 
 int GetTaskListSize(void)
 {
-    return bbcore::getTaskListSize();
+    return gApp->getTaskListSize();
 }
 
 //===========================================================================
@@ -941,7 +945,7 @@ int GetTaskListSize(void)
 
 HWND GetTask(int index)
 {
-    return bbcore::getTask(index);
+    return gApp->getTask(index);
 }
 
 //===========================================================================
@@ -950,7 +954,7 @@ HWND GetTask(int index)
 
 int GetActiveTask(void)
 {
-    return bbcore::getActiveTask();
+    return gApp->getActiveTask();
 }
 
 //===========================================================================
@@ -959,7 +963,7 @@ int GetActiveTask(void)
 
 int GetTaskWorkspace(HWND hwnd)
 {
-    return bbcore::getTaskWorkspace(hwnd);
+    return gApp->getTaskWorkspace(hwnd);
 }
 
 //===========================================================================
@@ -968,7 +972,7 @@ int GetTaskWorkspace(HWND hwnd)
 
 void SetTaskWorkspace(HWND hwnd, int wkspc)
 {
-    return bbcore::setTaskWorkspace(hwnd, wkspc);
+    return gApp->setTaskWorkspace(hwnd, wkspc);
 }
 
 //===========================================================================
@@ -977,7 +981,7 @@ void SetTaskWorkspace(HWND hwnd, int wkspc)
 
 const struct tasklist* GetTaskListPtr(void)
 {
-    return bbcore::getTaskListPtr();
+    return gApp->getTaskListPtr();
 } 
 
 //===========================================================================
@@ -986,7 +990,7 @@ const struct tasklist* GetTaskListPtr(void)
 
 void GetDesktopInfo(DesktopInfo* deskInfo)
 {
-    return bbcore::getDesktopInfo(deskInfo);
+    return gApp->getDesktopInfo(deskInfo);
 }
 
 //===========================================================================
@@ -995,6 +999,6 @@ void GetDesktopInfo(DesktopInfo* deskInfo)
 
 bool GetTaskLocation(HWND hwnd, struct taskinfo* t)
 {
-    return bbcore::getTaskLocation(hwnd, t);
+    return gApp->getTaskLocation(hwnd, t);
 }
 
