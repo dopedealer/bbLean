@@ -1,43 +1,4 @@
 
-- make deeper build refactoring
-    - try to resolve in-copmpile blackbox hacks
-        - fix bsetroot requires static in-compilation of bimage.cpp
-            * move sources to src folder
-            * move configs in root, styles, etc to data folder
-            * check all compiles and generates successfully
-            * add same defines to bbcore lib as in blackbox proj
-            * create g test especially for bbcore lib
-            * move blackbox entry to separate main.cpp file
-                * make a file
-                * make a class Blackbox
-                * make call of Blackbox class to run
-                * move winmain to main.cpp
-            * move content of blackbox to bbcore lib
-            * make separate static only lib bbcore with namespace bbcore inside, no exports
-            * move blackbox to use bbcore lib
-            * move all blackbox functionality to bbcore lib
-            * replace direct export api realisation to methods calling in blackbox class
-            * verify export proxies scope actions
-            * verify export apis scope actions
-            - make sure comments to proxy export methods present
-            * replace direct in-compile of cpp from ex blackbox in bsetroot to usage of static lib bbcore
-            * try remove direct in-compile of image_cx.cpp
-        * remove hack compilations of:
-            * cpp files from bbstylemaker
-            x make bblib buildable as dynamic based on option
-            * make blackbox exported api via proxying to some global object
-        x make sure needed defs defined based on option
-        * set correct artifacts gaterhing to instaler build
-        x remove global variable in rc functionality 
-        * remove #include "../../plugins/bbPlugin/drawico.cpp"  from MenuItem.cpp
-    * remove blackbox/bbcore in-compile include from bblib (start with remove include dir)
-    x remove usage of defaultrcPath and other fn fromiz blacbox inside bblib
-    x remove global variables in bblib (rc global state)
-    x remove global variables all over bblean repository code
-    x try to remove include blackbox dir from bblib
-    - add nls txt to docs copying
-x split BBSendData.h to h and cpp files
-
 - make other refactorings
     - remove duplicate code from fuzzydoc - bblib
         - add library bblib dep
@@ -78,6 +39,7 @@ x split BBSendData.h to h and cpp files
   string is *very* suspicious. Hashmap? When cleared ?
 - move bbPath() function and corresponding path-related to rcfile area
 - remove all 'include cpp' hacks everywhere
+- add nls txt to docs copying
 
 - move bblib c files to cpp with careful export conventions
 - make external utf-8 only in char* args
