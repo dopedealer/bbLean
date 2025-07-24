@@ -409,23 +409,27 @@ void set_reader_timer(void)
 /* ------------------------------------------------------------------------- */
 // helpers
 
-char *read_file_into_buffer (const char *path, int max_len)
+char *read_file_into_buffer(const char* path, int max_len)
 {
     FILE *fp; char *buf; int len;
     if (NULL == (fp = fopen(path,"rb")))
+    {
         return NULL;
+    }
 
     fseek(fp,0,SEEK_END);
     len = ftell (fp);
     fseek (fp,0,SEEK_SET);
     if (max_len && len >= max_len)
+    {
         len = max_len-1;
+    }
 
-    buf=(char*)m_alloc(len+1);
-    fread (buf, 1, len, fp);
+    buf = (char*)m_alloc(len+1);
+    fread(buf, 1, len, fp);
     fclose(fp);
 
-    buf[len]=0;
+    buf[len] = 0;
     return buf;
 }
 
@@ -617,22 +621,25 @@ lin_list* search_line(fil_list* fl, const char *key, int fwild, LONG *p_seekpos)
 /* ------------------------------------------------------------------------- */
 // searches for the filename and, if not found, builds a _new line-list
 
-fil_list* read_file(const char *filename)
+fil_list* read_file(const char* filename)
 {
     lin_list **slp, *sl;
     fil_list **flp, *fl;
     char *buf, *p, *d, *s, *t, c, hashname[MAX_PATH];
-    unsigned h;
+    unsigned hashFilename;
     int k;
 
     // ----------------------------------------------
     // first check, if the file has already been read
-    h = calc_hash(hashname, filename, &k, 0);
+    hashFilename = calc_hash(hashname, filename, &k, 0);
     k = k + 1;
-    for (flp = &g_rc->rc_files; NULL!=(fl=*flp); flp = &fl->next)
-        if (fl->hash==h && 0==memcmp(hashname, fl->path+fl->k, k)) {
+    for (flp = &g_rc->rc_files; NULL != (fl = *flp); flp = &fl->next)
+    {
+        if (fl->hash == hashFilename && 0 == memcmp(hashname, fl->path + fl->k, k))
+        {
             ++g_rc->used;
             return fl; //... return cached line list.
+        }
     }
 
     // allocate a _new file structure, the filename is
@@ -641,7 +648,7 @@ fil_list* read_file(const char *filename)
     memcpy(fl->path, filename, k);
     memcpy(fl->path+k, hashname, k);
     fl->k = k;
-    fl->hash = h;
+    fl->hash = hashFilename;
     cons_node(&g_rc->rc_files, fl);
 
 #ifdef DEBUG_READER

@@ -159,6 +159,18 @@ void createBorder(HDC hdc, RECT* rp, COLORREF borderColor, int borderWidth)
     }
 }
 
+constexpr int _imin(int a, int b)
+{
+    return a<b?a:b;
+}
+
+constexpr unsigned long bsqrt(unsigned long x)
+{
+    unsigned long q, r;
+    if (x < 2) return x;
+    for (r = x >> 1; q = x / r, q < r; r = (r + q) >> 1);
+    return r;
+}
 
 #ifndef BI_HIBITS
 /* byte to fill into bits 24-31 */
@@ -171,64 +183,95 @@ void createBorder(HDC hdc, RECT* rp, COLORREF borderColor, int borderWidth)
 #define SQD  16
 #define SQR_TAB_SIZE (SQF*SQF*2/SQD) // ~ 4096
 
-static unsigned char _sqrt_table[SQR_TAB_SIZE];
 
 #define DITH_TABLE_SIZE (256+8)
-static int bits_per_pixel = -1;
-static unsigned char _dith_r_table[DITH_TABLE_SIZE];
-static unsigned char _dith_g_table[DITH_TABLE_SIZE];
-static unsigned char _dith_b_table[DITH_TABLE_SIZE];
-static unsigned char add_r[16], add_g[16], add_b[16];
-
+static int bits_per_pixel = -1; 
 static bool option_dither;
 static bool option_070;
 #define BBP 4 // bytes per pixel
 
-
-// -------------------------------------
-static unsigned long bsqrt(unsigned long x)
+template<int sqrtTableSize = SQR_TAB_SIZE>
+struct SqrtTableData
 {
-    unsigned long q, r;
-    if (x < 2) return x;
-    for (r = x >> 1; q = x / r, q < r; r = (r + q) >> 1);
-    return r;
-}
-
-static void init_sqrt(void)
-{
-    int i;
-    for (i = 0; i < SQR_TAB_SIZE; i++)
+    // 'only init' constexpr constructor for usual struct
+    constexpr SqrtTableData(void)
     {
-        // backwards compatible to the elliptic inconsistency in
-        // the original gradient code: sqrt(i/2) instead of sqrt(i)
-        _sqrt_table[i] = (unsigned char)(SQR - 1 - bsqrt(i*SQD/2));
+        for (int i = 0; i < sqrtTableSize; ++i)
+        {
+            // backwards compatible to the elliptic inconsistency in
+            // the original gradient code: sqrt(i/2) instead of sqrt(i)
+            sqrt_table[i] = (unsigned char)(SQR - 1 - bsqrt(i*SQD/2));
+        }
     }
-}
+
+    unsigned char sqrt_table[sqrtTableSize];
+};
+
+// while it is constexpr it is ok to be global
+constexpr SqrtTableData kSqrtTableData{};
+
+
+
+template<int dithTableSize = DITH_TABLE_SIZE>
+struct DitheringData
+{
+    // 'only init' constexpr constructor for usual struct
+    constexpr DitheringData(void)
+    {
+        int red_bits, green_bits, blue_bits;
+        int dr, dg, db;
+
+        constexpr unsigned char dither4[16] =
+        {
+            7, 3, 6, 2,  // 3 1 3 1
+            1, 5, 0, 4,  // 0 2 0 2
+            6, 2, 7, 3,  // 3 1 3 1
+            0, 4, 1, 5   // 0 2 0 2
+        };
+
+        // hardcoded for 16 bit display: red:5, green:6, blue:5
+        red_bits    = 1 << (8 - 5);
+        green_bits  = 1 << (8 - 6);
+        blue_bits   = 1 << (8 - 5);
+        for (int i = 0; i < dithTableSize; i++)
+        {
+            dith_r_table[i] = (unsigned char)_imin(255, i & -red_bits    );
+            dith_g_table[i] = (unsigned char)_imin(255, i & -green_bits  );
+            dith_b_table[i] = (unsigned char)_imin(255, i & -blue_bits   );
+        }
+
+        dr = 8/red_bits, dg = 8/green_bits, db = 8/blue_bits;
+        for (int i = 0; i < 16; i++)
+        {
+            int d = dither4[i];
+            add_r[i] = (unsigned char)(d / dr);
+            add_g[i] = (unsigned char)(d / dg);
+            add_b[i] = (unsigned char)(d / db);
+        } 
+    }
+
+    unsigned char dith_r_table[dithTableSize];
+    unsigned char dith_g_table[dithTableSize];
+    unsigned char dith_b_table[dithTableSize];
+
+    unsigned char add_r[16];
+    unsigned char add_g[16];
+    unsigned char add_b[16];
+}; 
+
+// while it is constexpr it is ok to be global
+constexpr DitheringData kDitheringData{};
+
 
 inline static int isgn(int x)
 {
     return x>0 ? 1 : x<0 ? -1 : 0;
 }
 
-static int _imin(int a, int b)
+
+static void initDitherOptions(void)
 {
-    return a<b?a:b;
-}
-
-static void init_dither_tables(void)
-{
-    HDC hdc;
-    int red_bits, green_bits, blue_bits;
-    int i, dr, dg, db;
-
-    static const unsigned char dither4[16] =
-    {
-      7, 3, 6, 2,  // 3 1 3 1
-      1, 5, 0, 4,  // 0 2 0 2
-      6, 2, 7, 3,  // 3 1 3 1
-      0, 4, 1, 5   // 0 2 0 2
-    };
-
+    HDC hdc; 
     hdc = GetDC(NULL);
     bits_per_pixel = GetDeviceCaps(hdc, BITSPIXEL);
     ReleaseDC(NULL, hdc);
@@ -238,28 +281,7 @@ static void init_dither_tables(void)
     {
         option_dither = false;
         bits_per_pixel = 0;
-        return;
-    }
-
-    // hardcoded for 16 bit display: red:5, green:6, blue:5
-    red_bits    = 1 << (8 - 5);
-    green_bits  = 1 << (8 - 6);
-    blue_bits   = 1 << (8 - 5);
-    for (i = 0; i < DITH_TABLE_SIZE; i++)
-    {
-        _dith_r_table[i] = (unsigned char)_imin(255, i & -red_bits    );
-        _dith_g_table[i] = (unsigned char)_imin(255, i & -green_bits  );
-        _dith_b_table[i] = (unsigned char)_imin(255, i & -blue_bits   );
-    }
-
-    dr = 8/red_bits, dg = 8/green_bits, db = 8/blue_bits;
-    for (i = 0; i < 16; i++)
-    {
-      int d = dither4[i];
-      add_r[i] = (unsigned char)(d / dr);
-      add_g[i] = (unsigned char)(d / dg);
-      add_b[i] = (unsigned char)(d / db);
-    }
+    } 
 }
 
 //===========================================================================
@@ -278,9 +300,9 @@ static void TrueColorDither(bimage* bi)
     int oy = 4 * (y & 3);
     for (x = 0; x < w; x++) {
       int ox = oy + (x & 3);
-      p[0] = _dith_b_table[p[0] + add_b[ox]];
-      p[1] = _dith_g_table[p[1] + add_g[ox]];
-      p[2] = _dith_r_table[p[2] + add_r[ox]];
+      p[0] = kDitheringData.dith_b_table[p[0] + kDitheringData.add_b[ox]];
+      p[1] = kDitheringData.dith_g_table[p[1] + kDitheringData.add_g[ox]];
+      p[2] = kDitheringData.dith_r_table[p[2] + kDitheringData.add_r[ox]];
       p+=BBP;
     }
   }
@@ -403,7 +425,7 @@ inline static void elli_fn(bimage* bi, unsigned char *c, int x, int y)
 {
     int dx = SQF - 1 - SQF * x / bi->width;
     int dy = SQF - 1 - SQF * y / bi->height;
-    int f = _sqrt_table[(dx*dx + dy*dy) / SQD];
+    int f = kSqrtTableData.sqrt_table[(dx*dx + dy*dy) / SQD];
     *(unsigned long *)c = ((unsigned long*)bi->xtab)[f];
 }
 
@@ -585,8 +607,6 @@ bimage* bimage_create(int width, int height,  StyleItem *si)
             goto draw_quadrant;
 
         case B_ELLIPTIC:
-            if (0 == _sqrt_table[0])
-                init_sqrt();
             table_fn(bi, bi->xtab, SQR, false);
             goto draw_quadrant;
 
@@ -666,7 +686,7 @@ void bimage_init(bool dither, bool is_070)
 {
     option_dither = dither;
     option_070 = is_070;
-    init_dither_tables();
+    initDitherOptions();
 }
 
 

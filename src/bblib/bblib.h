@@ -121,7 +121,7 @@ BBLIB_EXPORT char *extract_string(char *dest, const char *src, int n);
 BBLIB_EXPORT char *strcpy_max(char *dest, const char *src, int maxlen);
 BBLIB_EXPORT char* stristr(const char *aa, const char *bb);
 BBLIB_EXPORT int get_string_index (const char *key, const char * const * string_array);
-BBLIB_EXPORT unsigned calc_hash(char *p, const char *s, int *pLen, int delim);
+BBLIB_EXPORT unsigned calc_hash(char* outBuffer, const char* strToHash, int* pstrLength, int delim);
 
 BBLIB_EXPORT char *new_str_n(const char *s, int n);
 BBLIB_EXPORT char *new_str(const char *s);

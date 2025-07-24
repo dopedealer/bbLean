@@ -313,21 +313,24 @@ BBLIB_EXPORT int wchar_to_mbyte(const WCHAR *src, char *str, int len, BOOL isMby
 /* ------------------------------------------------------------------------- */
 
 // strlwr a keyword, calculate hash value and length
-unsigned calc_hash(char *p, const char *s, int *pLen, int delim)
+unsigned calc_hash(char* outBuffer, const char* strToHash, int* pstrLength, int delim)
 {
-    unsigned h; int c; char *d = p;
-    for (h = 0; 0 != (c = *s) && delim != c; ++s, ++d)
+    unsigned hash;
+    int c;
+    char* d = outBuffer;
+    const char* s = strToHash;
+    for (hash = 0; 0 != (c = *s) && delim != c; ++s, ++d)
     {
         if (c >= 'A' && c <= 'Z')
             c += 32;
         *d = (char)c;
-        if ((h ^= c) & 1)
-            h^=0xedb88320;
-        h>>=1;
+        if ((hash ^= c) & 1)
+            hash^=0xedb88320;
+        hash>>=1;
     }
     *d = 0;
-    *pLen = d - p;
-    return h;
+    *pstrLength = d - outBuffer;
+    return hash;
 }
 
 /* ------------------------------------------------------------------------- */
