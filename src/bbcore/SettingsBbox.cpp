@@ -108,9 +108,9 @@ void SettingsBbox::readStyleSettings(void)
 
 void SettingsBbox::readRCSettings(void)
 {
-   const char *p, *extrc, *bbrc;
+    const char *p, *extrc, *bbrc;
 
-   bbResetDefaultrcPath();
+    bbResetDefaultrcPath();
     p = read_string(bbExtensionsRcPath(NULL), "blackbox.theme:", "");
     if (p[0] && 0 != stricmp(p, "default"))
     {

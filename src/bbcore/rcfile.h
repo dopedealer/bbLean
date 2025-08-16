@@ -39,10 +39,19 @@ void bbResetMenuRcPath(void);
 char* bbStyleRcBuffer(void);
 void bbResetStyleRcPath(void);
 
+/// \brief Opens file for parsing
+/// Open/Close a file for use with 'FileRead' or 'ReadNextCommand'
+/// (Do not use 'fopen/fclose' in combination with these)
 FILE* fileOpen(const char* szPath);
+
+/// \brief Close selected file
 bool fileClose(FILE* fp);
+
+/// \brief Read's a line from given FILE and returns boolean on status
 bool fileRead(FILE* fp, char* buffer); 
 
+/// \brief Reads the next line of the file
+/// Additionally skips comments and empty lines
 bool readNextCommand(FILE *fp, char* szBuffer, unsigned dwLength); 
 
 const char* bbStylePath(const char* other);

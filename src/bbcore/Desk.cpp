@@ -60,7 +60,7 @@ static LRESULT CALLBACK Desk_WndProc (HWND hwnd, UINT uMsg, WPARAM wParam, LPARA
 static void set_bitmap(HBITMAP bmp);
 
 
-static int get_drop_command(const char *filename, int flags);
+static int get_drop_command(const char* filename, int flags);
 unsigned get_modkeys(void);
 
 static void (*pSetHooks)(HWND BlackboxWnd, int flags);
@@ -74,30 +74,36 @@ static void exit_DeskDropTarget(HWND hwnd);
 void Desk_Init(void)
 {
     if (Settings_disableDesk)
-        ;
-    else
-    if (Settings_desktopHook)
     {
-        if (load_imp(&pSetHooks, deskhook_dll, "SetHooks"))
-            pSetHooks(gBBhwnd, gUnderExplorer);
-        else
-            bbMessageBox(MB_OK, NLS2("$Error_DesktopHook$",
-                "Error: %s not found!"), deskhook_dll);
     }
     else
     {
-        BBRegisterClass(szDesktopName, Desk_WndProc, BBCS_VISIBLE);
-        CreateWindowEx(
-            WS_EX_TOOLWINDOW,
-            szDesktopName,
-            NULL,
-            WS_CHILD|WS_VISIBLE|WS_CLIPCHILDREN|WS_CLIPSIBLINGS,
-            0,0,0,0,
-            GetDesktopWindow(),
-            NULL,
-            hMainInstance,
-            NULL
-            );
+        if (Settings_desktopHook)
+        {
+            if (load_imp(&pSetHooks, deskhook_dll, "SetHooks"))
+            {
+                pSetHooks(gBBhwnd, gUnderExplorer);
+            }
+            else
+            {
+                bbMessageBox(MB_OK, NLS2("$Error_DesktopHook$", "Error: %s not found!"), deskhook_dll);
+            }
+        }
+        else
+        {
+            BBRegisterClass(szDesktopName, Desk_WndProc, BBCS_VISIBLE);
+            CreateWindowEx(
+                    WS_EX_TOOLWINDOW,
+                    szDesktopName,
+                    NULL,
+                    WS_CHILD|WS_VISIBLE|WS_CLIPCHILDREN|WS_CLIPSIBLINGS,
+                    0,0,0,0,
+                    GetDesktopWindow(),
+                    NULL,
+                    hMainInstance,
+                    NULL
+                    );
+        }
     }
     Desk_new_background(NULL);
 }
@@ -157,32 +163,43 @@ HBITMAP Desk_getbmp(void)
 
 //===========================================================================
 
-void Desk_new_background(const char *p)
-{
-    bool makebmp;
-
-    p = Desk_extended_rootCommand(p);
-    if (p)
+void Desk_new_background(const char* path)
+{ 
+    path = Desk_extended_rootCommand(path);
+    if (path)
     {
-        if (0 == stricmp(p, "none"))
-            p = "";
-        if (0 == stricmp(p, "style"))
-            p = NULL;
+        if (0 == stricmp(path, "none"))
+        {
+            path = "";
+        }
+        else if (0 == stricmp(path, "style"))
+        {
+            path = NULL;
+        }
     }
-    if (false == Settings_enableBackground)
-        p = "";
-    else
-    if (NULL == p)
-        p = mStyle.rootCommand;
 
-    makebmp = hDesktopWnd && Settings_smartWallpaper;
-    if (0 == strcmp(gRoot.command, p) && *p && (gRoot.bmp || !makebmp))
+    if (false == Settings_enableBackground)
+    {
+        path = "";
+    }
+    else if (NULL == path)
+    {
+        path = mStyle.rootCommand;
+    }
+
+    bool makebmp = hDesktopWnd && Settings_smartWallpaper;
+    if (0 == strcmp(gRoot.command, path) && *path && (gRoot.bmp || !makebmp))
+    {
         return;
-    set_bitmap(load_desk_bitmap(p, makebmp));
+    }
+
+    set_bitmap(load_desk_bitmap(path, makebmp));
     if (hDesktopWnd)
+    {
         Desk_SetPosition();
-    strcpy(gRoot.command, p);
-    if (usingVista && 0 == *p)
+    }
+    strcpy(gRoot.command, path);
+    if (usingVista && 0 == *path)
     {
         SystemParametersInfo(SPI_SETDESKWALLPAPER, 0, NULL, SPIF_SENDCHANGE);
     }
@@ -192,7 +209,7 @@ void Desk_new_background(const char *p)
 // Desktop's window procedure
 
 static
-LRESULT CALLBACK Desk_WndProc (HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
+LRESULT CALLBACK Desk_WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
     static const UINT msgs [] = { BB_DRAGTODESKTOP, BB_REDRAWGUI, 0 };
     static bool button_down, dblclk;
@@ -326,25 +343,35 @@ LRESULT CALLBACK Desk_WndProc (HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPara
 //===========================================================================
 // figure out whether we want the file (images and styles, that is)
 
+/// \brief Makes reaction on drop file event. Currently allows to set wallpaper
+///        with dragging images with shift, ctrl modifiers. Or sets style.
 static
-int get_drop_command(const char *filename, int flags)
+int get_drop_command(const char* filename, int flags)
 {
     const char *e;
 
     e = file_extension(filename);
-    if (*e && stristr(".bmp.gif.png.jpg.jpeg", e)) {
+    if (*e && stristr(".bmp.gif.png.jpg.jpeg", e))
+    {
         unsigned modkey = get_modkeys() & (MK_ALT|MK_SHIFT|MK_CONTROL);
-        const char *mode;
+        const char* mode{};
         if (0 == modkey)
+        {
             mode = "full";
-        else
-        if (MK_SHIFT == modkey)
+        }
+        else if (MK_SHIFT == modkey)
+        {
             mode = "center";
-        else
-        if (MK_CONTROL == modkey)
+        }
+        else if (MK_CONTROL == modkey)
+        {
             mode = "tile";
+        }
         else
+        {
             return 0;
+        }
+
         if (0 == (flags & 1))
         {
             post_command_fmt("@BBCore.rootCommand bsetroot -%s \"%s\"", mode, filename);
@@ -354,7 +381,8 @@ int get_drop_command(const char *filename, int flags)
 
     // whether its a style is checked only once by looking at
     // the file's contents on DragEnter
-    if (flags & 2) {
+    if (flags & 2)
+    {
         if (0 == (flags & 1))
         {
             post_command_fmt(MM_STYLE_BROAM, filename);
@@ -370,9 +398,9 @@ int get_drop_command(const char *filename, int flags)
 //===========================================================================
 // get/set/reset a custom rootcommand (e.g. with dropped images on desktop)
 
-const char * Desk_extended_rootCommand(const char *p)
+const char* Desk_extended_rootCommand(const char *p)
 {
-    const char rc_key [] = "blackbox.background.rootCommand";
+    const char rc_key[] = "blackbox.background.rootCommand";
     const char *extrc = bbExtensionsRcPath(NULL);
     if (p)
         write_string(extrc, rc_key, p);
@@ -507,6 +535,9 @@ void ShowExplorer(void)
 
 #ifndef BBTINY
 
+/// \brief Notifies blackbow window that user drag&dropped some file (style or
+///        something else) with sending BB_DRAGTODESKTOP message with passing file path
+///        as argument
 class DeskDropTarget : public IDropTarget
 {
 public:
@@ -529,7 +560,7 @@ private:
 
     DWORD m_dwRef;
     char m_filename[MAX_PATH];
-    int m_flags;
+    int m_flags{};
 };
 
 DeskDropTarget::DeskDropTarget()

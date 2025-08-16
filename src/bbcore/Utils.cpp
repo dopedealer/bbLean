@@ -318,19 +318,16 @@ int BBMessageBoxV(int flg, const char *fmt, va_list args)
     return bbMessageBoxV(flg, fmt, args);
 } 
 
-//===========================================================================
-// Function: BBRegisterClass
-// Purpose:  Register a window class, display error on failure
-//===========================================================================
-
-BOOL BBRegisterClass (const char *classname, WNDPROC wndproc, int flags)
+BOOL BBRegisterClass(const char* classname, WNDPROC wndproc, int flags)
 {
     WNDCLASS wc;
     memset(&wc, 0, sizeof(wc));
     wc.hInstance = hMainInstance;
     wc.lpszClassName = classname;
     wc.lpfnWndProc = wndproc;
-    if (flags & BBCS_VISIBLE) {
+
+    if (flags & BBCS_VISIBLE)
+    {
         wc.hCursor = LoadCursor(NULL, IDC_ARROW);
         wc.style |= CS_DBLCLKS;
     }
@@ -694,14 +691,17 @@ void register_fonts(void)
     {
         sprintf(end, "\\*.%s", *cp);
         hFind = FindFirstFile(path, &findData);
-        if (hFind != INVALID_HANDLE_VALUE) {
+        if (hFind != INVALID_HANDLE_VALUE)
+        {
             do {
                 string_node *sn, **psn;
                 strcpy(end+1, findData.cFileName);
                 for (psn = &bbFonts; 0 != (sn = *psn); psn = &sn->next)
                     if (0 == strcmp(sn->str, path))
                         break;
-                if (!sn) {
+
+                if (!sn)
+                {
                     int r = AddFontResource(path);
                     // debug_printf("add font (%d) %s", r, path);
                     if (r)

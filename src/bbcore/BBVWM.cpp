@@ -421,28 +421,31 @@ void defer_windows(int newdesk)
 //=========================================================
 
 static
-void explicit_move(winlist *wl)
+void explicit_move(winlist* wl)
 {
     if (!wl->iconic && !is_frozen(wl->hwnd))
-        SetWindowPos(wl->hwnd, NULL,
+    {
+        ::SetWindowPos(wl->hwnd, NULL,
             wl->rect.left,
             wl->rect.top,
             wl->rect.right - wl->rect.left,
             wl->rect.bottom - wl->rect.top,
-            SWP_NOSIZE|SWP_NOZORDER|SWP_NOACTIVATE
+            SWP_NOSIZE | SWP_NOZORDER | SWP_NOACTIVATE
             );
+    }
 }
 
 static
 bool set_location_helper(HWND hwnd, taskinfo* t, unsigned flags)
 {
-    winlist *wl;
     int dx, dy, new_desk, switch_desk, window_desk;
     bool defer, move_before;
 
-    wl = (winlist*)assoc(vwm_WL, hwnd);
+    winlist* wl = (winlist*)assoc(vwm_WL, hwnd);
     if (NULL == wl)
+    {
         return false;
+    }
 
     dx = t->xpos - wl->rect.left;
     dy = t->ypos - wl->rect.top;
@@ -525,16 +528,19 @@ bool vwm_set_location(HWND hwnd, taskinfo* t, unsigned flags)
 }
 
 bool vwm_set_desk(HWND hwnd, int new_desk, bool switchto)
-{
-    taskinfo t;
-    unsigned flags;
-
+{ 
     if (new_desk < 0 || new_desk >= nScreens)
+    {
         return false;
+    }
 
-    t.desk = new_desk;
-    t.xpos = t.ypos = 0;
-    flags = switchto ? BBTI_SWITCHTO|BBTI_SETDESK : BBTI_SETDESK;
+    taskinfo t{
+        .xpos = 0,
+        .ypos = 0,
+        .desk = new_desk,
+    };
+    unsigned flags = switchto ? BBTI_SWITCHTO | BBTI_SETDESK
+                              : BBTI_SETDESK;
     return vwm_set_location(hwnd, &t, flags);
 }
 
@@ -552,15 +558,17 @@ bool vwm_set_workspace(HWND hwnd, int new_desk)
     return set_location_helper(hwnd, &t, BBTI_SETDESK|BBTI_SETPOS);
 }
 
-bool vwm_set_sticky(HWND hwnd, bool set)
+bool vwm_set_sticky(HWND hwnd, bool value)
 {
     winlist *wl;
     if (FALSE == IsWindow(hwnd))
         return false;
     wl = vwm_add_window(hwnd);
     if (NULL == wl)
+    {
         return false;
-    wl->sticky_app = set;
+    }
+    wl->sticky_app = value;
     return true;
 }
 
@@ -591,7 +599,7 @@ bool vwm_lower_window(HWND hwnd)
 
 int vwm_get_desk(HWND hwnd)
 {
-    winlist *wl = (winlist*)assoc(vwm_WL, hwnd);
+    winlist* wl = (winlist*)assoc(vwm_WL, hwnd);
     return wl ? wl->desk : currentScreen;
 }
 

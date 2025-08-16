@@ -120,8 +120,12 @@ BBLIB_EXPORT int replace_string(char *out, int bufsize, int offset, int len, con
 BBLIB_EXPORT char *extract_string(char *dest, const char *src, int n);
 BBLIB_EXPORT char *strcpy_max(char *dest, const char *src, int maxlen);
 BBLIB_EXPORT char* stristr(const char *aa, const char *bb);
+
+/// \brief Searches provided string in provided string array
+/// \returns Index of found string in case of success. -1 in case of failure
 BBLIB_EXPORT int get_string_index (const char *key, const char * const * string_array);
-BBLIB_EXPORT unsigned calc_hash(char *p, const char *s, int *pLen, int delim);
+
+BBLIB_EXPORT unsigned calc_hash(char* outBuffer, const char* strToHash, int* pstrLength, int delim);
 
 BBLIB_EXPORT char *new_str_n(const char *s, int n);
 BBLIB_EXPORT char *new_str(const char *s);
@@ -129,7 +133,10 @@ BBLIB_EXPORT void free_str(char **s);
 BBLIB_EXPORT void replace_str(char **s, const char *n);
 BBLIB_EXPORT char *concat_str(const char *s1, const char *s2);
 
+/// \brief Returns formatted string allocated with malloc()
 BBLIB_EXPORT char *m_formatv(const char *fmt, va_list arg_list);
+
+/// \brief Returns formatted string allocated with malloc()
 BBLIB_EXPORT char *m_format(const char *fmt, ...);
 
 /// \brief Converts wide charactes string to utf-8 and puts to output buffer.
@@ -166,23 +173,43 @@ BBLIB_EXPORT int wchar_to_mbyte(const WCHAR *src, char *str, int len, BOOL isMby
 
 /* tokenize.cpp */
 
-BBLIB_EXPORT int nexttoken(const char **p_out, const char **p_in, const char *delims);
-BBLIB_EXPORT char* NextToken(char* buf, const char** string, const char *delims);
+/// \brief Tries to find token in input string. If found copies result token to
+///        passed output buffer and returns length of found token.
+///        Skips front and trailing spaces. Currently assumes as space all
+///        bytes <= 32 (dec). Recognises only "\" slashes.
+BBLIB_EXPORT int nexttoken(const char **p_out, const char **p_in, const char* delims);
+
+
+/// \brief Copies the first token of 'inputString' seperated by the delim to 'outBuffer', 
+///        updates input position to start of next token 
+BBLIB_EXPORT char* NextToken(char* outBuffer, const char** inputString, const char* delims);
+
 BBLIB_EXPORT int get_string_within (char *dest, int size, const char **p_src, const char *delims);
 BBLIB_EXPORT const char *get_special_command(const char **p_path, char *buffer, int size);
 BBLIB_EXPORT int skip_spc(const char **pp);
 
 /* paths.cpp */
 
-BBLIB_EXPORT char* unquote(char *src);
-BBLIB_EXPORT char *quote_path(char *path);
-BBLIB_EXPORT const char *file_basename(const char *path);
-BBLIB_EXPORT const char *file_extension(const char *path);
+BBLIB_EXPORT char* unquote(char* src);
+BBLIB_EXPORT char* quote_path(char* path);
+
+/// \brief Gets path to file, searches slash from the end, tries to point to
+///        start of file part (after last slash)
+/// \returns Pointer to file name or start of the string in case of not success
+BBLIB_EXPORT const char* file_basename(const char* path);
+
+/// \brief Searches pointer to extension part in given path
+/// \returns Pointer to '.' symbol in given string that preceeds extension. If failed returns NULL.
+BBLIB_EXPORT const char* file_extension(const char* path);
+
 BBLIB_EXPORT char *file_directory(char *buffer, const char *path);
 BBLIB_EXPORT char *fix_path(char *path);
-BBLIB_EXPORT int is_absolute_path(const char *path);
+BBLIB_EXPORT int is_absolute_path(const char* path);
 BBLIB_EXPORT char *join_path(char *buffer, const char *dir, const char *filename);
 BBLIB_EXPORT char *replace_slashes(char *buffer, const char *path);
+
+/// \brief Tells whether specified path exists
+///        Check if 'pszPath' exists as a regular file
 BBLIB_EXPORT bool file_exists(const char* path); 
 
 BBLIB_EXPORT void bbshell_set_utf8(int f);
@@ -214,8 +241,18 @@ BBLIB_EXPORT int load_imp(void *pp, const char *dll, const char *proc);
 BBLIB_EXPORT int _load_imp(void *pp, const char *dll, const char *proc);
 #define have_imp(pp) ((DWORD_PTR)pp > 1)
 
+/// \brief Gets the directory of executable from it's handle.
+///        Makes result path to output buffer. Found result dir contains
+///        trailing slash.
+///        If path not found (is even possible?) the result string has zero
+///        length.
+/// \param h Handle of executable
+/// \param pszPath Output buffer
+/// \param nMaxLen Buffer size
+/// \returns The resultint path - the pointer to start of passed buffer
 BBLIB_EXPORT char* get_exe_path(HINSTANCE h, char* pszPath, int nMaxLen);
-BBLIB_EXPORT char *set_my_path(HINSTANCE h, char *dest, const char *fname);
+
+BBLIB_EXPORT char *set_my_path(HINSTANCE h, char* dest, const char* fname);
 BBLIB_EXPORT const char *get_relative_path(HINSTANCE h, const char *path);
 
 BBLIB_EXPORT int BBWait(int delay, unsigned nObj, HANDLE *pObj);
@@ -264,7 +301,9 @@ BBLIB_EXPORT int listlen(void *v0);
 BBLIB_EXPORT void freeall(void *p);
 
 BBLIB_EXPORT struct string_node *new_string_node(const char *s);
-BBLIB_EXPORT void append_string_node(struct string_node **p, const char *s);
+
+/// \brief Allocates a new string node and appends to the end of existing node list
+BBLIB_EXPORT void append_string_node(struct string_node** p, const char* newString);
 
 /* m_alloc.cpp */
 

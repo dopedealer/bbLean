@@ -118,11 +118,14 @@ void arrow_bullet (HDC buf, int x, int y, int d); // missing ??
 void draw_line_h(HDC hDC, int x1, int x2, int y, int w, COLORREF C);
 char* replace_arg1(const char *fmt, const char *in);
 
-/* other */
-BOOL BBRegisterClass (const char *classname, WNDPROC wndproc, int flags);
 #define BBCS_VISIBLE 1
 #define BBCS_EXTRA 2
 #define BBCS_DROPSHADOW 4
+
+/// \brief Registers a window class, display error on failure
+/// \returns 0 if failed. Othwerwise if successful
+BOOL BBRegisterClass(const char* classname, WNDPROC wndproc, int flags);
+
 int EditBox(const char *caption, const char *message, const char *initvalue, char *buffer);
 
 /* Logging */

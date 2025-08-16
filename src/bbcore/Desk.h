@@ -29,7 +29,12 @@ void Desk_Init(void);
 void ShowExplorer(void);
 void HideExplorer(void);
 
-void Desk_new_background(const char *rootCommand);
+/// \brief Sets given image file as desktop background
+/// Writes to correspondint extensions.rc field if arg present. In arg is null
+/// tries to read value from extensions.rc file.
+/// \param path Path to image file. Can be null.
+void Desk_new_background(const char* path);
+
 const char * Desk_extended_rootCommand(const char *p);
 bool Desk_mousebutton_event(int button);
 void Desk_Reset(bool all);

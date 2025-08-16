@@ -123,13 +123,37 @@ if (NEED_COPY_FILES)
             COMMAND ${CMAKE_COMMAND} -E copy_if_different "${CMAKE_CURRENT_LIST_DIR}/../../data/styles/3colours/blue" "${ARTIFACTS_OUTPUT_DIR}/styles/3colours/blue"
             COMMAND ${CMAKE_COMMAND} -E copy_if_different "${CMAKE_CURRENT_LIST_DIR}/../../data/styles/3colours/green" "${ARTIFACTS_OUTPUT_DIR}/styles/3colours/green"
             COMMAND ${CMAKE_COMMAND} -E copy_if_different "${CMAKE_CURRENT_LIST_DIR}/../../data/styles/3colours/red" "${ARTIFACTS_OUTPUT_DIR}/styles/3colours/red"
-        )
+        ) 
+
         add_custom_command(
             TARGET ${PROJECT}
             POST_BUILD
             COMMAND ${CMAKE_COMMAND} -E make_directory "${ARTIFACTS_OUTPUT_DIR}/backgrounds/3colours"
             COMMAND ${CMAKE_COMMAND} -E copy_if_different "${CMAKE_CURRENT_LIST_DIR}/../../data/backgrounds/3colours/blue.jpg" "${ARTIFACTS_OUTPUT_DIR}/backgrounds/3colours/blue.jpg"
             COMMAND ${CMAKE_COMMAND} -E copy_if_different "${CMAKE_CURRENT_LIST_DIR}/../../data/backgrounds/3colours/red.jpg" "${ARTIFACTS_OUTPUT_DIR}/backgrounds/3colours/red.jpg"
+        )
+
+        add_custom_command(
+            TARGET ${PROJECT}
+            POST_BUILD
+            COMMAND ${CMAKE_COMMAND} -E make_directory "${ARTIFACTS_OUTPUT_DIR}/styles/classic"
+            COMMAND ${CMAKE_COMMAND} -E copy_if_different "${CMAKE_CURRENT_LIST_DIR}/../../data/styles/classic/Blue" "${ARTIFACTS_OUTPUT_DIR}/styles/classic/Blue"
+        )
+
+        add_custom_command(
+            TARGET ${PROJECT}
+            POST_BUILD
+            COMMAND ${CMAKE_COMMAND} -E make_directory "${ARTIFACTS_OUTPUT_DIR}/styles/fluxbox"
+            COMMAND ${CMAKE_COMMAND} -E copy_if_different "${CMAKE_CURRENT_LIST_DIR}/../../data/styles/fluxbox/carp" "${ARTIFACTS_OUTPUT_DIR}/styles/fluxbox/carp"
+        )
+
+        add_custom_command(
+            TARGET ${PROJECT}
+            POST_BUILD
+            COMMAND ${CMAKE_COMMAND} -E make_directory "${ARTIFACTS_OUTPUT_DIR}/styles/misc"
+            COMMAND ${CMAKE_COMMAND} -E copy_if_different "${CMAKE_CURRENT_LIST_DIR}/../../data/styles/misc/awe1" "${ARTIFACTS_OUTPUT_DIR}/styles/misc/awe1"
+            COMMAND ${CMAKE_COMMAND} -E copy_if_different "${CMAKE_CURRENT_LIST_DIR}/../../data/styles/misc/awe2" "${ARTIFACTS_OUTPUT_DIR}/styles/misc/awe2"
+            COMMAND ${CMAKE_COMMAND} -E copy_if_different "${CMAKE_CURRENT_LIST_DIR}/../../data/styles/misc/qnx-photon2" "${ARTIFACTS_OUTPUT_DIR}/styles/misc/qnx-photon2"
         )
     endif()
 endif()

@@ -146,16 +146,20 @@ plugins* append_plugin(const char *rcline)
 {
     plugins* q = c_new(plugins);
 
-    if ('\0' == rcline[0] || '#' == rcline[0] || '[' == rcline[0]) {
+    if ('\0' == rcline[0] || '#' == rcline[0] || '[' == rcline[0])
+    {
         q->path = new_str(rcline);
-    } else {
+    }
+    else
+    {
         char name[100];
         int n, l;
         plugins* q2;
 
         q->enabled = true;
         q->useslit = false;
-        for (;;) {
+        for (;;)
+        {
             n = *rcline;
             if (n == '!')
                 q->enabled = false;
@@ -177,9 +181,12 @@ plugins* append_plugin(const char *rcline)
                 n++;
         }
 
-        if (0 == n) {
+        if (0 == n)
+        {
             name[l] = 0;
-        } else {
+        }
+        else
+        {
             sprintf(name+l, ".%d", 1+n);
             q->isslit = false;
         }
@@ -421,22 +428,28 @@ int load_plugin(plugins* q, HWND hSlit)
 
         TRY
         {
-            if (useslit) {
+            if (useslit)
+            {
                 if (q->beginPluginEx)
                     r = q->beginPluginEx(hModule, hSlit);
                 else
                     r = q->beginSlitPlugin(hModule, hSlit);
-            } else {
+            }
+            else
+            {
                 if (q->beginPlugin)
                     r = q->beginPlugin(hModule);
                 else
                     r = q->beginPluginEx(hModule, NULL);
             }
 
-            if (BEGINPLUGIN_OK == r) {
+            if (BEGINPLUGIN_OK == r)
+            {
                 q->hmodule = hModule;
                 q->inslit = useslit;
-            } else if (BEGINPLUGIN_FAILED_QUIET != r) {
+            }
+            else if (BEGINPLUGIN_FAILED_QUIET != r)
+            {
                 error = error_plugin_fail_to_load;
             }
 
@@ -667,7 +680,7 @@ int PluginManager_handleBroam(const char *args)
     };
 
     char buffer[MAX_PATH];
-    plugins* q;
+    plugins* q{};
     int action;
 
     NextToken(buffer, &args, NULL);
@@ -688,19 +701,22 @@ int PluginManager_handleBroam(const char *args)
 
     strcpy(buffer, get_relative_path(NULL, unquote(buffer)));
 
-    if (e_add == action) {
+    if (e_add == action)
+    {
         q = append_plugin(buffer);
         q->useslit = true;
 
-    } else {
+    }
+    else
+    {
         dolist (q, bbplugins)
             if (q->name
-                && 0 == stricmp(e_remove==action?q->path:q->name, buffer))
+                && 0 == stricmp(e_remove == action ? q->path : q->name, buffer))
                 break;
     }
 
-    if (q) {
-
+    if (q)
+    { 
         if (e_remove == action)
             q->enabled = false;
         if (e_load == action)

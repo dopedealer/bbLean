@@ -939,11 +939,7 @@ void Menu::bring_ontop(bool force_active)
     bbcore::Menu_All_Hide_But(this);
 }
 
-//===========================================================================
-// Paint the menu. The Background gradient bitmap is cached. Items are drawn
-// only if they intersect with the update rectangle.
-
-void Menu::Paint()
+void Menu::Paint(void)
 {
     PAINTSTRUCT ps;
     HDC hdc, hdc_screen, back;

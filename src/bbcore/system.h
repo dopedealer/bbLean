@@ -50,7 +50,23 @@ void snapWindowToEdgeV(WINDOWPOS* wp, LPARAM nDist, UINT flags, va_list vlist);
 // ==============================================================
 /* BBApi.cpp - some (non api) utils */
 
+/// \brief Executes application with given name and optional run parameters.
+/// Possible optional run parameters:
+/// -hidden : run in a hidden window
+/// -in <path> ; specify working directory
+/// -workspace1 : specify workspace
+/// 
+/// Possible flags (can be OR'ed):
+/// RUN_SHOWERRORS
+/// RUN_NOERRORS
+/// RUN_WAIT
+/// RUN_HIDDEN
+/// RUN_NOARGS
+/// RUN_NOSUBST
+/// RUN_ISPIDL
+/// RUN_WINDIR
 BOOL BBExecute_string(const char *s, int flags);
+
 int BBExecute_pidl(const char* verb, const void *pidl);
 
 

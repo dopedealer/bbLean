@@ -225,7 +225,7 @@
 
 /* File dragged over/dropped on desktop.
    lParam: filename
-   wParam 0:drop (on mousebutton up) 1:drag (on mouse over)
+   wParam 0:drop (on mousebutton up) 1:drag (on mouse over), 2:is style file (OR'ed bits)
    The plugin should return TRUE if it wants the file, FALSE if not */
 #define BB_DRAGTODESKTOP        10510 /* For plugins: receive only */
 
@@ -307,7 +307,8 @@
 /* ----------------------------------- */
 /* internal usage */
 #define BB_FOLDERCHANGED        10897   /* folder changed */
-#define BB_DRAGOVER             10898   /* dragging over menu */
+#define BB_DRAGOVER             10898   /* dragging over menu */ 
+// args: wparam - 0, lparam - allocated command string (with malloc)
 #define BB_POSTSTRING           10899   /* asynchrone execute command */
 
 /* ----------------------------------- */

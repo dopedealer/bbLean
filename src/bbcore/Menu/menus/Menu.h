@@ -96,6 +96,10 @@ public:
     void SetZPos(void);
     void Validate(void);
     void Show(int xpos, int ypos, bool fShow);
+
+    /// \brief Paint the menu. 
+    /// The Background gradient bitmap is cached. Items are drawn
+    /// only if they intersect with the update rectangle.
     void Paint(void);
 
     void MenuTimer(UINT);

@@ -301,19 +301,24 @@ static const cfgmenu* find_cfg_item(
     const cfgmenu* pmenu,
     const cfgmenu** pp_menu)
 {
-    const cfgmenu* p;
-    for (p = pmenu; p->text; ++p)
-        if (p->command) {
-            if (0 == memicmp(cmd, p->command, strlen(p->command))) {
-            *pp_menu = pmenu;
-            return p;
+    for (const cfgmenu* p = pmenu; p->text; ++p)
+    {
+        if (p->command)
+        {
+            if (0 == memicmp(cmd, p->command, strlen(p->command)))
+            {
+                *pp_menu = pmenu;
+                return p;
             }
-        } else if (p->pvalue >= (void*)100) {
-            const cfgmenu* psub;
-            psub = find_cfg_item(cmd, (cfgmenu*)p->pvalue, pp_menu);
+        }
+        else if (p->pvalue >= (void*)100)
+        {
+            const cfgmenu* psub = find_cfg_item(cmd, (cfgmenu*)p->pvalue, pp_menu);
             if (psub)
                 return psub;
         }
+    }
+
     return NULL;
 }
 
@@ -329,19 +334,27 @@ const void *exec_internal_broam(
         return v;
 
     v = (*p_item)->pvalue;
-    if (v) {
+    if (v)
+    {
         // scan for a possible argument to the command
         while (!IS_SPC(*arg))
             ++arg;
         skip_spc(&arg);
         // now set the appropriate variable
-        if (is_fixed_string(v)) {
+        if (is_fixed_string(v))
+        {
             strcpy((char *)v, arg);
-        } else if (is_string_item(v)) {
+        }
+        else if (is_string_item(v))
+        {
             strcpy((char *)v, arg);
-        } else if (get_int_item(v)) {
+        }
+        else if (get_int_item(v))
+        {
             if (*arg) *(int*)v = atoi(arg);
-        } else {
+        }
+        else
+        {
             set_bool((bool*)v, arg);
         }
         // write to blackbox.rc or extensions.rc (automatic)
@@ -357,7 +370,8 @@ int exec_cfg_command(const char *argument)
     const void *v;
 
     // is it a plugin related command?
-    if (0 == memicmp(argument, "plugin.", 7)) {
+    if (0 == memicmp(argument, "plugin.", 7))
+    {
         if (0 == PluginManager_handleBroam(argument+7))
             return 0;
         Menu_Update(MENU_UPD_CONFIG);
@@ -370,20 +384,28 @@ int exec_cfg_command(const char *argument)
         return 0;
 
     // now take care for some item-specific refreshes
-    if (v == &Settings_toolbar.enabled) {
+    if (v == &Settings_toolbar.enabled)
+    {
         if (Settings_toolbar.enabled)
             beginToolbar(hMainInstance);
         else
             endToolbar(hMainInstance);
         Menu_Update(MENU_UPD_CONFIG);
-    } else if (v == &gSettingsMenu.sortByExtension
-            || v == &gSettingsMenu.showHiddenFiles) {
+    }
+    else if (v == &gSettingsMenu.sortByExtension || v == &gSettingsMenu.showHiddenFiles)
+    {
         PostMessage(gBBhwnd, BB_REDRAWGUI, BBRG_MENU|BBRG_FOLDER, 0);
-    } else if (v == &Settings_smartWallpaper) {
+    }
+    else if (v == &Settings_smartWallpaper)
+    {
         Desk_Reset(true);
-    } else if (v == &gSettingsMenu.dropShadows) {
+    }
+    else if (v == &gSettingsMenu.dropShadows)
+    {
         Menu_Exit(), Menu_Init();
-    } else if (v == &Settings_UTF8Encoding) {
+    }
+    else if (v == &Settings_UTF8Encoding)
+    {
         Workspaces_GetCaptions();
         Tray_SetEncoding();
         PostMessage(gBBhwnd, BB_REDRAWGUI, BBRG_MENU|BBRG_FOLDER, 0);

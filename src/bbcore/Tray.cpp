@@ -813,9 +813,10 @@ LRESULT TrayTestEvent(void *data, unsigned size)
 //===========================================================================
 
 static
-LRESULT CALLBACK TrayWndProc( HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
+LRESULT CALLBACK TrayWndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
-    if (message == WM_COPYDATA) {
+    if (message == WM_COPYDATA)
+    {
         void *data;
         unsigned size;
         int id;
@@ -825,7 +826,8 @@ LRESULT CALLBACK TrayWndProc( HWND hwnd, UINT message, WPARAM wParam, LPARAM lPa
         id = ((COPYDATASTRUCT*)lParam)->dwData;
 
         if (size >= sizeof (DWORD)
-            && ((SHELLTRAYDATA*)data)->dwMagic == 0x34753423) {
+            && ((SHELLTRAYDATA*)data)->dwMagic == 0x34753423)
+        {
             if (id == 1)
                 return TrayEvent(data, size);
             if (id == 3)
@@ -836,13 +838,15 @@ LRESULT CALLBACK TrayWndProc( HWND hwnd, UINT message, WPARAM wParam, LPARAM lPa
         return TrayTestEvent(data, size);
     }
 
-    if (message == WM_WINDOWPOSCHANGED && tray_on_top) {
+    if (message == WM_WINDOWPOSCHANGED && tray_on_top)
+    {
         SetWindowPos(hwnd, HWND_TOPMOST, 0,0,0,0,
             SWP_NOSIZE|SWP_NOMOVE|SWP_NOACTIVATE|SWP_NOSENDCHANGING);
         return 0;
     }
 
-    if (message == trayredirect_message && message) {
+    if (message == trayredirect_message && message)
+    {
         systemTrayNode *p;
         dolist (p, trayIconList)
             if (p->t.uID == wParam)

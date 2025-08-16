@@ -123,7 +123,7 @@ class ISettings
                 const char *key, StyleItem *si, StyleItem *si_def,
                 int sn, int f, bool is_070) = 0; 
 
-        virtual void readStyle(const char *style, StyleStruct *pStyle) = 0; 
+        virtual void readStyle(const char* styleFilePath, StyleStruct* pStyle) = 0; 
 
         virtual const char * makeKey(char *buff, const rccfg* cp) = 0;
 
@@ -166,7 +166,7 @@ class SettingsCommon : public ISettings
                 const char *key, StyleItem *si, StyleItem *si_def,
                 int sn, int f, bool is_070) override;
 
-        void readStyle(const char *style, StyleStruct *pStyle) override;
+        void readStyle(const char* styleFilePath, StyleStruct* pStyle) override;
 
         const char * makeKey(char *buff, const rccfg* cp) override;
         void readSettings(const char *bbrc, const rccfg* cp) override;
@@ -316,11 +316,11 @@ enum other_defaults
 
 struct items
 {
-    short type;
-    short sn;
-    const char *rc_string;
-    int sn_def;
-    unsigned flags;
+    short type;             ///< assumed underlying type
+    short sn;               ///< ui control trait
+    const char *rc_string;  ///< caption
+    int sn_def;             ///< target ui control
+    unsigned flags;         ///< flags or custom value in specific cases
 }; 
 
 #define COMMON_STYLE_PROPS                                                                                          \

@@ -21,52 +21,63 @@
 
 #include "bblib.h"
 
-int nexttoken(const char **p_out, const char **p_in, const char *delims)
+int nexttoken(const char **p_out, const char **p_in, const char* delims)
 {
-    const char *s, *a, *e;
+    const char *s, *pFoundStart, *pFoundEnd;
     char c, q;
     int delim_spc;
 
     delim_spc = NULL == delims || strchr(delims, ' ');
 
-    for (a = e = s = *p_in, q = 0; 0 != (c = *s);) {
+    for (pFoundStart = pFoundEnd = s = *p_in, q = 0; 0 != (c = *s);)
+    {
         ++s;
-        if (0==q) {
+        if (0 == q)
+        {
             if ('\"'==c || '\''==c)
+            {
                 q = c;
-            else
-            if (IS_SPC(c)) {
-                if (e == a) {
-                    a = e = s;
+            }
+            else if (IS_SPC(c))
+            {
+                if (pFoundEnd == pFoundStart)
+                {
+                    pFoundStart = pFoundEnd = s;
                     continue;
                 }
                 if (delim_spc)
+                {
                     break;
+                }
             }
             if (delims && strchr(delims, c))
+            {
                 break;
-        } else if (c==q) {
+            }
+        }
+        else if (c == q)
+        {
             q=0;
         }
-        e = s;
+        pFoundEnd = s;
     }
-    while (e > a && IS_SPC(e[-1]))
-        --e;
+    while (pFoundEnd > pFoundStart && IS_SPC(pFoundEnd[-1]))
+        --pFoundEnd;
     skip_spc(&s);
-    *p_out = a, *p_in = s;
-    return e - a;
+    *p_out = pFoundStart, *p_in = s;
+    return pFoundEnd - pFoundStart;
 }
 
 /* ------------------------------------------------------------------------- */
 /* Function: NextToken */
-/* Purpose: Copy the first token of 'string' seperated by the delim to 'buf', */
+/* Purpose: Copy the first token of 'inputString' seperated by the delim to 'outBuffer', */
 /*  update input position to start of next token */
 
-char* NextToken(char* buf, const char** string, const char *delims)
+char* NextToken(char* outBuffer, const char** inputString, const char* delims)
 {
-    const char *a; int n;
-    n = nexttoken(&a, string, delims);
-    return extract_string(buf, a, imin(n, MAX_PATH - 1));
+    const char* a{};
+    int tokenLength = nexttoken(&a, inputString, delims);
+    return extract_string(outBuffer, a, imin(tokenLength, MAX_PATH - 1));
 }
 
 /* ------------------------------------------------------------------------- */

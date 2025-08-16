@@ -45,14 +45,14 @@ char *quote_path(char *path)
 
 /* ------------------------------------------------------------------------- */
 
-const char *file_basename(const char *path)
+const char* file_basename(const char* path)
 {
     int nLen = strlen(path);
     while (nLen && !IS_SLASH(path[nLen-1])) nLen--;
     return path + nLen;
 }
 
-const char *file_extension(const char *path)
+const char* file_extension(const char* path)
 {
     const char *p, *e;
     p = e = strchr(path, 0);
@@ -86,14 +86,16 @@ char *fix_path(char *path)
     return path;
 }
 
-int is_absolute_path(const char *path)
+int is_absolute_path(const char* path)
 {
     const char *p, *q; char c;
-    for (p = q = path; 0 != (c = *p);) {
+    for (p = q = path; 0 != (c = *p);)
+    {
         if (IS_SLASH(c))
             return p == q;
         ++p;
-        if (':' == c) {
+        if (':' == c)
+        {
             q = p;
             if (':' == *p)
                 return 1;
@@ -147,7 +149,7 @@ char* get_exe_path(HINSTANCE h, char* pszPath, int nMaxLen)
     GetModuleFileName(h, pszPath, nMaxLen);
     if (load_imp(&pGetLongPathName, "KERNEL32.DLL", "GetLongPathNameA"))
         pGetLongPathName(pszPath, pszPath, nMaxLen);
-    *(char*)file_basename(pszPath) = 0;
+    *(char*)file_basename(pszPath) = 0; // explicitly set 'end of string' char on file name start
     return pszPath;
 }
 
@@ -176,7 +178,7 @@ const char *get_relative_path(HINSTANCE h, const char *path)
 /* Out: */
 /* ------------------------------------------------------------------------- */
 
-char *set_my_path(HINSTANCE h, char *dest, const char *fname)
+char* set_my_path(HINSTANCE h, char* dest, const char* fname)
 {
     dest[0] = 0;
     if (0 == is_absolute_path(fname))
@@ -184,8 +186,6 @@ char *set_my_path(HINSTANCE h, char *dest, const char *fname)
     return strcat(dest, fname);
 }
 
-/// \brief Tells whether specified path exists
-///        Check if 'pszPath' exists as a regular file
 bool file_exists(const char* path)
 {
     DWORD a = GetFileAttributes(path);

@@ -62,9 +62,7 @@ char* stristr(const char *aa, const char *bb)
     return NULL;
 }
 
-/// \brief Searches provided string in provided string array
-/// \returns Index of found string in case of success. -1 in case of failure
-int get_string_index (const char *key, const char * const * string_array)
+int get_string_index(const char *key, const char * const * string_array)
 {
     int i; const char *s;
     for (i = 0; nullptr != (s = *string_array); i++, string_array++)
@@ -138,7 +136,7 @@ static int cstr_cpy(char *out, const char *in)
     return d - out;
 }
 
-char *m_formatv(const char *fmt, va_list arg_list)
+char* m_formatv(const char *fmt, va_list arg_list)
 {
     va_list arg;
     char *out, *ptr, c;
@@ -219,8 +217,7 @@ _char:
     }
 }
 
-/// \brief Returns formatted string allocated with malloc()
-char *m_format(const char *fmt, ...)
+char* m_format(const char *fmt, ...)
 {
     va_list arg_list;
     va_start(arg_list, fmt);
@@ -313,21 +310,24 @@ BBLIB_EXPORT int wchar_to_mbyte(const WCHAR *src, char *str, int len, BOOL isMby
 /* ------------------------------------------------------------------------- */
 
 // strlwr a keyword, calculate hash value and length
-unsigned calc_hash(char *p, const char *s, int *pLen, int delim)
+unsigned calc_hash(char* outBuffer, const char* strToHash, int* pstrLength, int delim)
 {
-    unsigned h; int c; char *d = p;
-    for (h = 0; 0 != (c = *s) && delim != c; ++s, ++d)
+    unsigned hash;
+    int c;
+    char* d = outBuffer;
+    const char* s = strToHash;
+    for (hash = 0; 0 != (c = *s) && delim != c; ++s, ++d)
     {
         if (c >= 'A' && c <= 'Z')
             c += 32;
         *d = (char)c;
-        if ((h ^= c) & 1)
-            h^=0xedb88320;
-        h>>=1;
+        if ((hash ^= c) & 1)
+            hash^=0xedb88320;
+        hash>>=1;
     }
     *d = 0;
-    *pLen = d - p;
-    return h;
+    *pstrLength = d - outBuffer;
+    return hash;
 }
 
 /* ------------------------------------------------------------------------- */

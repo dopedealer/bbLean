@@ -774,13 +774,13 @@ const char* getBBVersion(void)
     return BBAPPVERSION;
 }
 
-BOOL BBExecute_string(const char *line, int flags)
+BOOL BBExecute_string(const char* line, int flags)
 {
     char workdir[MAX_PATH];
     char file[MAX_PATH];
     const char *cmd, *args;
-    char *cmd_temp = NULL;
-    char *line_temp = NULL;
+    char* cmd_temp{};
+    char* line_temp{};
     int n, ret;
 
     workdir[0] = 0;
@@ -792,12 +792,15 @@ BOOL BBExecute_string(const char *line, int flags)
     if (0 == (flags & RUN_NOSUBST))
         line = replace_environment_strings_alloc(&line_temp, line);
 
-    if (flags & RUN_NOARGS) {
+    if (flags & RUN_NOARGS)
+    {
         cmd = line;
         args = NULL;
         strcpy(file, cmd);
 
-    } else {
+    }
+    else
+    {
         for (args = line;; args += args[0] == ':')
         {
             cmd = args;
@@ -830,7 +833,8 @@ BOOL BBExecute_string(const char *line, int flags)
             args = NULL;
     }
 
-    if (0 == (flags & RUN_NOSUBST)) {
+    if (0 == (flags & RUN_NOSUBST))
+    {
         n = '\"' == file[0];
         cmd_temp = (char*)m_alloc((args ? strlen(args) : 0) + MAX_PATH + 10);
         strcpy(cmd_temp, replace_shellfolders(file, file, true, bbDefaultrcPath(), isUsingUtf8Encoding()));
@@ -842,9 +846,12 @@ BOOL BBExecute_string(const char *line, int flags)
     }
 
     ret = -1 != run_process(cmd, workdir, flags);
-    if (ret) {
+    if (ret)
+    {
         // debug_printf("cmd (%d) <%s>", ret, cmd);
-    } else {
+    }
+    else
+    {
         ret = bbExecute(NULL, NULL, file, args, workdir,
             flags & RUN_HIDDEN ? SW_HIDE : SW_SHOWNORMAL,
             flags & RUN_NOERRORS);

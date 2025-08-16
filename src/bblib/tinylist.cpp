@@ -144,9 +144,9 @@ struct string_node *new_string_node(const char *s)
     return b;
 }
 
-void append_string_node(struct string_node **p, const char *s)
+void append_string_node(struct string_node** p, const char* newString)
 {
-    append_node(p, new_string_node(s));
+    append_node(p, new_string_node(newString));
 }
 
 /* ------------------------------------------------------------------------- */

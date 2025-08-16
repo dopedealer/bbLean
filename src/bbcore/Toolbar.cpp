@@ -331,10 +331,10 @@ static
 void Toolbar_setlabel(void)
 {
     // Get current workspace name...
-    DesktopInfo DI;
+    DesktopInfo DI{};
     HWND hwnd;
 
-    getDesktopInfo (& DI);
+    getDesktopInfo(&DI);
     strcpy(Toolbar_WorkspaceName, DI.name);
     if (Toolbar_ShowingExternalLabel)
         return;

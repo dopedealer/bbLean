@@ -143,9 +143,9 @@ static const rccfg bbrc_cfg[] = {
 //=====================================================
 // Style definitions
 
-StyleStruct mStyle;
-toolbar_setting  Settings_toolbar;
-menu_setting  gSettingsMenu;
+StyleStruct mStyle{};
+toolbar_setting  Settings_toolbar{};
+menu_setting  gSettingsMenu{};
 
 //====================
 // workspaces
@@ -675,7 +675,7 @@ restart:
     return 0 != (si->validated & f);
 }
 
-void SettingsCommon::readStyle(const char *style, StyleStruct *pStyle)
+void SettingsCommon::readStyle(const char* styleFilePath, StyleStruct* pStyle)
 {
     const items* s;
     StyleItem *T, *F;
@@ -691,9 +691,9 @@ void SettingsCommon::readStyle(const char *style, StyleStruct *pStyle)
     memset(pStyle, 0, sizeof *pStyle);
     pStyle->bulletUnix = bu;
     pStyle->metricsUnix = true;
-    pStyle->is_070 = 0 != get_070(style);
+    pStyle->is_070 = 0 != get_070(styleFilePath);
 
-    readStylePersonal(style, pStyle);
+    readStylePersonal(styleFilePath, pStyle);
 
     s = getStyleItems();
     do {
@@ -718,7 +718,7 @@ void SettingsCommon::readStyle(const char *style, StyleStruct *pStyle)
         if (C_STY == type)
         {
             readStyleItemEx(
-                style,
+                styleFilePath,
                 pStyle,
                 s->rc_string,
                 (StyleItem*)v,
@@ -731,7 +731,7 @@ void SettingsCommon::readStyle(const char *style, StyleStruct *pStyle)
         }
 
         trans = set_translate_065(false);
-        p = read_value(style, s->rc_string, NULL);
+        p = read_value(styleFilePath, s->rc_string, NULL);
         set_translate_065(trans);
 
         if (p) switch (sn)

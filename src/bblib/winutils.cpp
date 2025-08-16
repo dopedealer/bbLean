@@ -158,21 +158,26 @@ int diff_filetime(const char *fn, FILETIME *ft0)
 
 unsigned long getfileversion(const char *path)
 {
-    char temp[MAX_PATH]; DWORD dwHandle = 0, result = 0;
+    char temp[MAX_PATH];
+    DWORD dwHandle = 0, result = 0;
     UINT bytes = GetFileVersionInfoSize(strcpy(temp, path), &dwHandle);
-    if (bytes) {
-        char *buffer = (char*)m_alloc(bytes);
-        if (GetFileVersionInfo(temp, 0, bytes, buffer)) {
-            void *value;
+    if (bytes)
+    {
+        char* buffer = (char*)m_alloc(bytes);
+        if (GetFileVersionInfo(temp, 0, bytes, buffer))
+        {
+            void* value{};
             char subblock[2] = "\\";
-            if (VerQueryValue(buffer, subblock, &value, &bytes)) {
-                VS_FIXEDFILEINFO *vs = (VS_FIXEDFILEINFO*)value;
+            if (VerQueryValue(buffer, subblock, &value, &bytes))
+            {
+                VS_FIXEDFILEINFO* vs = (VS_FIXEDFILEINFO*)value;
                 result = ((vs->dwFileVersionLS & 0xFF) >> 0)
                     | ((vs->dwFileVersionLS & 0xFF0000) >> 8)
                     | ((vs->dwFileVersionMS & 0xFF) << 16)
                     | ((vs->dwFileVersionMS & 0xFF0000) << 8)
                     ;
-            }}
+            }
+        }
         m_free(buffer);
     }
     /* debug_printf("version number of %s %08x", path, result); */

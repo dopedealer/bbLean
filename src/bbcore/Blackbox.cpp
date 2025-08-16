@@ -719,7 +719,7 @@ int handle_received_data(HWND hwnd, UINT msg, WPARAM wParam, const void *data, u
 
 //===========================================================================
 
-LRESULT CALLBACK MainWndProc (HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
+LRESULT CALLBACK MainWndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
     LRESULT r;
     const char *str;
@@ -1174,7 +1174,7 @@ void ShowAppnames(void)
 //===========================================================================
 
 /* execute a command, wait until execution finished (unless it's a shell command) */
-void exec_command(const char *cmd)
+void exec_command(const char* cmd)
 {
     if (NULL == cmd || 0 == cmd[0])
     {
@@ -1388,7 +1388,12 @@ corebroamTable [] =
 
 //===========================================================================
 
-int exec_core_broam(const char *broam)
+/// \brief Dispatches root broadcast message string and executes related action
+///        if association found.
+/// There are two types of broams - 'sending message to window' and 'direct
+/// action execution' ones. Every command searched in actions table by it's
+/// string name and gets it id which directs to real action execution place.
+int exec_core_broam(const char* broam)
 {
     //debug_printf("%s", broam);
 

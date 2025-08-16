@@ -41,7 +41,7 @@
 - remove all 'include cpp' hacks everywhere
 - add nls txt to docs copying
 
-- move bblib c files to cpp with careful export conventions
+todo:
 - make external utf-8 only in char* args
 - make windows 10, 11 full support - hook mode and native
 ? add spleen font type usage from openbsd
@@ -53,7 +53,16 @@
 - replace explicit imports for functions that present at least from vista/xp
 - add hints (tray popups) on tray icons mouse hover
 - replace global settings singletone - change to interface usage from blackbox class
-
+- rewrite O n^2  complexity reading writing settings to fast analog
+? make calling usual 'desktop menu' on rmb click
+- add moving window with alt+rmb holding on every window point
+- move 'scroll workspace' pluging functionality from plugin to bbcore and make
+  binded to corresponding property in rc file (now it mentioned in comment but
+  discarded as 'nix only' property)
+- add a fiew "classic" skins from 'usual' blackbox to repository, make copying
+- try to fix a "quick launch" menu content - now it on windows 10 (11?) taken from
+  two different folders - predefined and 'user pinned'
+- check why it is so slow exits
 
 - other refactorings
     - bbkeys refactoring
@@ -93,6 +102,10 @@
       Make composition of methods instead of calling of something in bbcore.
     - make bbcore::makeGradient function parameters passed as struct instead of large number of pars
     - move all functions that ends with XXX_command to corresponding source fiels (commands.cpp, commands.h)
+    ? functions like nexttoken() does not check the size of output buffer and just writes to it
+    - replace all strcpy, strcat, memcpy dangerous usages
+    - change broam search to hashmaps
+    - make common 'browse file' helper fn in winutils
 
 
 - add manifest to make winapi dialogs look more pretty

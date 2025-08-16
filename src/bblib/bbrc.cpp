@@ -409,23 +409,27 @@ void set_reader_timer(void)
 /* ------------------------------------------------------------------------- */
 // helpers
 
-char *read_file_into_buffer (const char *path, int max_len)
+char *read_file_into_buffer(const char* path, int max_len)
 {
     FILE *fp; char *buf; int len;
     if (NULL == (fp = fopen(path,"rb")))
+    {
         return NULL;
+    }
 
     fseek(fp,0,SEEK_END);
     len = ftell (fp);
     fseek (fp,0,SEEK_SET);
     if (max_len && len >= max_len)
+    {
         len = max_len-1;
+    }
 
-    buf=(char*)m_alloc(len+1);
-    fread (buf, 1, len, fp);
+    buf = (char*)m_alloc(len+1);
+    fread(buf, 1, len, fp);
     fclose(fp);
 
-    buf[len]=0;
+    buf[len] = 0;
     return buf;
 }
 
@@ -617,22 +621,25 @@ lin_list* search_line(fil_list* fl, const char *key, int fwild, LONG *p_seekpos)
 /* ------------------------------------------------------------------------- */
 // searches for the filename and, if not found, builds a _new line-list
 
-fil_list* read_file(const char *filename)
+fil_list* read_file(const char* filename)
 {
     lin_list **slp, *sl;
     fil_list **flp, *fl;
     char *buf, *p, *d, *s, *t, c, hashname[MAX_PATH];
-    unsigned h;
+    unsigned hashFilename;
     int k;
 
     // ----------------------------------------------
     // first check, if the file has already been read
-    h = calc_hash(hashname, filename, &k, 0);
+    hashFilename = calc_hash(hashname, filename, &k, 0);
     k = k + 1;
-    for (flp = &g_rc->rc_files; NULL!=(fl=*flp); flp = &fl->next)
-        if (fl->hash==h && 0==memcmp(hashname, fl->path+fl->k, k)) {
+    for (flp = &g_rc->rc_files; NULL != (fl = *flp); flp = &fl->next)
+    {
+        if (fl->hash == hashFilename && 0 == memcmp(hashname, fl->path + fl->k, k))
+        {
             ++g_rc->used;
             return fl; //... return cached line list.
+        }
     }
 
     // allocate a _new file structure, the filename is
@@ -641,7 +648,7 @@ fil_list* read_file(const char *filename)
     memcpy(fl->path, filename, k);
     memcpy(fl->path+k, hashname, k);
     fl->k = k;
-    fl->hash = h;
+    fl->hash = hashFilename;
     cons_node(&g_rc->rc_files, fl);
 
 #ifdef DEBUG_READER
@@ -685,16 +692,8 @@ comment:
     m_free(buf);
     check_070(fl);
     return fl;
-}
+} 
 
-
-/// \brief Searches the given file for the supplied keyword and returns a
-///        pointer to the value - string
-/// \param path String containing the name of the file to be opened
-/// \param szKey String containing the keyword to be looked for
-/// \param ptr [opt] An index into the file to start search. If present, at input indicates the line
-///                  from where the search starts, at output is set to the line that follows the match.
-/// \returns Pointer to the value string of the keyword 
 const char* read_value(const char* path, const char* szKey, long* ptr)
 {
     fil_list* fl;
@@ -717,12 +716,6 @@ const char* read_value(const char* path, const char* szKey, long* ptr)
     return r;
 }
 
-/// \brief Searches the given file for the supplied keyword as true/false
-///        string and returns whether it was true or false or bDefault in case of fail
-/// \param path  String containing the name of the file to be opened
-/// \param szKey String containing the keyword to be looked for
-/// \param defaultValue  Default value that will be returned in case of fail recognition
-/// \returns Result of recognition
 bool read_bool(const char* fileName, const char* szKey, bool defaultValue)
 {
     const char* szValue = read_value(fileName, szKey, nullptr);
@@ -740,24 +733,12 @@ bool read_bool(const char* fileName, const char* szKey, bool defaultValue)
     return defaultValue;
 }
 
-/// \brief Searches the given file for the supplied keyword as int
-///        returns it if it was recoghized. In case of failure returns default value
-/// \param path  String containing the name of the file to be opened
-/// \param szKey String containing the keyword to be looked for
-/// \param defaultValue  Default value that will be returned in case of fail recognition
-/// \returns Result of recognition
 int read_int(const char* fileName, const char* szKey, int defaultValue)
 {
     const char* szValue = read_value(fileName, szKey, nullptr);
     return szValue ? atoi(szValue) : defaultValue;
 }
 
-/// \brief Searches the given file for the supplied keyword as string
-///        and returns it if it was recoghized. In case of failure returns default value
-/// \param path  String containing the name of the file to be opened
-/// \param szKey String containing the keyword to be looked for
-/// \param defaultValue  Default value that will be returned in case of fail recognition
-/// \returns Result of recognition
 const char* read_string(const char* fileName, const char* szKey, const char* szDefault)
 {
     const char* szValue = read_value(fileName, szKey, nullptr);
@@ -835,25 +816,32 @@ void write_value(const char* path, const char* szKey, const char* value)
     fl = read_file(path);
     tl = search_line(fl, szKey, false, NULL);
 
-    if (tl && value && 0 == strcmp(tl->str + tl->k, value)) {
+    if (tl && value && 0 == strcmp(tl->str + tl->k, value))
+    {
         // nothing changed
-        if (memcmp(tl->str + tl->o, szKey, tl->k-1)) {
+        if (memcmp(tl->str + tl->o, szKey, tl->k-1))
+        {
             // make shure that keyword has correct letter case
             memcpy(tl->str + tl->o, szKey, tl->k-1);
             mark_rc_dirty(fl);
         }
         tl->dirty = 1;
-    } else {
+    }
+    else
+    {
         for (tlp = &fl->lines; *tlp != tl; tlp = &(*tlp)->next)
             ;
-        if (tl) {
+        if (tl)
+        {
             *tlp = tl->next;
             free_line(fl, tl);
         }
-        if (value) {
+        if (value)
+        {
             sl = make_line(fl, szKey, value);
             sl->dirty = true;
-            if (NULL == tl && false == fl->newfile) {
+            if (NULL == tl && false == fl->newfile)
+            {
                 // insert a new item below a similar one
                 slp = get_simkey(&fl->lines, sl->str);
                 if (slp) tlp = slp;

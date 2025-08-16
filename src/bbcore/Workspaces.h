@@ -25,7 +25,12 @@
 namespace bbcore {
 
 bool setTaskLocation(HWND hwnd, taskinfo* t, UINT flags);
+
+/// \brief Make a plugin/app window appear on all workspaces
+///        This is now one API for both plugins and application windows,
+///        still internally uses different methods
 void makeSticky(HWND hwnd);
+
 void removeSticky(HWND hwnd);
 bool checkSticky(HWND hwnd);
 int getTaskListSize(void);

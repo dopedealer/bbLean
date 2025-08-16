@@ -92,14 +92,6 @@ DWORD_PTR send_bbls_command(HWND hwnd, WPARAM wParam, LPARAM lParam)
 }
 
 
-void setDesktop(HWND hwnd, int n, bool switchto)
-{
-    vwm_set_desk(hwnd, n, switchto);
-}
-
-/// \brief Make a plugin/app window appear on all workspaces
-///        This is now one API for both plugins and application windows,
-///        still internally uses different methods
 void makeSticky(HWND hwnd)
 {
     sticky_list* p{};
@@ -110,8 +102,7 @@ void makeSticky(HWND hwnd)
     }
 
     if (is_bbwindow(hwnd))
-    {
-
+    { 
         if (assoc(gStickylist, hwnd))
         {
             return;
@@ -126,7 +117,7 @@ void makeSticky(HWND hwnd)
     { 
         if (vwm_get_desk(hwnd) != currentScreen)
         {
-            setDesktop(hwnd, currentScreen, false);
+            vwm_set_desk(hwnd, currentScreen, false);
         }
         vwm_set_sticky(hwnd, true);
         send_bbls_command(hwnd, BBLS_SETSTICKY, 1);
@@ -380,19 +371,21 @@ void SetWorkspaceNames(const char *names)
     send_desk_refresh();
 }
 
+/// \brief Gets previously read workspace name list and creates string node
+///        list of workspaces names
 static
 void SetNames(void)
-{
-    const char *names; int i;
-
+{ 
     freeall(&deskNames);
-    names = Settings_workspaceNames;
-    for (i = 0; i < Settings_workspaces; ++i)
+    const char* names = Settings_workspaceNames;
+    char wkspc_name[MAX_PATH];
+
+    for (int i = 0; i < Settings_workspaces; ++i)
     {
-        char wkspc_name[MAX_PATH];
         if (0 == *NextToken(wkspc_name, &names, ","))
-            sprintf(wkspc_name,
-                NLS2("$Workspace_DefaultName$", "Workspace %d"), i+1);
+        {
+            sprintf(wkspc_name, NLS2("$Workspace_DefaultName$", "Workspace %d"), i+1);
+        }
         append_string_node(&deskNames, wkspc_name);
     }
 }
@@ -401,9 +394,11 @@ void SetNames(void)
 static
 HWND get_default_window(HWND hwnd)
 {
-    if (NULL == hwnd) {
+    if (NULL == hwnd)
+    {
         hwnd = GetForegroundWindow();
-        if (NULL == hwnd || is_bbwindow(hwnd)) {
+        if (NULL == hwnd || is_bbwindow(hwnd))
+        {
             hwnd = get_top_window(currentScreen);
         }
     }
@@ -419,7 +414,7 @@ LRESULT send_syscommand(HWND hwnd, WPARAM SC_XXX)
 } 
 
 static
-BOOL list_desktops_func(DesktopInfo *DI, LPARAM lParam)
+BOOL list_desktops_func(DesktopInfo* DI, LPARAM lParam)
 {
     SendMessage((HWND)lParam, BB_DESKTOPINFO, 0, (LPARAM)DI);
     return TRUE;
@@ -702,7 +697,7 @@ void WS_BringToFront(HWND hwnd, bool to_current)
         }
         else
         {
-            setDesktop(hwnd, currentScreen, false);
+            vwm_set_desk(hwnd, currentScreen, false);
         }
     }
     SwitchToWindow(hwnd);
@@ -933,19 +928,24 @@ bool check_sticky_plugin(HWND hwnd)
 }
 
 //===========================================================================
+
+/// \brief Tries to find the sticky windows names list file, reads names from
+///        it and recreates a sticky windows names node string list
 static
 void WS_LoadStickyNamesList(void)
 {
     char path[MAX_PATH];
     char buffer[MAX_PATH];
-    FILE* fp;
 
     freeall(&stickyNamesList);
     findRCFile(path, "StickyWindows.ini", NULL);
-    fp = fileOpen(path);
-    if (fp) {
-        while (readNextCommand(fp, buffer, sizeof (buffer)))
+    FILE* fp = fileOpen(path);
+    if (fp)
+    {
+        while(readNextCommand(fp, buffer, sizeof (buffer)))
+        {
             append_string_node(&stickyNamesList, strlwr(buffer));
+        }
         fileClose(fp);
     }
 }
@@ -1162,12 +1162,12 @@ void MoveWindowToWkspc(HWND hwnd, int desk, bool switchto)
     if (switchto)
     {
         SwitchToWindow(hwnd);
-        setDesktop(hwnd, desk, true);
+        vwm_set_desk(hwnd, desk, true);
 
     } else
     {
         SwitchToBBWnd();
-        setDesktop(hwnd, desk, false);
+        vwm_set_desk(hwnd, desk, false);
         focus_top_window();
     }
 }
@@ -1465,7 +1465,7 @@ void Workspaces_TaskProc(WPARAM wParam, HWND hwnd)
             {
                 // in case the app has windows on other workspaces, this
                 // gathers them in the current
-                setDesktop(hwnd, currentScreen, false);
+                vwm_set_desk(hwnd, currentScreen, false);
             }
             else
             if (Settings_followActive
@@ -1474,7 +1474,7 @@ void Workspaces_TaskProc(WPARAM wParam, HWND hwnd)
             {
                 // we switch only if there is a previously active window
                 // and that window neither was closed nor minimized
-                setDesktop(hwnd, windesk, true);
+                vwm_set_desk(hwnd, windesk, true);
             }
             else
             if (currentScreen == vwm_get_desk(GetLastActivePopup(hwnd)))
@@ -1482,7 +1482,7 @@ void Workspaces_TaskProc(WPARAM wParam, HWND hwnd)
                 // the app is on other workspaces but has popup'd something
                 // (supposedly spontaneously) in the current workspace.
                 // We put the popup on the other WS and switch to.
-                setDesktop(hwnd, windesk, true);
+                vwm_set_desk(hwnd, windesk, true);
             }
             else
             {
@@ -1490,7 +1490,7 @@ void Workspaces_TaskProc(WPARAM wParam, HWND hwnd)
                 // and set blackbox as foreground task. We dont
                 // want people typing in windows on other workspaces
                 SwitchToBBWnd();
-                setDesktop(hwnd, windesk, false);
+                vwm_set_desk(hwnd, windesk, false);
                 break;
             }
 

@@ -175,9 +175,6 @@ void bbResetPluginRcPath(void)
     gPluginrcPath[0] = 0;
 }
 
-/// \brief Opens file for parsing
-/// Open/Close a file for use with 'FileRead' or 'ReadNextCommand'
-/// (Do not use 'fopen/fclose' in combination with these)
 FILE* fileOpen(const char* szPath)
 {
 #ifdef __BBCORE__
@@ -191,20 +188,16 @@ FILE* fileOpen(const char* szPath)
     return fopen(szPath, "rt");
 }
 
-/// \brief Close selected file
 bool fileClose(FILE* fp)
 {
     return fp && 0 == fclose(fp);
 }
 
-/// \brief Read's a line from given FILE and returns boolean on status
 bool fileRead(FILE* fp, char* buffer)
 {
     return 0 != read_next_line(fp, buffer, MAX_LINE_LENGTH);
 }
 
-/// \brief Reads the next line of the file
-/// Additionally skips comments and empty lines
 bool readNextCommand(FILE *fp, char* szBuffer, unsigned dwLength)
 {
     while (read_next_line(fp, szBuffer, dwLength))
